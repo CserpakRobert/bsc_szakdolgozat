@@ -1,6 +1,16 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Backend;
 
-app.MapGet("/", () => "Hello World!");
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>()).Build().Run();
+        //var builder = WebApplication.CreateBuilder(args);
+        //var app = builder.Build();
 
-app.Run();
+        //app.MapGet("/", () => "Hello World!");
+        //app.Run();
+
+        //app.Start();
+    }
+}
