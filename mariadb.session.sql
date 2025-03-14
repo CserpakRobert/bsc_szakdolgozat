@@ -13,3 +13,8 @@ SELECT user, host, plugin FROM mysql.user;
 create user 'backend'@'localhost' IDENTIFIED by 'pwd'
 GRANT ALL PRIVILEGES ON *.* TO 'backend'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
+drop table aspnetroles,aspnetusers,test;
+drop table test;
+SELECT * FROM aspnetusers, aspnetusers;
+select * from aspnetusers

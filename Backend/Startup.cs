@@ -1,4 +1,6 @@
-﻿using Backend.Persistence;
+﻿using Backend.Models;
+using Backend.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
@@ -13,7 +15,7 @@ namespace Backend
         {
             Configuration = configuration;
         }
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             var asd = Configuration.GetConnectionString("MariaDBConnectionString");
@@ -23,6 +25,7 @@ namespace Backend
                 )));
 
             services.AddControllers();
+            services.AddIdentity<User,UserRole>().AddEntityFrameworkStores<MariaDBContext>().AddDefaultTokenProviders();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -36,8 +39,12 @@ namespace Backend
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
+                
                 endpoints.MapControllers();
             });
         }
