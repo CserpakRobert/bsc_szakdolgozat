@@ -16,7 +16,7 @@ namespace Backend
         [HttpGet]
         public async Task<IEnumerable<testDataModel>> Get()
         {
-            return await dbcontext.Tests.ToListAsync();
+            return await dbcontext.Test.ToListAsync();
         }
     }
     public class testDataModel

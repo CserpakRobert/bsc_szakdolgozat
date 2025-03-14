@@ -16,14 +16,16 @@ namespace Backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MariaDBContext>(options => options.UseMySql(
+            var asd = Configuration.GetConnectionString("MariaDBConnectionString");
+            services.AddDbContext<MariaDBContext>(options => options.UseMySql(Configuration.GetConnectionString("MariaDBConnectionString"),
                 ServerVersion.AutoDetect(Configuration.GetConnectionString("MariaDBConnectionString")
+
                 )));
 
             services.AddControllers();
         }
 
-        public void Configure( IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

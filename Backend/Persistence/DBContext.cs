@@ -8,7 +8,7 @@ namespace Backend.Persistence
         {
            
         }
-        public virtual DbSet<testDataModel> Tests { get; set; }
+        public virtual DbSet<testDataModel> Test { get; set; }
 
     }
 }
