@@ -10,7 +10,8 @@ using System.Web;
 
 namespace Backend.Controllers
 {
-
+    [Route("api/user")]
+    [ApiController]
     public class UserController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
@@ -25,7 +26,7 @@ namespace Backend.Controllers
             this._configuration = configuration;
         }
 
-        [HttpPost("user/register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] JsonElement body)
         {
 
@@ -40,7 +41,7 @@ namespace Backend.Controllers
                 return BadRequest(result.Errors);
             
         }
-        [HttpPost("user/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] JsonElement body)
         {
             var email = body.GetProperty("email").GetString();

@@ -8,7 +8,7 @@ namespace Backend.Persistence
     {
         public MariaDBContext(DbContextOptions<MariaDBContext> options) : base(options)
         {
-           
+            
         }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Competition> Competitions { get; set; }
