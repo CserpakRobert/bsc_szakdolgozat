@@ -10,11 +10,11 @@ namespace Backend.Models
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
+
         [Required]
-        public string TrailerLink { get; set; }
+        public string Link { get; set; }
+
         [Required]
-        public string MovieLink { get; set; }
-        [Required]
-        public string Creators { get; set; }
+        public Submission Submission { get; set; }
     }
 }

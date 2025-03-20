@@ -10,8 +10,11 @@ namespace Backend.Persistence
         {
            
         }
-        public virtual DbSet<testDataModel> Test { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Competition> Competitions { get; set; }
+        public virtual DbSet<Submission> Submissions { get; set; }
+        public virtual DbSet<MovieDetails> MoviesDetails { get; set; }
+        public virtual DbSet<MusicDetails> MusicDetails { get; set; }
 
     }
 }

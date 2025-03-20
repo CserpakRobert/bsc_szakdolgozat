@@ -18,6 +18,13 @@ namespace Backend.Models
         [EmailAddress]
         [Required]
         public override string Email { get; set; }
-        
+
+        public ICollection<Submission> OwnedSubmissions { get; set; }
+        public ICollection<Submission> CollaboratedSubmissions { get; set; }
+
+        public ICollection<Competition> ModeratedCompetitions { get; set; }
+
+        public ICollection<Competition> OwnedCompetiotions { get; set; }
+
     }
 }
