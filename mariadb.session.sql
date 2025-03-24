@@ -14,7 +14,26 @@ create user 'backend'@'localhost' IDENTIFIED by 'pwd'
 GRANT ALL PRIVILEGES ON *.* TO 'backend'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
-drop table aspnetroles,aspnetusers,test;
+drop table *;
 drop table test;
 SELECT * FROM aspnetusers, aspnetusers;
 select * from aspnetusers
+
+SELECT CONCAT('DROP TABLE IF EXISTS ', table_name, ';')
+FROM information_schema.tables
+WHERE table_schema = 'szakdol';
+CREATE database szakdol;
+drop database szakdol;
+use szakdol;
+select * from competitionuser;
+
+drop database test;
+DROP TABLE IF EXISTS aspnetroleclaims;
+DROP TABLE IF EXISTS aspnetroles;
+DROP TABLE IF EXISTS aspnetuserclaims;
+DROP TABLE IF EXISTS aspnetuserlogins;
+DROP TABLE IF EXISTS aspnetuserroles;
+DROP TABLE IF EXISTS aspnetusers;
+DROP TABLE IF EXISTS aspnetusertokens;
+DROP TABLE IF EXISTS test;
+DROP TABLE IF EXISTS __efmigrationshistory;

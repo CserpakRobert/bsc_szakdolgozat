@@ -6,6 +6,7 @@ namespace Backend.Models
     [Table("MovieDetails")]
     public class MovieDetails
     {
+        public int Id { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]

@@ -16,5 +16,25 @@ namespace Backend.Persistence
         public virtual DbSet<MovieDetails> MoviesDetails { get; set; }
         public virtual DbSet<MusicDetails> MusicDetails { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>().HasKey(e => e.Id);
+            modelBuilder.Entity<User>().HasMany(e => e.CreatedCompetitions).WithOne(e => e.Creator).HasForeignKey(e=>e.CreatorId);
+            modelBuilder.Entity<User>().HasMany(e => e.ModeratedCompetitions).WithMany(e => e.Moderators);
+
+            modelBuilder.Entity<User>().HasMany(e => e.CreatedSubmissions).WithOne(e => e.Owner);
+            modelBuilder.Entity<User>().HasMany(e => e.CollaboratedSubmissions).WithMany(e => e.Creators);
+
+            modelBuilder.Entity<Competition>().HasMany(e => e.Submissions).WithOne(e => e.Competition).HasForeignKey(e=>e.CompetitionId);
+
+            modelBuilder.Entity<Submission>().HasOne(e => e.MovieDetails)
+                .WithOne(e => e.Submission).HasForeignKey<Submission>(e=>e.MovieDetailsId).IsRequired(false);
+            modelBuilder.Entity<Submission>().HasOne(e => e.MusicDetails)
+                .WithOne(e => e.Submission).HasForeignKey<Submission>(e => e.MusicDetailsId).IsRequired(false);
+
+        }
     }
 }
