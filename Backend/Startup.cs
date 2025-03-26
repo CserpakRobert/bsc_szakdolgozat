@@ -22,6 +22,18 @@ namespace Backend
         
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder
+                        .SetIsOriginAllowed(origin => true)
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()  
+                        .AllowAnyHeader()
+                        ); 
+            });
+
             var asd = Configuration.GetConnectionString("MariaDBConnectionString");
             services.AddDbContext<MariaDBContext>(options => options.UseMySql(Configuration.GetConnectionString("MariaDBConnectionString"),
                 ServerVersion.AutoDetect(Configuration.GetConnectionString("MariaDBConnectionString")
@@ -53,9 +65,11 @@ namespace Backend
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();
             app.UseAuthentication();

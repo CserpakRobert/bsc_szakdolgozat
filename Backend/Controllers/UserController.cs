@@ -1,7 +1,9 @@
 ﻿using Backend.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -25,14 +27,20 @@ namespace Backend.Controllers
             this._signInManager = signInManager;
             this._configuration = configuration;
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] JsonElement body)
+        public class RegisterModel
         {
 
 
-                var user = new Models.User { Email = body.GetProperty("email").GetString(), UserName = body.GetProperty("username").GetString() };
-                var result = await _userManager.CreateAsync(user, body.GetProperty("password").GetString());
+            public string Username { get; set; }
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        {
+
+                var user = new Models.User { Email = model.Email, UserName=model.Username };
+                var result = await _userManager.CreateAsync(user,model.Password);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -41,11 +49,16 @@ namespace Backend.Controllers
                 return BadRequest(result.Errors);
             
         }
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] JsonElement body)
+        public class LoginModel
         {
-            var email = body.GetProperty("email").GetString();
-            var password = body.GetProperty("password").GetString();
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var email = model.Email;
+            var password = model.Password;
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))

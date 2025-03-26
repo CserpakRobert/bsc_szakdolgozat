@@ -23,9 +23,9 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Competition>> GetAll([FromBody] int page, [FromBody] int competitionPerPage)
+        public async Task<IEnumerable<Competition>> GetAll()
         {
-            return _context.Competitions.Where(competition => competition.IsPrivate == false).Skip(page * competitionPerPage);
+            return _context.Competitions.Where(competition => competition.IsPrivate == false).Skip(0);
         }
     }
 }

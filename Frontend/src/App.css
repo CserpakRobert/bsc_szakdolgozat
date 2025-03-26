@@ -4,7 +4,17 @@
   padding: 2rem;
   text-align: center;
 }
+.active {
+  color: white !important;
 
+}
+.inactive,.pending{
+  color: white !important;
+}
+
+NavLink:hover{
+  color: "lightblue";
+}
 .logo {
   height: 6em;
   padding: 1.5em;

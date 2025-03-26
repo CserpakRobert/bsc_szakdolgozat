@@ -25,7 +25,7 @@ WHERE table_schema = 'szakdol';
 CREATE database szakdol;
 drop database szakdol;
 use szakdol;
-select * from competitionuser;
+select * from aspnetusers;
 
 drop database test;
 DROP TABLE IF EXISTS aspnetroleclaims;
