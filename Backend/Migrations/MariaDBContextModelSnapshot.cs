@@ -152,9 +152,6 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Votes")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompetitionId");
@@ -237,6 +234,25 @@ namespace Backend.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Models.Votes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("votes");
                 });
 
             modelBuilder.Entity("Backend.UserRole", b =>
@@ -401,6 +417,36 @@ namespace Backend.Migrations
                     b.ToTable("SubmissionUser");
                 });
 
+            modelBuilder.Entity("SubmissionVotes", b =>
+                {
+                    b.Property<int>("SubmissionsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VotesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SubmissionsId", "VotesId");
+
+                    b.HasIndex("VotesId");
+
+                    b.ToTable("SubmissionVotes");
+                });
+
+            modelBuilder.Entity("UserVotes", b =>
+                {
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VotesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UsersId", "VotesId");
+
+                    b.HasIndex("VotesId");
+
+                    b.ToTable("UserVotes");
+                });
+
             modelBuilder.Entity("Backend.Models.Competition", b =>
                 {
                     b.HasOne("Backend.Models.User", "Creator")
@@ -539,6 +585,36 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.User", null)
                         .WithMany()
                         .HasForeignKey("CreatorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SubmissionVotes", b =>
+                {
+                    b.HasOne("Backend.Models.Submission", null)
+                        .WithMany()
+                        .HasForeignKey("SubmissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Votes", null)
+                        .WithMany()
+                        .HasForeignKey("VotesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserVotes", b =>
+                {
+                    b.HasOne("Backend.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Votes", null)
+                        .WithMany()
+                        .HasForeignKey("VotesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -1,11 +1,11 @@
 
 
-export default function UserDetails(){
+export default function UserDetails() {
     return (
         <>
-        
-        
-        
+
+
+
         </>
 
     )

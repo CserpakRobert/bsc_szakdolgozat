@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { api } from "../../globalHelpers/apiAxios"
-import { Paper, Grid2, Card,  Button } from "@mui/material"
+import { Paper, Grid2, Card, Button } from "@mui/material"
 import CompetitionInterface from "./CompetitionInterface"
-import UserButton from "../User/userButton"
+import UserButton from "../User/UserButton"
+
 
 
 export default function CompetitionDetails() {
@@ -11,10 +12,7 @@ export default function CompetitionDetails() {
     const [error, setError] = useState(false)
     const [competition, setCompetition] = useState<undefined | CompetitionInterface>(undefined)
 
-
-
     useEffect(() => {
-        console.log(id);
         api.get(`competition/${id}`)
             .then(
                 resp => setCompetition(resp.data)
@@ -24,8 +22,6 @@ export default function CompetitionDetails() {
             )
     }, [id]
     )
-
-
     return (
         <>
             <Paper variant="detailsPaper">
@@ -40,7 +36,7 @@ export default function CompetitionDetails() {
                         </Grid2>
                         <Grid2 size={{ xs: 12, md: 8 }} sx={{ flexGrow: 1, display: "flex", flexDirection: "row", alignContent: "flex-start" }} >
                             <Card variant="outlined" sx={{ flexGrow: 1, flexDirection: "column" }}>
-                                <p style={{lineBreak:"anywhere"}}>{competition.description}</p>
+                                <p style={{ lineBreak: "anywhere" }}>{competition.description}</p>
                             </Card>
                         </Grid2>
                         <Grid2 size={4}>
@@ -69,9 +65,3 @@ export default function CompetitionDetails() {
 
     )
 }
-
-{/* <List sx={{maxHeight:"100px", overflow:"auto"}}>
-{["1", "2", "3","1", "2", "3","1", "2", "3"].map(f =>
-    <UserButton username={f} />
-)}
-</List> */}

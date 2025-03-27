@@ -92,6 +92,8 @@ namespace Backend.Controllers
 
             public bool VotingEnabled { get; set; } = false;
             public bool SubmissionsEnabled { get; set; } = false;
+            public bool IsMovieCompetition { get; set; } = false;
+            public bool IsMusicCompetition { get; set; } = false;
 
 
 
@@ -127,9 +129,9 @@ namespace Backend.Controllers
                 Creatorname = competition.Creator.UserName,
                 ModeratorNames = [.. competition.Moderators.Select(moderator => moderator.UserName)],
                 VotingEnabled = competition.IsInVotingPhase,
-                SubmissionsEnabled = competition.IsInSubmissionPhase
-
-
+                SubmissionsEnabled = competition.IsInSubmissionPhase,
+                IsMusicCompetition = competition.isMusicCompetition,
+                IsMovieCompetition = competition.isMovieCompetition
             };
 
             return Ok(result);

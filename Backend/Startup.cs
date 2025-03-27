@@ -74,8 +74,7 @@ namespace Backend
                         context.Response.StatusCode = 401;
                         context.Response.ContentType = "application/json";
                         return context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
-                    }
-                    ,
+                    },
                     OnForbidden = context =>
                     {
                         Debug.WriteLine($"Authentication failed: {"challenged"}");
@@ -98,6 +97,9 @@ namespace Backend
             services.AddControllers();
 
             services.AddScoped<UserService>();
+            services.AddScoped<CompetitionService>();
+            services.AddScoped<SubmissionService>();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

@@ -1,5 +1,5 @@
-import { Box, Button, FormControlLabel, Paper,  Radio,  RadioGroup,  TextField } from "@mui/material";
-import { FormEvent, use, useState } from "react";
+import { Box, Button, FormControlLabel, Paper, Radio, RadioGroup, TextField } from "@mui/material";
+import { FormEvent, useState } from "react";
 import { api } from "../../globalHelpers/apiAxios";
 import { useNavigate } from "react-router-dom";
 
@@ -10,17 +10,17 @@ export default function CreateCompetition() {
     const navigate = useNavigate()
     const handlesubmit = async (event: FormEvent) => {
         event.preventDefault();
-        return api.post("/competition/create", {title,description,category})
-        .then(resp=> navigate(`/competition/details/${resp.data.id}`))
-        .catch(e=>console.log(e)
-        )
+        return api.post("/competition/create", { title, description, category })
+            .then(resp => navigate(`/competition/details/${resp.data.id}`))
+            .catch(e => console.log(e)
+            )
     }
 
     return (
 
         <Paper variant="createPaper">
             <h1>Create Competition</h1>
-            <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, width: {xs:"100%"} }}onSubmit={handlesubmit}>
+            <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, width: { xs: "100%" } }} onSubmit={handlesubmit}>
 
                 <TextField
                     className="outlined-input"
@@ -38,9 +38,9 @@ export default function CreateCompetition() {
                     rows={5}
                     onChange={(e) => setdescription(e.target.value)}
                 />
-                <RadioGroup row value={category} onChange={(e)=>setCategory(e.target.value)}>
-                    <FormControlLabel label="Movie" value="movie" control={<Radio/>}/>
-                    <FormControlLabel label="Music" value="Music" control={<Radio/>}/>
+                <RadioGroup row value={category} onChange={(e) => setCategory(e.target.value)}>
+                    <FormControlLabel label="Movie" value="movie" control={<Radio />} />
+                    <FormControlLabel label="Music" value="music" control={<Radio />} />
                 </RadioGroup>
                 <Button sx={{ width: "50%", display: "flex", flexDirection: "column", }} variant="outlined" type="submit">Create</Button>
             </Box>

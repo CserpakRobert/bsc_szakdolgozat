@@ -11,6 +11,8 @@ import { AuthProvider } from './globalHelpers/AuthContext';
 import CreateCompetition from './components/Competition/CreateCompetition';
 import CompetitionDetails from './components/Competition/CompetitionDetails';
 import UserDetails from './components/User/UserDetails';
+import CreateSubmission from './components/Submission/CreateSubmission';
+import SubmissionDetails from './components/Submission/SubmissionDetails';
 
 function App() {
 
@@ -30,6 +32,8 @@ function App() {
                 <Route path='/competition/create' element={<CreateCompetition />} />
                 <Route path='/competition/details/:id' element={<CompetitionDetails />} />
                 <Route path='/user/profile/:name' element={<UserDetails />} />
+                <Route path='/submission/create/:id' element={<CreateSubmission />} />
+                <Route path='/submission/:id' element={<SubmissionDetails />} />
               </Routes>
             </BrowserRouter>
           </CssBaseline>

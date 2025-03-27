@@ -1,20 +1,51 @@
-1+ nap:
+(1.5 nap | + 1.5 nap)
+1+ nap (~8-12 óra):
 tesztek
-admin felület/ admin role
-Deploy
++admin felület/ admin role
 
-1 nap:
+
+(4 nap | + 1 nap | ++ 1 nap)
+1 nap (~ 8 óra):
 automatikus lejárat/szavazat lezárás
 Frontend errorok
 Frontend kinézet
+Deploy
++ Indexek
+++ Services tárolt eljárásba
 
-4 óra:
-Delete submission
+
+(0 nap | +:1-2 nap)
+2-6 óra:
++ youtube linkekre hossz limit
++ komponensekre lista szűrés
 
 
+(3-4 nap)
 1-2 óra:
-Create submission
-Edit submission
-User invites
-Moderator invites
+MenuBar:
+    minden route
+submission:
+    Details komponens
+    Delete submission
+    Edit submission
+    User invites
+    vote (adás/visszavonás)
+    kis komponens listázásra    *1
+    listázás                    *1
+    details:
+        MovieDetails komponens
+        MusicDetails komponens
+competition:
+    Delete Competition
+    Moderator invites
+    linkek validálása
+    kis komponens listázásra    *1
+    listázás                    *1
+User:
+profil oldal:
+    profil
+    *1 -> listák(created competitions, created submissions, participated submissions)
 
+
+Kódolás 10 nap + 9*( 2-3 óra)
+Dokumentáció 8 nap + 6 * (2-3 óra)

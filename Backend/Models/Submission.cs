@@ -8,9 +8,8 @@ namespace Backend.Models
     public class Submission
     {
         public int Id { get; set; }
-        [Required]
-        [DefaultValue(0)]
-        public int Votes { get; set; }
+
+        public ICollection<Votes> Votes { get; set; } = [];
 
         [Required]
         public User Owner { get; set; }
@@ -44,6 +43,20 @@ namespace Backend.Models
 
         public int CreatorId { get; set; }
         public User Creator { get; set; }
+    }
+    
+    public class Votes
+    {
+        [Required]
+        public int Id { get; set; }
+        [Required]
+        public ICollection<Submission> Submissions { get; set; } = [];
+        [Required]
+        public int SubmissionId { get; set; }
+        [Required]
+        public ICollection<User> Users { get; set; } = [];
+        [Required]
+        public int UserId { get; set; }
     }
 
 
