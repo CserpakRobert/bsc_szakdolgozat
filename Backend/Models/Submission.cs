@@ -29,6 +29,20 @@ namespace Backend.Models
         public int? MusicDetailsId { get; set; }
         public MovieDetails? MovieDetails { get; set; }
         public int? MovieDetailsId { get; set; }
+
+        public ICollection<InvitedSubmissionUsers> Invites { get; set; }
     }
+
+    [Table("InvitedSubmissionUsers")]
+    public class InvitedSubmissionUsers
+    {
+        public int Id { get; set; }
+        public int SubmissionId { get; set; }
+        public Submission Submission { get; set; }
+
+        public int CreatorId { get; set; }
+        public User Creator { get; set; }
+    }
+
 
 }

@@ -6,15 +6,11 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { NavLink} from 'react-router-dom';
-import { useAuth } from '../useAuth';
+import { useAuth } from '../globalHelpers/useAuth';
 
 export default function MenuBar() {
 
     const {isLoggedIn, logout} = useAuth()
-    // const logOut = () => {
-    //     localStorage.removeItem('token');
-    //     // setIsLoggedIn(false);
-    // }
 
     return (
         <Box sx={{ flexGrow: 1 }}>

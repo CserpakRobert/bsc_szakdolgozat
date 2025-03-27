@@ -1,6 +1,6 @@
 import { Box, Button, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
-import { api } from "../apiAxios";
+import { api } from "../globalHelpers/apiAxios";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {

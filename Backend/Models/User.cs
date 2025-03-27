@@ -24,7 +24,7 @@ namespace Backend.Models
         public ICollection<Submission> CreatedSubmissions { get; set; }
         public ICollection<Submission> CollaboratedSubmissions { get; set; }
 
-
+        public ICollection<InvitedSubmissionUsers> Invites{ get; set; }
 
     }
 }

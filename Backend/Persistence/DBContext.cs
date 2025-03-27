@@ -15,6 +15,7 @@ namespace Backend.Persistence
         public virtual DbSet<Submission> Submissions { get; set; }
         public virtual DbSet<MovieDetails> MoviesDetails { get; set; }
         public virtual DbSet<MusicDetails> MusicDetails { get; set; }
+        public virtual DbSet<InvitedSubmissionUsers> InvitedSubmissionUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +35,10 @@ namespace Backend.Persistence
                 .WithOne(e => e.Submission).HasForeignKey<Submission>(e=>e.MovieDetailsId).IsRequired(false);
             modelBuilder.Entity<Submission>().HasOne(e => e.MusicDetails)
                 .WithOne(e => e.Submission).HasForeignKey<Submission>(e => e.MusicDetailsId).IsRequired(false);
+
+            modelBuilder.Entity<InvitedSubmissionUsers>().HasOne(e => e.Submission).WithMany(e => e.Invites);
+
+            modelBuilder.Entity<InvitedSubmissionUsers>().HasOne(e => e.Creator).WithMany(e => e.Invites);
 
         }
     }

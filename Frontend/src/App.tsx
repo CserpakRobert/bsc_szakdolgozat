@@ -4,10 +4,11 @@ import './App.css'
 import MenuBar from './components/MenuBar';
 import Register from './components/register';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { darkTheme } from "./theme"
+import { darkTheme } from "./globalHelpers/theme"
 import { CssBaseline } from '@mui/material';
 import Login from './components/login';
-import { AuthProvider } from './AuthContext';
+import { AuthProvider } from './globalHelpers/AuthContext';
+import CreateCompetition from './components/Competition/CreateCompetition';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
               <Routes>
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />
+                <Route path='/competition/create' element={<CreateCompetition />} />
               </Routes>
             </BrowserRouter>
           </CssBaseline>

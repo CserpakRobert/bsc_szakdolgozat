@@ -37,6 +37,12 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsInSubmissionPhase")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsInVotingPhase")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("tinyint(1)");
 
@@ -49,6 +55,29 @@ namespace Backend.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("Competition");
+                });
+
+            modelBuilder.Entity("Backend.Models.InvitedSubmissionUsers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("SubmissionId");
+
+                    b.ToTable("InvitedSubmissionUsers");
                 });
 
             modelBuilder.Entity("Backend.Models.MovieDetails", b =>
@@ -389,6 +418,25 @@ namespace Backend.Migrations
                     b.Navigation("Creator");
                 });
 
+            modelBuilder.Entity("Backend.Models.InvitedSubmissionUsers", b =>
+                {
+                    b.HasOne("Backend.Models.User", "Creator")
+                        .WithMany("Invites")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Submission", "Submission")
+                        .WithMany("Invites")
+                        .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Submission");
+                });
+
             modelBuilder.Entity("Backend.Models.Submission", b =>
                 {
                     b.HasOne("Backend.Models.Competition", "Competition")
@@ -518,11 +566,18 @@ namespace Backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Backend.Models.Submission", b =>
+                {
+                    b.Navigation("Invites");
+                });
+
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Navigation("CreatedCompetitions");
 
                     b.Navigation("CreatedSubmissions");
+
+                    b.Navigation("Invites");
                 });
 #pragma warning restore 612, 618
         }
