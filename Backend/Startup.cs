@@ -1,5 +1,6 @@
 ﻿using Backend.Models;
 using Backend.Persistence;
+using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -95,6 +96,8 @@ namespace Backend
             });
 
             services.AddControllers();
+
+            services.AddScoped<UserService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

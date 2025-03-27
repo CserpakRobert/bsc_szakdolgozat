@@ -70,7 +70,7 @@ namespace Backend.Controllers
             return Ok(new { Token = token });
         }
 
-        private string GenerateJwt(Backend.Models.User user)
+        private string GenerateJwt(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);

@@ -9,6 +9,8 @@ import { CssBaseline } from '@mui/material';
 import Login from './components/login';
 import { AuthProvider } from './globalHelpers/AuthContext';
 import CreateCompetition from './components/Competition/CreateCompetition';
+import CompetitionDetails from './components/Competition/CompetitionDetails';
+import UserDetails from './components/User/UserDetails';
 
 function App() {
 
@@ -26,6 +28,8 @@ function App() {
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/competition/create' element={<CreateCompetition />} />
+                <Route path='/competition/details/:id' element={<CompetitionDetails />} />
+                <Route path='/user/profile/:name' element={<UserDetails />} />
               </Routes>
             </BrowserRouter>
           </CssBaseline>

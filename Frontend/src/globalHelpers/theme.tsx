@@ -1,11 +1,16 @@
-import { createTheme } from "@mui/material";
-import { PaperProps } from "@mui/material";
+import { CardProps, createTheme, PaperProps } from "@mui/material";
 
 
 declare module "@mui/material/Paper" {
     interface PaperPropsVariantOverrides {
         userPaper: true;
-        createPaper: true
+        createPaper: true;
+        detailsPaper: true;
+    }
+}
+declare module "@mui/material/Card" {
+    interface CardPropsVariantOverrides {
+        detailsCard: true;
     }
 }
 export const darkTheme = createTheme({
@@ -35,21 +40,62 @@ export const darkTheme = createTheme({
                         variant: "createPaper" as PaperProps["variant"]
                     },
                     style: {
-                        display:"flex",
-                        flexDirection:"column",
-                        "@media (min-width:600px)": { width: "90%", height: 500 },
-                        "@media (min-width:960px)": { width: "100%", height: 450 },
-                        
+                        display: "flex",
+                        flexDirection: "column",
+                        "@media (min-width:600px)": { width: "90%", height: 700 },
+                        "@media (min-width:960px)": { width: "100%", height: 500 },
+
                         color: "#fafafa",
                         padding: "2rem",
                         borderRadius: "8px",
                         boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
                     },
 
+
+                },
+                {
+                    props: {
+                        variant: "detailsPaper" as PaperProps["variant"]
+                    },
+                    style: {
+                        display: "flex",
+                        flexGrow: 1,
+                        flexDirection: "column",
+                        // alignItems:"flex-start",
+                        // alignContent:"flex-start",
+                        "@media (min-width:600px)": { width: "90%", height: 500 },
+                        "@media (min-width:960px)": { width: "100%", height: 450 },
+                        minWidth: "50vw",
+                        color: "#fafafa",
+                        padding: "2rem",
+                        borderRadius: "8px",
+                        boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                    },
+
+
                 }
             ]
 
-        }
+        },
+        MuiCard: {
+            variants: [
+                {
+                    props: {
+                        variant: "detailsCard" as CardProps["variant"]
+                    },
+                    style: {
+                        
+                        color: "#fafafa",
+                        padding: "2rem",
+                        borderRadius: "8px",
+                        border:"px",
+                        borderColor:"fafafa",
+                        boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                        
 
+                    },
+                }]
+
+        }
     }
 });

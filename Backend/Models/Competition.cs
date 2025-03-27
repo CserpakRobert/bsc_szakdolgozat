@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Backend.Models
 {
     [Table("Competition")]
-    public class Competition 
+    public class Competition
     {
         public int Id { get; set; }
         [Required]
@@ -28,6 +28,12 @@ namespace Backend.Models
         [Required]
         [DefaultValue(false)]
         public bool IsInVotingPhase { get; set; }
+
+        [DefaultValue(false)]
+        public bool isMovieCompetition { get; set; }
+        [DefaultValue(false)]
+        public bool isMusicCompetition { get; set; }
+
         [Required]
         public ICollection<User> Moderators { get; set; }
 
@@ -36,5 +42,5 @@ namespace Backend.Models
 
 
     }
-    
+
 }

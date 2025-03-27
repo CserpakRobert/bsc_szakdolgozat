@@ -50,6 +50,12 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("isMovieCompetition")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("isMusicCompetition")
+                        .HasColumnType("tinyint(1)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
@@ -88,15 +94,11 @@ namespace Backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
+                    b.Property<string>("MovieLink")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("TrailerLink")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -113,19 +115,7 @@ namespace Backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("MovieLink")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TrailerLink")
+                    b.Property<string>("Link")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -157,6 +147,10 @@ namespace Backend.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Votes")
                         .HasColumnType("int");
