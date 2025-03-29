@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Backend.Utils;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
@@ -9,10 +10,17 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        [YouTubeLink]
         public string TrailerLink { get; set; }
 
         [Required]
+        [YouTubeLink]
         public string MovieLink { get; set; }
+
+        [Required]
+        public int SubmissionId { get; set; }
+
+        [Required]
         public Submission Submission { get; set; }
     }
 }
