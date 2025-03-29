@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../../globalHelpers/apiAxios"
 import { Paper, Grid2, Card, Button } from "@mui/material"
 import CompetitionInterface from "./CompetitionInterface"
@@ -9,7 +9,8 @@ import UserButton from "../User/UserButton"
 
 export default function CompetitionDetails() {
     const { id } = useParams()
-    const [error, setError] = useState(false)
+    const navigate = useNavigate()
+
     const [competition, setCompetition] = useState<undefined | CompetitionInterface>(undefined)
 
     useEffect(() => {
@@ -18,7 +19,6 @@ export default function CompetitionDetails() {
                 resp => setCompetition(resp.data)
             )
             .catch(
-                () => setError(true)
             )
     }, [id]
     )
@@ -43,12 +43,12 @@ export default function CompetitionDetails() {
                             <h3>Creator:</h3>
                             <UserButton username={competition.creatorname} />
                         </Grid2>
-                        {competition.submissionsenabled ? (
+                        {competition.submissionsEnabled && !competition.isCreator && !competition.isModerator ? (
                             <>
                                 <Grid2 size={8}>
                                 </Grid2>
                                 <Grid2 size={4}>
-                                    <Button>Create a submission</Button>
+                                    <Button onClick={()=> navigate(`/submission/create/${competition.id}`)}>Create a submission</Button>
                                 </Grid2>
                             </>
                         ) : (<></>)

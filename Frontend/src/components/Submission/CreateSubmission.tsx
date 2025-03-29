@@ -1,6 +1,6 @@
 import { Box, Button, Paper, TextField } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CompetitionInterface from "../Competition/CompetitionInterface";
 import { api } from "../../globalHelpers/apiAxios";
 
@@ -25,12 +25,14 @@ export default function CreateSubmission() {
         )
     }, [id])
 
+    const navigate = useNavigate()
+
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault()
         if (competition?.isMovieCompetition) {
-            api.post("submission/create", { competitionid: id, title, description, moviedetails: { trailerLink, movieLink } })
+            api.post("submission/create", { competitionid: id, title, description, moviedetails: { trailerLink, movieLink } }).then(resp => navigate(`/submission/${resp.data.id}`))
         } else if (competition?.isMusicCompetition) {
-            api.post("submission/create", { competitionid: id, title, description, musicdetails: { link:musicLink } })
+            api.post("submission/create", { competitionid: id, title, description, musicdetails: { link: musicLink } }).then(resp => navigate(`/submission/${resp.data.id}`))
 
         }
 
@@ -71,7 +73,7 @@ export default function CreateSubmission() {
                                 onChange={(e) => setTrailerLink(e.target.value)}
                             />                        <TextField
                                 className="outlined-input"
-                                label="description"
+                                label="Movie Link"
                                 type="text"
                                 value={movieLink}
                                 onChange={(e) => setMovieLink(e.target.value)}

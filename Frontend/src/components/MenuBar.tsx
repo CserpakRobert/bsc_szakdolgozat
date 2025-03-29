@@ -5,12 +5,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../globalHelpers/useAuth';
 
 export default function MenuBar() {
 
-    const {isLoggedIn, logout} = useAuth()
+    const { isLoggedIn, userName, logout } = useAuth()
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -24,9 +24,20 @@ export default function MenuBar() {
                         sx={{ mr: 2 }}
                     >
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        News
+
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} >
+                        {isLoggedIn?(<>
+                        <NavLink to={`/competition/create`} className={({ isActive, isPending }) =>
+                            isPending ? "pending" : isActive ? "active" : "inactive"
+                        }>
+                            <Button color='inherit'>Create</Button>
+                        </NavLink>
+                        
+                        
+                        
+                        </>):(<></>)}
                     </Typography>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} >
                     {isLoggedIn ?
                         (<>
                             <NavLink to="/login" className={({ isActive, isPending }) =>
@@ -34,7 +45,7 @@ export default function MenuBar() {
                             }>
                                 <Button color='inherit' onClick={logout}>Logout</Button>
                             </NavLink>
-                            <NavLink to="/profile" className={({ isActive, isPending }) =>
+                            <NavLink to={`/user/profile/${userName}`} className={({ isActive, isPending }) =>
                                 isPending ? "pending" : isActive ? "active" : "inactive"
                             }>
                                 <Button color='inherit'>Profile</Button>
@@ -56,6 +67,7 @@ export default function MenuBar() {
                         )
                     }
                     {/* <Button color="inherit" >Register</Button> */}
+                    </Typography>
                 </Toolbar>
             </AppBar>
         </Box>

@@ -19,7 +19,9 @@ namespace Backend.Models
         [Required]
         public override string Email { get; set; }
 
-        public ICollection<Votes> Votes { get; set; } = [];
+
+        public ICollection<Submission> VotedSubmissions { get; set; } = [];
+
 
         public ICollection<Competition> CreatedCompetitions { get; set; }
         public ICollection<Competition> ModeratedCompetitions { get; set; }

@@ -1,4 +1,6 @@
 ﻿using Backend.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +51,21 @@ namespace Backend.Controllers
                 return BadRequest(result.Errors);
             
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("{name}")]
+        public async Task<IActionResult> UserById(string name)
+        {
+            var result = await _userManager.FindByNameAsync(name);
+            if (result is null)
+            {
+                return BadRequest("User not found");
+            }
+            return Ok(new { result.Id, result.UserName});
+        }
+
+
+
         public class LoginModel
         {
             public string Email { get; set; }
@@ -67,7 +84,7 @@ namespace Backend.Controllers
             }
 
             var token = GenerateJwt(user);
-            return Ok(new { Token = token });
+            return Ok(new { Token = token, userName = user.UserName });
         }
 
         private string GenerateJwt(User user)

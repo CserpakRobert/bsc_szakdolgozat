@@ -36,8 +36,7 @@ namespace Backend.Persistence
             modelBuilder.Entity<Submission>().HasOne(e => e.MusicDetails)
                 .WithOne(e => e.Submission).HasForeignKey<Submission>(e => e.MusicDetailsId).IsRequired(false);
 
-            modelBuilder.Entity<Submission>().HasMany(e => e.Votes).WithMany(e => e.Submissions);
-            modelBuilder.Entity<User>().HasMany(e => e.Votes).WithMany(e => e.Users);
+            modelBuilder.Entity<Submission>().HasMany(e => e.VotedUsers).WithMany(e => e.VotedSubmissions);
 
             modelBuilder.Entity<InvitedSubmissionUsers>().HasOne(e => e.Submission).WithMany(e => e.Invites);
 

@@ -27,6 +27,8 @@ drop database szakdol;
 use szakdol;
 select * from aspnetusers;
 
+UPDATE competition set isinvotingphase=0, IsInSubmissionPhase = 1 where Id = 8;
+
 drop database test;
 DROP TABLE IF EXISTS aspnetroleclaims;
 DROP TABLE IF EXISTS aspnetroles;

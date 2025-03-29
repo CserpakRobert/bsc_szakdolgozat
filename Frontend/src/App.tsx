@@ -13,13 +13,13 @@ import CompetitionDetails from './components/Competition/CompetitionDetails';
 import UserDetails from './components/User/UserDetails';
 import CreateSubmission from './components/Submission/CreateSubmission';
 import SubmissionDetails from './components/Submission/SubmissionDetails';
+import SubmissionSmallDetails from './components/Submission/SubmissionSmallDetails';
 
 function App() {
 
   return (
     <>
       <AuthProvider>
-
         <ThemeProvider theme={darkTheme}>
           <CssBaseline>
 
@@ -34,6 +34,7 @@ function App() {
                 <Route path='/user/profile/:name' element={<UserDetails />} />
                 <Route path='/submission/create/:id' element={<CreateSubmission />} />
                 <Route path='/submission/:id' element={<SubmissionDetails />} />
+                <Route path='/submission/test' element={<SubmissionSmallDetails submission={{id:2,title:"asd",type:"movie"}} />} />
               </Routes>
             </BrowserRouter>
           </CssBaseline>

@@ -67,8 +67,10 @@ namespace Backend.Controllers
                 Creator = user,
                 Moderators = [user],
                 IsPrivate = false,
-                isMovieCompetition = model.Category == "movie",
-                isMusicCompetition = model.Category == "music"
+                IsInSubmissionPhase = true,
+                IsInVotingPhase = true,
+                IsMovieCompetition = model.Category == "movie",
+                IsMusicCompetition = model.Category == "music"
                 
             });
             await _context.SaveChangesAsync();
@@ -82,6 +84,7 @@ namespace Backend.Controllers
         }
         public class GetOneCompetitionModel
         {
+            public int Id { get; set; }
             public bool IsCreator { get; set; } = false;
             public bool IsModerator { get; set; } = false;
             public bool CanSubmit { get; set; } = true;
@@ -121,6 +124,7 @@ namespace Backend.Controllers
 
             result = new GetOneCompetitionModel()
             {
+                Id = competition.Id,
                 IsCreator = await _userService.IsCreatorInCompetition(competition.Id, user.Id),
                 IsModerator = await _userService.IsModeratorInCompetition(competition.Id, user.Id),
                 CanSubmit = await _userService.CanSubmitOnCompetition(competition.Id, user.Id),
@@ -130,8 +134,8 @@ namespace Backend.Controllers
                 ModeratorNames = [.. competition.Moderators.Select(moderator => moderator.UserName)],
                 VotingEnabled = competition.IsInVotingPhase,
                 SubmissionsEnabled = competition.IsInSubmissionPhase,
-                IsMusicCompetition = competition.isMusicCompetition,
-                IsMovieCompetition = competition.isMovieCompetition
+                IsMusicCompetition = competition.IsMusicCompetition,
+                IsMovieCompetition = competition.IsMovieCompetition
             };
 
             return Ok(result);
