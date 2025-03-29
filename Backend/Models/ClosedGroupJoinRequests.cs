@@ -17,6 +17,7 @@ namespace Backend.Models
 
         [Required]
         [ValidDescription]
+        [MaxLength(3000)]
         public string Description { get; set; }
 
 

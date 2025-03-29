@@ -197,30 +197,14 @@ namespace Backend.Controllers
             [HttpPost("vote/{id}")]
             public async Task<IActionResult> VoteForSubmission(int id)
             {
-                if (await _submissionService.CanVote(id))
+
+                var result = await _submissionService.VoteForSubmission(id);
+                if (result)
                 {
-                    var submission = await _context.Submissions.FirstOrDefaultAsync(sub => sub.Id == id);
-                    if (submission is null)
-                    {
-                        return BadRequest("Submission not found");
-                    }
-                    else
-                    {
-                        var user = await _userService.GetLoggedInUser();
-                        if (user is null)
-                        {
-                            return Unauthorized("Invalid Credentials");
-                        }
-                        using var transaction = await _context.Database.BeginTransactionAsync();
-                        submission.VoteCount++;
-                        // TODO add vote User
-                        submission.VotedUsers.Add(user);
-                        await _context.SaveChangesAsync();
-                        await transaction.CommitAsync();
-                        return Ok();
-                    }
+                    return Ok();
                 }
                 return BadRequest("Cant Vote for this submission");
+
             }
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -228,37 +212,18 @@ namespace Backend.Controllers
             public async Task<IActionResult> UnVoteForSubmission(int id)
             {
 
-                    var submission = await _context.Submissions.FirstOrDefaultAsync(sub => sub.Id == id);
-                    if (submission is null)
-                    {
-                        return BadRequest("Submission not found");
-                    }
-                    else
-                    {
-                        var user = await _userService.GetLoggedInUser();
-                        if (user is null)
-                        {
-                            return Unauthorized("Invalid Credentials");
-                        }
-                        if (await _submissionService.HasVote(submission.Id))
-                        {
-                            using var transaction = await _context.Database.BeginTransactionAsync();
-                            submission.VoteCount--;
-                            submission.VotedUsers.Remove(user);
-                            await _context.SaveChangesAsync();
-                            await transaction.CommitAsync();
-                            return Ok();
-
-                        }
-
-                        return BadRequest("No vote on submision");
-                    
+                var result = await _submissionService.UnVoteForSubmission(id);
+                if (result)
+                {
+                    return Ok();
                 }
+                return BadRequest("No vote on submision");
+
             }
-
-
-
-
         }
+
     }
+
+
 }
+

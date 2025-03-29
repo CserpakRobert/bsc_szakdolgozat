@@ -14,6 +14,13 @@ namespace Backend.Models
         public int VoteCount { get; set; } = 0;
 
         [Required]
+        [DefaultValue(false)]
+        public bool IsSubmitted { get; set; }
+
+        [Required]
+        public int Placement { get; set; } = 0;
+
+        [Required]
         public int OwnerId { get; set; }
 
         [Required]
@@ -48,6 +55,8 @@ namespace Backend.Models
 
         public int? MovieDetailsId { get; set; }
         public MovieDetails? MovieDetails { get; set; }
+        public int? ShortStoryDetailsId { get; set; }
+        public ShortStoryDetails? ShortStoryDetails { get; set; }
 
 
     }
