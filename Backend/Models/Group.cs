@@ -33,7 +33,7 @@ namespace Backend.Models
 
         public ICollection<User> Participants { get; set; } = [];
 
-        public ICollection<ClosedGroupJoinRequests> JoinRequests { get; set; } = [];
+        public ICollection<OpenGroupJoinRequests> JoinRequests { get; set; } = [];
 
         public ICollection<SubmissionInvites> Invites { get; set; } = [];
 

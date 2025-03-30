@@ -29,7 +29,7 @@ namespace Backend.Models
         public ICollection<Submission> CollaboratedSubmissions { get; set; } = [];
         public ICollection<SubmissionInvites> SentInvites { get; set; } = [];
         public ICollection<SubmissionInvites> RecievedInvites { get; set; } = [];
-        public ICollection<ClosedGroupJoinRequests> JoinRequests { get; set; } = [];
+        public ICollection<OpenGroupJoinRequests> JoinRequests { get; set; } = [];
         public ICollection<Group> OwnedGroups { get; set; } = [];
         public ICollection<Group> ParticipatingGroups { get; set; } = [];
 

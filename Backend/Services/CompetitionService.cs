@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Backend.Models.DTOs;
 using Backend.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,17 @@ namespace Backend.Services
             return competition.IsInSubmissionPhase;
         }
 
+        public async Task<bool?> IsInPreparationPhase(int id)
+        {
+            var result = await _context.Competitions.FindAsync(id);
+            if (result is null) return null;
+            return result.IsInPreparationPhase;
+        }
+
+        public async Task<bool> IsModerator(int competitionId, int userId)
+        {
+            return await _context.Moderators.AnyAsync(m => m.UserId == userId && m.CompetitionId == competitionId);
+        }
 
     }
 }

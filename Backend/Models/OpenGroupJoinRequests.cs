@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Backend.Models
 {
 
-    [Table("ClosedGroupJoinRequests")]
-    public class ClosedGroupJoinRequests
+    [Table("OpenGroupJoinRequests")]
+    public class OpenGroupJoinRequests
     {
 
         [Required]

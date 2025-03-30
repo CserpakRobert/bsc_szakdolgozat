@@ -17,7 +17,7 @@ namespace Backend.Persistence
         public virtual DbSet<MovieDetails> MoviesDetails { get; set; }
         public virtual DbSet<MusicDetails> MusicDetails { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
-        public virtual DbSet<ClosedGroupJoinRequests> JoinRequests { get; set; }
+        public virtual DbSet<OpenGroupJoinRequests> JoinRequests { get; set; }
 
         public virtual DbSet<SubmissionInvites> SubmissionInvites { get; set; }
 
@@ -36,7 +36,7 @@ namespace Backend.Persistence
 
             modelBuilder.Entity<User>().HasKey(e => e.Id);
             modelBuilder.Entity<Competition>().HasKey(e => e.Id);
-            modelBuilder.Entity<ClosedGroupJoinRequests>().HasKey(e => e.Id);
+            modelBuilder.Entity<OpenGroupJoinRequests>().HasKey(e => e.Id);
             modelBuilder.Entity<Group>().HasKey(e => e.Id);
             modelBuilder.Entity<MovieDetails>().HasKey(e => e.Id);
             modelBuilder.Entity<MusicDetails>().HasKey(e => e.Id);
@@ -47,10 +47,6 @@ namespace Backend.Persistence
             modelBuilder.Entity<Moderators>().HasKey(e => new { e.UserId, e.CompetitionId });
             modelBuilder.Entity<SubmissionVotes>().HasKey(e => new { e.UserId, e.SubmissionId });
             modelBuilder.Entity<UserParticipateGroups>().HasKey(e => new { e.UserId, e.GroupId });
-
-            //modelBuilder.Entity<UserParticipateGroups>().HasOne(e => e.User).WithMany(e=>e.ParticipatingGroups);
-
-
 
 
             //User
@@ -67,25 +63,16 @@ namespace Backend.Persistence
                 .HasMany(e => e.ModeratedCompetitions)
                 .WithMany(e => e.Moderators)
                 .UsingEntity<Moderators>();
-            //l => l.HasOne<Competition>().WithMany().HasForeignKey(e => e.CompetitionId),
-            //r => r.HasOne<User>().WithMany().HasForeignKey(e => e.UserId)
-            //);
 
             modelBuilder.Entity<User>()
                 .HasMany(e => e.CollaboratedSubmissions)
                 .WithMany(e => e.Creators)
                 .UsingEntity<CollaboratedSubmissions>();
-                    //l => l.HasOne<Submission>().WithMany().HasForeignKey(e => e.SubmissionId),
-                    //r => r.HasOne<User>().WithMany().HasForeignKey(e => e.UserId)
-                    //);
 
             modelBuilder.Entity<User>()
                 .HasMany(e => e.ParticipatingGroups)
                 .WithMany(e => e.Participants)
                 .UsingEntity<UserParticipateGroups>();
-                    //l => l.HasOne<Group>().WithMany().HasForeignKey(e => e.GroupId),
-                    //r => r.HasOne<User>().WithMany().HasForeignKey(e => e.UserId)
-                    //);
 
             //Group
             modelBuilder.Entity<Group>().HasMany(e => e.Invites).WithOne(e => e.Group);
@@ -109,9 +96,6 @@ namespace Backend.Persistence
                 .HasMany(e => e.VotedUsers)
                 .WithMany(e => e.VotedSubmissions)
                 .UsingEntity<SubmissionVotes>();
-                    //l => l.HasOne<User>().WithMany().HasForeignKey(e => e.UserId),
-                    //r => r.HasOne<Submission>().WithMany().HasForeignKey(e => e.SubmissionId)
-                    //);
 
 
             //TODO: Indexes

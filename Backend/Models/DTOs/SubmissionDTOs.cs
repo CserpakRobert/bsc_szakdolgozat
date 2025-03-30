@@ -7,23 +7,37 @@
     public partial interface IModifySubmission
     {
         public int Id { get; set; }
+
+        public bool Submitted { get; set; }
         public string Title { get; set; }
 
         public string Description { get; set; }
     }
 
-    public interface IModifyMovieDetails : IModifySubmission
+    public class ModifyMovieDetails : IModifySubmission
     {
-        public string MovieLink { get; set; }
-        public string TrailerLink { get; set; }
+        public int Id { get; set ; }
+        public bool Submitted { get; set; }
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string MovieLink { get; set; } = null!;
+        public string TrailerLink { get; set; } = null!;
     }
-    public interface IModifyMusicDetails : IModifySubmission
+    public class ModifyMusicDetails : IModifySubmission
     {
-        public string Link { get; set; }
+        public int Id { get; set; }
+        public bool Submitted { get; set; }
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string Link { get; set; } = null!;
     }
-    public interface IModifyShortStoryDetails : IModifySubmission
+    public class ModifyShortStoryDetails : IModifySubmission
     {
-        public string Story { get; set; }
+        public int Id { get; set; }
+        public bool Submitted { get; set; }
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string Story { get; set; } = null!;
 
     }
 }

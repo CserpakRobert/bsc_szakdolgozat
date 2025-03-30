@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Backend.Models.DTOs;
 using Backend.Persistence;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -59,78 +60,96 @@ namespace Backend.Controllers
                 public ICollection<string> InvitedUsers { get; set; } = [];
             }
 
+            //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            //[HttpPost("create")]
+            //public async Task<IActionResult> CreateSubmission([FromBody] CreateSubmissionModel model)
+            //{
+            //    var user = await _userService.GetLoggedInUser();
+            //    if (user is null)
+            //    {
+            //        return Unauthorized("Invalid Credentials");
+            //    }
+            //    if (model.musicDetails == null && model.MovieDetails == null)
+            //    {
+            //        return BadRequest();
+            //    }
+            //    var canSubmit = await _userService.CanSubmitOnCompetition(model.CompetitionId, user.Id);
+            //    if (!canSubmit)
+            //    {
+            //        return BadRequest("cant submit");
+            //    }
+            //    using var transaction = await _context.Database.BeginTransactionAsync();
+            //    if (model.musicDetails != null)
+            //    {
+            //        var musicDetails = new MusicDetails() { Link = model.musicDetails.Link };
+            //        await _context.MusicDetails.AddAsync(musicDetails);
+            //        await _context.SaveChangesAsync();
+
+            //        if (musicDetails == null)
+            //        {
+            //            await transaction.RollbackAsync();
+            //            return BadRequest();
+            //        }
+
+            //        var submissionResult = await _context.AddAsync(new Submission()
+            //        {
+            //            CompetitionId = model.CompetitionId,
+            //            OwnerId = user.Id,
+            //            Title = model.Title,
+            //            Description = model.Description,
+            //            MusicDetailsId = musicDetails.Id
+            //        });
+
+            //        await _context.SaveChangesAsync();
+            //        await transaction.CommitAsync();
+            //        return Ok(new { Id = submissionResult.Entity.Id });
+
+            //    }
+            //    if (model.MovieDetails != null)
+            //    {
+            //        var movieDetails = new MovieDetails() { TrailerLink = model.MovieDetails.TrailerLink, MovieLink = model.MovieDetails.TrailerLink };
+            //        await _context.MoviesDetails.AddAsync(movieDetails);
+            //        await _context.SaveChangesAsync();
+
+            //        if (movieDetails == null)
+            //        {
+            //            await transaction.RollbackAsync();
+            //            return BadRequest();
+            //        }
+
+            //        var submissionResult = await _context.AddAsync(new Submission()
+            //        {
+            //            CompetitionId = model.CompetitionId,
+            //            OwnerId = user.Id,
+            //            Title = model.Title,
+            //            Description = model.Description,
+            //            MovieDetailsId = movieDetails.Id
+            //        });
+
+            //        await _context.SaveChangesAsync();
+            //        await transaction.CommitAsync();
+            //        return Ok(new { Id = submissionResult.Entity.Id });
+
+            //    }
+            //    return BadRequest();
+            //}
+
+
+
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-            [HttpPost("create")]
-            public async Task<IActionResult> CreateSubmission([FromBody] CreateSubmissionModel model)
+            [HttpPost("modify")]
+            public async Task<IActionResult> CreateSubmission([FromBody] IModifySubmission model)
             {
-                var user = await _userService.GetLoggedInUser();
-                if (user is null)
+                if (!await _submissionService.CanEdit(model.Id))
                 {
-                    return Unauthorized("Invalid Credentials");
+                    BadRequest("Ezt a pályázatot nem szerkesztheted!");
                 }
-                if (model.musicDetails == null && model.MovieDetails == null)
+                var result = _submissionService.ModifySubmission(model);
+                if (result is not null)
                 {
-                    return BadRequest();
+                    return Ok();
                 }
-                var canSubmit = await _userService.CanSubmitOnCompetition(model.CompetitionId, user.Id);
-                if (!canSubmit)
-                {
-                    return BadRequest("cant submit");
-                }
-                using var transaction = await _context.Database.BeginTransactionAsync();
-                if (model.musicDetails != null)
-                {
-                    var musicDetails = new MusicDetails() { Link = model.musicDetails.Link };
-                    await _context.MusicDetails.AddAsync(musicDetails);
-                    await _context.SaveChangesAsync();
-
-                    if (musicDetails == null)
-                    {
-                        await transaction.RollbackAsync();
-                        return BadRequest();
-                    }
-
-                    var submissionResult = await _context.AddAsync(new Submission()
-                    {
-                        CompetitionId = model.CompetitionId,
-                        OwnerId = user.Id,
-                        Title = model.Title,
-                        Description = model.Description,
-                        MusicDetailsId = musicDetails.Id
-                    });
-
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return Ok(new { Id = submissionResult.Entity.Id });
-
-                }
-                if (model.MovieDetails != null)
-                {
-                    var movieDetails = new MovieDetails() { TrailerLink = model.MovieDetails.TrailerLink, MovieLink = model.MovieDetails.TrailerLink };
-                    await _context.MoviesDetails.AddAsync(movieDetails);
-                    await _context.SaveChangesAsync();
-
-                    if (movieDetails == null)
-                    {
-                        await transaction.RollbackAsync();
-                        return BadRequest();
-                    }
-
-                    var submissionResult = await _context.AddAsync(new Submission()
-                    {
-                        CompetitionId = model.CompetitionId,
-                        OwnerId = user.Id,
-                        Title = model.Title,
-                        Description = model.Description,
-                        MovieDetailsId = movieDetails.Id
-                    });
-
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return Ok(new { Id = submissionResult.Entity.Id });
-
-                }
-                return BadRequest();
+                return BadRequest("Probléma a módosítással");
             }
 
             public class GetSubmissionmodel

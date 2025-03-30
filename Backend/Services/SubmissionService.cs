@@ -23,7 +23,7 @@ namespace Backend.Services
 
         public async Task<Submission?> ModifySubmission(IModifySubmission modifySubmission)
         {
-            if (modifySubmission is not (IModifyMovieDetails or IModifyMusicDetails or IModifyShortStoryDetails))
+            if (modifySubmission is not (ModifyMovieDetails or ModifyMusicDetails or ModifyShortStoryDetails))
             {
                 return null;
             }
@@ -32,19 +32,21 @@ namespace Backend.Services
                 .Include(sub => sub.MovieDetails)
                 .Include(sub => sub.MusicDetails)
                 .Include(sub => sub.ShortStoryDetails)
+                .Include(sub => sub.Competition)
                 .FirstOrDefaultAsync(sub => sub.Id == modifySubmission.Id);
 
-            if (submission is null)
+            if (submission is null || submission.Competition.IsInSubmissionPhase)
             {
                 return null;
             }
-            submission.IsSubmitted = true;
+
+            submission.IsSubmitted = modifySubmission.Submitted;
             submission.Title = modifySubmission.Title;
             submission.Description = modifySubmission.Description;
 
 
             // Movie
-            if (submission.MovieDetails is not null && modifySubmission is IModifyMovieDetails modifyMovieSubmission)
+            if (submission.MovieDetails is not null && modifySubmission is ModifyMovieDetails modifyMovieSubmission)
             {
                 var competition = await _context.Competitions.FindAsync(submission.CompetitionId);
                 if (competition is not null && competition.IsInSubmissionPhase && competition.IsMovieCompetition)
@@ -56,7 +58,7 @@ namespace Backend.Services
             }
 
             // Music
-            if (submission.MusicDetails is not null && modifySubmission is IModifyMusicDetails modifyMusicSubmission)
+            if (submission.MusicDetails is not null && modifySubmission is ModifyMusicDetails modifyMusicSubmission)
             {
                 var competition = await _context.Competitions.FindAsync(submission.CompetitionId);
                 if (competition is not null && competition.IsInSubmissionPhase && competition.IsMovieCompetition)
@@ -68,7 +70,7 @@ namespace Backend.Services
 
             // ShortStory
             if (submission.ShortStoryDetails is not null
-                && modifySubmission is IModifyShortStoryDetails modifyShortStorySubmission)
+                && modifySubmission is ModifyShortStoryDetails modifyShortStorySubmission)
             {
                 var competition = await _context.Competitions.FindAsync(submission.CompetitionId);
                 if (competition is not null && competition.IsInSubmissionPhase && competition.IsMovieCompetition)
@@ -131,6 +133,13 @@ namespace Backend.Services
             return true;
         }
 
+        public async Task<Submission?> GetById(int id)
+        {
+            return await _context.Submissions.FindAsync(id);
+        }
+
+
+
         public async Task<bool> CanVote(int id)
         {
 
@@ -159,8 +168,10 @@ namespace Backend.Services
         }
         public async Task<bool> CanEdit(int id)
         {
-            var competition = await _context.Competitions.FirstAsync(e => e.Id == id);
-            return competition.IsInSubmissionPhase;
+            var user = _userService.GetLoggedInUser();
+            var submission = await _context.Competitions.FirstAsync(e => e.Id == id);
+            if (user is null || submission.CreatorId != user.Id) return false;
+            return true;
         }
 
         //public async Task<ICollection<Submission>> ListUser(int userId,
