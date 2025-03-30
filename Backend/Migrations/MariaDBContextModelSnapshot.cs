@@ -87,6 +87,9 @@ namespace Backend.Migrations
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsShortStoryCompetition")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateOnly>("SubmissionStartDate")
                         .HasColumnType("date");
 
@@ -134,6 +137,66 @@ namespace Backend.Migrations
                     b.HasIndex("GroupOwnerId");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.CollaboratedSubmissions", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "SubmissionId");
+
+                    b.HasIndex("SubmissionId");
+
+                    b.ToTable("CollaboratedSubmissions");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.Moderators", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompetitionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "CompetitionId");
+
+                    b.HasIndex("CompetitionId");
+
+                    b.ToTable("Moderators");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.SubmissionVotes", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "SubmissionId");
+
+                    b.HasIndex("SubmissionId");
+
+                    b.ToTable("SubmissionVotes");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.UserParticipateGroups", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("UserParticipateGroups");
                 });
 
             modelBuilder.Entity("Backend.Models.MovieDetails", b =>
@@ -387,36 +450,6 @@ namespace Backend.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("CompetitionUser", b =>
-                {
-                    b.Property<int>("ModeratedCompetitionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ModeratorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ModeratedCompetitionsId", "ModeratorsId");
-
-                    b.HasIndex("ModeratorsId");
-
-                    b.ToTable("CompetitionUser");
-                });
-
-            modelBuilder.Entity("GroupUser", b =>
-                {
-                    b.Property<int>("ParticipantsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ParticipatingGroupsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ParticipantsId", "ParticipatingGroupsId");
-
-                    b.HasIndex("ParticipatingGroupsId");
-
-                    b.ToTable("GroupUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -520,36 +553,6 @@ namespace Backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SubmissionUser", b =>
-                {
-                    b.Property<int>("CollaboratedSubmissionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CreatorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CollaboratedSubmissionsId", "CreatorsId");
-
-                    b.HasIndex("CreatorsId");
-
-                    b.ToTable("SubmissionUser");
-                });
-
-            modelBuilder.Entity("SubmissionUser1", b =>
-                {
-                    b.Property<int>("VotedSubmissionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VotedUsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("VotedSubmissionsId", "VotedUsersId");
-
-                    b.HasIndex("VotedUsersId");
-
-                    b.ToTable("SubmissionUser1");
-                });
-
             modelBuilder.Entity("Backend.Models.ClosedGroupJoinRequests", b =>
                 {
                     b.HasOne("Backend.Models.Group", "Group")
@@ -597,6 +600,82 @@ namespace Backend.Migrations
                     b.Navigation("Competition");
 
                     b.Navigation("GroupOwner");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.CollaboratedSubmissions", b =>
+                {
+                    b.HasOne("Backend.Models.Submission", "Submission")
+                        .WithMany()
+                        .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Submission");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.Moderators", b =>
+                {
+                    b.HasOne("Backend.Models.Competition", "Competition")
+                        .WithMany()
+                        .HasForeignKey("CompetitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Competition");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.SubmissionVotes", b =>
+                {
+                    b.HasOne("Backend.Models.Submission", "Submission")
+                        .WithMany()
+                        .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Submission");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.UserParticipateGroups", b =>
+                {
+                    b.HasOne("Backend.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Submission", b =>
@@ -663,36 +742,6 @@ namespace Backend.Migrations
                     b.Navigation("SenderUser");
                 });
 
-            modelBuilder.Entity("CompetitionUser", b =>
-                {
-                    b.HasOne("Backend.Models.Competition", null)
-                        .WithMany()
-                        .HasForeignKey("ModeratedCompetitionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("ModeratorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GroupUser", b =>
-                {
-                    b.HasOne("Backend.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.Group", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipatingGroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Backend.UserRole", null)
@@ -740,36 +789,6 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SubmissionUser", b =>
-                {
-                    b.HasOne("Backend.Models.Submission", null)
-                        .WithMany()
-                        .HasForeignKey("CollaboratedSubmissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("CreatorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SubmissionUser1", b =>
-                {
-                    b.HasOne("Backend.Models.Submission", null)
-                        .WithMany()
-                        .HasForeignKey("VotedSubmissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("VotedUsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

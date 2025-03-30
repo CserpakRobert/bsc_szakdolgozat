@@ -51,7 +51,10 @@ namespace Backend.Models
         public bool IsMovieCompetition { get; set; }
 
         [DefaultValue(false)]
-        public bool IsMusicCompetition { get; set; }
+        public bool IsMusicCompetition { get; set; }     
+        
+        [DefaultValue(false)]
+        public bool IsShortStoryCompetition { get; set; }
 
         //Table connections
 
