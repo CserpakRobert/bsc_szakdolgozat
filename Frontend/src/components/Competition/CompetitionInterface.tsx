@@ -10,11 +10,14 @@ export default interface CompetitionInterface {
     submissionsEnabled: boolean;
     isMusicCompetition: boolean;
     isMovieCompetition: boolean;
+    isShortStoryCompetition: boolean;
 
 }
 
 export interface CompetitionSmallInterface{
     id:number;
     title:string;
-    type:string;
+    type:"movie"|"music"|"shortstory";
+    phase:"preparation"|"voting"|"submit"|"finished"
+    relevantDate:string
 }

@@ -15,4 +15,19 @@
     {
         public string Description { get; set; }
     }
+
+    public class GetGroupDTO
+    {
+        public int CompetitionId { get; set; }
+        public string CompetitionTitle { get; set; } = null!;
+
+        public string OwnerName { get; set; } = null!;
+
+        public string Description { get; set; } = null!;
+
+        public ICollection<string> ParticipateNames { get; set; } = [];
+
+        public bool IsClosed { get; set; }
+
+    }
 }

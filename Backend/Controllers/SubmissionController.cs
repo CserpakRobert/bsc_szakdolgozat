@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Backend.Controllers
 {
@@ -18,25 +16,14 @@ namespace Backend.Controllers
         [ApiController]
         public class SubmissionController : ControllerBase
         {
-            private readonly UserManager<User> _userManager;
-            private readonly IConfiguration _configuration;
             private readonly MariaDBContext _context;
-            private readonly IHttpContextAccessor _httpContextAccessor;
-            private readonly UserService _userService;
             private readonly SubmissionService _submissionService;
 
             public SubmissionController(UserManager<User> userManager,
                 MariaDBContext mariaDbContext,
-                             IConfiguration configuration,
-                             IHttpContextAccessor httpContextAccessor,
-                             UserService userService,
                              SubmissionService submissionService)
             {
-                this._userManager = userManager;
-                this._configuration = configuration;
                 this._context = mariaDbContext;
-                this._httpContextAccessor = httpContextAccessor;
-                this._userService = userService;
                 _submissionService = submissionService;
             }
 
@@ -59,81 +46,6 @@ namespace Backend.Controllers
                 public CreateMovieDetailsModel? MovieDetails { get; set; }
                 public ICollection<string> InvitedUsers { get; set; } = [];
             }
-
-            //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-            //[HttpPost("create")]
-            //public async Task<IActionResult> CreateSubmission([FromBody] CreateSubmissionModel model)
-            //{
-            //    var user = await _userService.GetLoggedInUser();
-            //    if (user is null)
-            //    {
-            //        return Unauthorized("Invalid Credentials");
-            //    }
-            //    if (model.musicDetails == null && model.MovieDetails == null)
-            //    {
-            //        return BadRequest();
-            //    }
-            //    var canSubmit = await _userService.CanSubmitOnCompetition(model.CompetitionId, user.Id);
-            //    if (!canSubmit)
-            //    {
-            //        return BadRequest("cant submit");
-            //    }
-            //    using var transaction = await _context.Database.BeginTransactionAsync();
-            //    if (model.musicDetails != null)
-            //    {
-            //        var musicDetails = new MusicDetails() { Link = model.musicDetails.Link };
-            //        await _context.MusicDetails.AddAsync(musicDetails);
-            //        await _context.SaveChangesAsync();
-
-            //        if (musicDetails == null)
-            //        {
-            //            await transaction.RollbackAsync();
-            //            return BadRequest();
-            //        }
-
-            //        var submissionResult = await _context.AddAsync(new Submission()
-            //        {
-            //            CompetitionId = model.CompetitionId,
-            //            OwnerId = user.Id,
-            //            Title = model.Title,
-            //            Description = model.Description,
-            //            MusicDetailsId = musicDetails.Id
-            //        });
-
-            //        await _context.SaveChangesAsync();
-            //        await transaction.CommitAsync();
-            //        return Ok(new { Id = submissionResult.Entity.Id });
-
-            //    }
-            //    if (model.MovieDetails != null)
-            //    {
-            //        var movieDetails = new MovieDetails() { TrailerLink = model.MovieDetails.TrailerLink, MovieLink = model.MovieDetails.TrailerLink };
-            //        await _context.MoviesDetails.AddAsync(movieDetails);
-            //        await _context.SaveChangesAsync();
-
-            //        if (movieDetails == null)
-            //        {
-            //            await transaction.RollbackAsync();
-            //            return BadRequest();
-            //        }
-
-            //        var submissionResult = await _context.AddAsync(new Submission()
-            //        {
-            //            CompetitionId = model.CompetitionId,
-            //            OwnerId = user.Id,
-            //            Title = model.Title,
-            //            Description = model.Description,
-            //            MovieDetailsId = movieDetails.Id
-            //        });
-
-            //        await _context.SaveChangesAsync();
-            //        await transaction.CommitAsync();
-            //        return Ok(new { Id = submissionResult.Entity.Id });
-
-            //    }
-            //    return BadRequest();
-            //}
-
 
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -173,7 +85,7 @@ namespace Backend.Controllers
                     .FirstOrDefaultAsync(sub => sub.Id == id);
                 if (submission is null)
                 {
-                    return BadRequest("Submission not found");
+                    return BadRequest(new {ErrorMessage = "Submission not found" });
                 }
                 if (submission.MovieDetails is not null)
                 {
@@ -208,7 +120,7 @@ namespace Backend.Controllers
 
                     });
                 }
-                return BadRequest("Unexpected details error");
+                return BadRequest(new { ErrorMessage = "Unexpected details error" });
             }
 
 

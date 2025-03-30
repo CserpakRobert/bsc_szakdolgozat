@@ -13,6 +13,7 @@ export default function CreateSubmission() {
     const [trailerLink, setTrailerLink] = useState("")
     const [movieLink, setMovieLink] = useState("")
     const [musicLink, setMusicLink] = useState("")
+    const [shortStory, setshortStory] = useState("")
 
     useEffect(() => {
 
@@ -33,7 +34,8 @@ export default function CreateSubmission() {
             api.post("submission/create", { competitionid: id, title, description, moviedetails: { trailerLink, movieLink } }).then(resp => navigate(`/submission/${resp.data.id}`))
         } else if (competition?.isMusicCompetition) {
             api.post("submission/create", { competitionid: id, title, description, musicdetails: { link: musicLink } }).then(resp => navigate(`/submission/${resp.data.id}`))
-
+        }else if (competition?.isShortStoryCompetition) {
+            api.post("submission/create", { competitionid: id, title, description, story: { link: musicLink } }).then(resp => navigate(`/submission/${resp.data.id}`))
         }
 
     }
@@ -43,20 +45,19 @@ export default function CreateSubmission() {
             {competition ? (
 
                 <>
-                    <h1>Add Submission to  </h1>
-                    <h1>{competition.title}</h1>
+                    <h1>Pályázat beadása a(z) {competition.title} versenyre</h1>
                     <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, width: { xs: "100%" } }} onSubmit={handleSubmit}>
 
                         <TextField
                             className="outlined-input"
-                            label="title"
+                            label="Cím"
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                         />
                         <TextField
                             className="outlined-input"
-                            label="description"
+                            label="Leírás"
                             type="text"
                             value={description}
                             multiline
@@ -87,6 +88,18 @@ export default function CreateSubmission() {
                                 type="text"
                                 value={musicLink}
                                 onChange={(e) => setMusicLink(e.target.value)}
+                            />
+                        </>) : (<></>)}
+                        {competition.isShortStoryCompetition ? (<>
+
+                            <TextField
+                                className="outlined-input"
+                                label="Történet"
+                                type="text"
+                                multiline
+                                rows={10}
+                                value={shortStory}
+                                onChange={(e) => setshortStory(e.target.value)}
                             />
                         </>) : (<></>)}
                         <Button sx={{ width: "50%", display: "flex", flexDirection: "column", }} variant="outlined" type="submit">Create</Button>

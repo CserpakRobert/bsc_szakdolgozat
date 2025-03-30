@@ -16,8 +16,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+    
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
     const [userName, setUserName] = useState(localStorage.getItem("userName")??"")
+
     const login = async (email: string, password: string) => {
         await api.post("/user/login", { email, password }).then((resp) => {
             localStorage.setItem("token", resp.data.token);

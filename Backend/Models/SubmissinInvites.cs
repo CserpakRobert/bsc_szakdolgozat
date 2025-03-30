@@ -10,8 +10,12 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public int SenderUserId { get; set; }
+        [Required]
         public User SenderUser { get; set; }
 
+        [Required]
+        public int RecieverUserId { get; set; }
         [Required]
         public User RecieverUser { get; set; }
 

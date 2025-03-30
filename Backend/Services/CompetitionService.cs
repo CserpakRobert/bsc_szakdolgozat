@@ -43,5 +43,38 @@ namespace Backend.Services
             return await _context.Moderators.AnyAsync(m => m.UserId == userId && m.CompetitionId == competitionId);
         }
 
+        internal async Task<IEnumerable<CompetitionListDetails>?> GetDetailsList(GetCompetitionListDTO listDTO)
+        {
+
+            Func<string, Func<Competition, bool>> correctType = (type) => (comp) =>
+            {
+                return type switch
+                {
+                    "movie" => comp.IsMovieCompetition,
+                    "music" => comp.IsMusicCompetition,
+                    "shortstory" => comp.IsShortStoryCompetition,
+                    _ => true,
+                };
+            };
+            Func<string, Func<Competition, bool>> correctPhase = (phase) => (comp) =>
+            {
+                return phase switch
+                {
+                    "preparation" => comp.IsInPreparationPhase,
+                    "vote" => comp.IsInVotingPhase,
+                    "finished" => !(comp.IsInVotingPhase || comp.IsInPreparationPhase || comp.IsInSubmissionPhase),
+                    _ => !comp.IsInSubmissionPhase,
+                };
+            };
+            var result = _context.Competitions
+                .Where(correctPhase(listDTO.Phase))
+                .Where(correctType(listDTO.Type))
+                .Select(c => new CompetitionListDetails(c))
+                .Skip(listDTO.Page)
+                ;
+
+            return result;
+        }
+
     }
 }

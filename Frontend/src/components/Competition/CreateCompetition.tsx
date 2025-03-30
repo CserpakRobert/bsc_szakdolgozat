@@ -41,6 +41,7 @@ export default function CreateCompetition() {
                 <RadioGroup row value={category} onChange={(e) => setCategory(e.target.value)}>
                     <FormControlLabel label="Movie" value="movie" control={<Radio />} />
                     <FormControlLabel label="Music" value="music" control={<Radio />} />
+                    <FormControlLabel label="ShortStory" value="shortstory" control={<Radio />} />
                 </RadioGroup>
                 <Button sx={{ width: "50%", display: "flex", flexDirection: "column", }} variant="outlined" type="submit">Create</Button>
             </Box>

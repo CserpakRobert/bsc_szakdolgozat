@@ -42,7 +42,7 @@ namespace Backend.Services
 
             return await canJoin && await hasJoin;
         }
-        public async Task<bool?> IsOwner(int groupId,string? userName = null)
+        public async Task<bool?> IsOwner(int groupId, string? userName = null)
         {
             User? user;
             if (userName is null)
@@ -68,7 +68,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<int?> Create(int competitionId,CreateGroupDTO createGroup)
+        public async Task<int?> Create(int competitionId, CreateGroupDTO createGroup)
         {
             if (!await CanJoin(competitionId)) return null;
             var result = await _context.Groups.AddAsync(new Group()
@@ -88,6 +88,11 @@ namespace Backend.Services
             return group;
         }
 
+        //public async Task<GetGroupDTO> GetDetailsById()
+        //{
+
+        //}
+
         public async Task<int?> RequestJoin(int groupId, GroupRequestDTO request)
         {
             var user = await _userService.GetLoggedInUser();
@@ -96,8 +101,9 @@ namespace Backend.Services
             var group = await GetById(groupId);
             if (group is null) return null;
 
-            var result =await _context.JoinRequests
-                .AddAsync(new OpenGroupJoinRequests() { 
+            var result = await _context.JoinRequests
+                .AddAsync(new OpenGroupJoinRequests()
+                {
                     Description = request.Description,
                     Group = group,
                     RequestOwner = user
@@ -139,10 +145,19 @@ namespace Backend.Services
                 .FirstOrDefaultAsync(g => g.Id == groupId);
 
             if (group is null) return false;
-             _context.Groups.Remove(group);
+            _context.Groups.Remove(group);
             await _context.SaveChangesAsync();
             return true;
-            
+
+        }
+
+        public async Task DeletePendingGroups(int userId, int groupId)
+        {
+            var toDeleteInvites = _context.SubmissionInvites.Where(si => si.GroupId == groupId && si.RecieverUserId == userId);
+            var toDeleteRequests = _context.JoinRequests.Where(jr => jr.GroupId == groupId && jr.RequestOwnerId == userId);
+            _context.SubmissionInvites.RemoveRange(toDeleteInvites);
+            _context.JoinRequests.RemoveRange(toDeleteRequests);
+            await _context.SaveChangesAsync();
         }
     }
 }

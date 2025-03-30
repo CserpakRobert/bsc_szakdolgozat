@@ -17,8 +17,12 @@ export const darkTheme = createTheme({
     palette: {
         mode: "dark",
         primary: { main: "#bb86fc" },
-        background: { default: "#121212", paper: "#1e1e1e" },
+        background: { default: "#121212", paper: "#1e1e1e"},
         text: { primary: "#ffffff" },
+        success:{main:"#3af259"},
+        warning:{main:"#2d78fa"},
+        secondary:{main:"#f2be2e"}
+        
     },
     components: {
         MuiPaper: {

@@ -13,6 +13,8 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public int RequestOwnerId { get; set; }
+        [Required]
         public User RequestOwner { get; set; }
 
         [Required]

@@ -29,6 +29,19 @@ namespace Backend.Controllers
             this._userService = userService;
         }
 
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[HttpPost("{groupId}")]
+        //public async Task<IActionResult> GetById(int groupId)
+        //{
+
+
+        //    var result = _groupService.GetById(groupId);
+        //    if (result is null) return BadRequest("A csoport nem található");
+
+
+
+
+        //}
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("create/{competitionId}")]
@@ -47,6 +60,7 @@ namespace Backend.Controllers
             }
             return Ok(result);
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("join/{groupId}")]
         public async Task<IActionResult> JoinGroup(int groupId, GroupRequestDTO request)
@@ -73,6 +87,7 @@ namespace Backend.Controllers
 
             return Ok();
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("delete/{groupId}")]
         public async Task<IActionResult> DeleteGroup(int groupId)

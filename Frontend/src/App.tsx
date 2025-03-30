@@ -14,31 +14,42 @@ import UserDetails from './components/User/UserDetails';
 import CreateSubmission from './components/Submission/CreateSubmission';
 import SubmissionDetails from './components/Submission/SubmissionDetails';
 import SubmissionSmallDetails from './components/Submission/SubmissionSmallDetails';
+import CompetitionList from './components/Competition/CompetitionList';
+import { ErrorProvider } from './globalHelpers/ErrorContext';
+import ErrorComponent from './components/ErrorComponent';
 
 function App() {
+
 
   return (
     <>
       <AuthProvider>
-        <ThemeProvider theme={darkTheme}>
-          <CssBaseline>
+        <ErrorProvider>
 
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline>
 
-            <BrowserRouter>
-              <MenuBar></MenuBar>
-              <Routes>
-                <Route path='/register' element={<Register />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/competition/create' element={<CreateCompetition />} />
-                <Route path='/competition/details/:id' element={<CompetitionDetails />} />
-                <Route path='/user/profile/:name' element={<UserDetails />} />
-                <Route path='/submission/create/:id' element={<CreateSubmission />} />
-                <Route path='/submission/:id' element={<SubmissionDetails />} />
-                <Route path='/submission/test' element={<SubmissionSmallDetails submission={{id:2,title:"asd",type:"movie"}} />} />
-              </Routes>
-            </BrowserRouter>
-          </CssBaseline>
-        </ThemeProvider>
+              <BrowserRouter>
+                <MenuBar></MenuBar>
+                <Routes>
+                  <Route path='/register' element={<Register />} />
+                  <Route path='/login' element={<Login />} />
+                  <Route path='/competition/create' element={<CreateCompetition />} />
+                  <Route path='/competition/list' element={<CompetitionList />} />
+                  <Route path='/competition/details/:id' element={<CompetitionDetails />} />
+                  <Route path='/user/profile/:name' element={<UserDetails />} />
+                  <Route path='/submission/create/:id' element={<CreateSubmission />} />
+                  <Route path='/submission/:id' element={<SubmissionDetails />} />
+                  <Route path='/submission/test' element={<SubmissionSmallDetails submission={{ id: 2, title: "asd", type: "movie" }} />} />
+                </Routes>
+              </BrowserRouter>
+
+              <ErrorComponent />
+
+            </CssBaseline>
+          </ThemeProvider>
+
+        </ErrorProvider>
       </AuthProvider>
     </>
 

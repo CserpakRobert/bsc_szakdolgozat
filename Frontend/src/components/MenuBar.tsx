@@ -32,7 +32,11 @@ export default function MenuBar() {
                         }>
                             <Button color='inherit'>Create</Button>
                         </NavLink>
-                        
+                        <NavLink to={`/competition/list`} className={({ isActive, isPending }) =>
+                            isPending ? "pending" : isActive ? "active" : "inactive"
+                        }>
+                            <Button color='inherit'>Competitions</Button>
+                        </NavLink>
                         
                         
                         </>):(<></>)}

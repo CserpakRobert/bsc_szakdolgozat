@@ -14,12 +14,12 @@ namespace Backend.Models
         [Required]
         [Title]
         [MaxLength(200)]
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
 
         [Required]
         [Description]
         [MaxLength(3000)]
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         [Required]
         [DefaultValue(true)]
@@ -62,7 +62,7 @@ namespace Backend.Models
         public int CreatorId { get; set; }
 
         [Required]
-        public User Creator { get; set; }
+        public User Creator { get; set; } = null!;
 
         public ICollection<User> Moderators { get; set; } = [];
 
@@ -72,6 +72,28 @@ namespace Backend.Models
 
 
 
+        [NotMapped]
+        public DateOnly? RelevantDate { get {
+                if (IsInPreparationPhase) return SubmissionStartDate;
+                if (IsInVotingPhase) return FinishDate;
+                return null;
+            } 
+        }
+        [NotMapped]
+        public string Phase { get {
+                if (IsInPreparationPhase) return "preparation";
+                if (IsInVotingPhase) return "voting";
+                if (IsInSubmissionPhase) return "submit";
+                return "finished";
+            } }
+
+        [NotMapped]
+        public string Type { get {
+                if (IsMovieCompetition) return "movie";
+                if (IsMusicCompetition) return "music";
+                if (IsShortStoryCompetition) return "shortstory";
+                return "";
+            } }
     }
 
 }

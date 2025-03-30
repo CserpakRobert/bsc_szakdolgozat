@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Backend.Models.DTOs;
 using Backend.Persistence;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,23 +17,20 @@ namespace Backend.Controllers
     [ApiController]
     public class CompetitionController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _configuration;
         private readonly MariaDBContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserService _userService;
+        private readonly CompetitionService _competitionService;
 
         public CompetitionController(UserManager<User> userManager,
             MariaDBContext mariaDbContext,
+                CompetitionService competitionService,
                          IConfiguration configuration,
                          IHttpContextAccessor httpContextAccessor,
                          UserService userService)
         {
-            this._userManager = userManager;
-            this._configuration = configuration;
             this._context = mariaDbContext;
-            this._httpContextAccessor = httpContextAccessor;
             this._userService = userService;
+            this._competitionService = competitionService;
         }
 
         //[HttpGet]
@@ -42,36 +40,40 @@ namespace Backend.Controllers
         //}
 
 
-        public class CreateCompetitionModel
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("list")]
+        public async Task<IActionResult> GetListDetails(GetCompetitionListDTO listArgs)
         {
-            public string Title { get; set; }
-            public string Description { get; set; }
-            public string Category { get; set; }
+            var result = await _competitionService.GetDetailsList(listArgs);
+            if (result is null) return BadRequest("nem találhatóak versenyek");
+            return Ok(result);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("create")]
-
-        public async Task<IActionResult> Create([FromBody] CreateCompetitionModel model)
+        public async Task<IActionResult> Create([FromBody] CreateCompetitionDTO model)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null)
             {
                 return Unauthorized("Invalid Credentials");
             }
-            if (model.Category != "movie" && model.Category != "music") return BadRequest();
+            if (model.Category is not ("movie" or "music" or "shortstory")) return BadRequest();
             var result = await _context.Competitions.AddAsync(new Competition()
             {
                 Title = model.Title,
-                Description= model.Description,
+                Description = model.Description,
                 Creator = user,
                 Moderators = [user],
                 IsPrivate = false,
+                IsInPreparationPhase = true,
                 IsInSubmissionPhase = true,
                 IsInVotingPhase = true,
                 IsMovieCompetition = model.Category == "movie",
-                IsMusicCompetition = model.Category == "music"
-                
+                IsMusicCompetition = model.Category == "music",
+                IsShortStoryCompetition = model.Category == "shortstory"
+
             });
             await _context.SaveChangesAsync();
 
@@ -82,25 +84,7 @@ namespace Backend.Controllers
             return Ok(new { Id = result.Entity.Id });
 
         }
-        public class GetOneCompetitionModel
-        {
-            public int Id { get; set; }
-            public bool IsCreator { get; set; } = false;
-            public bool IsModerator { get; set; } = false;
-            public bool CanSubmit { get; set; } = true;
-            public string Title { get; set; } = "";
-            public string Description { get; set; } = "";
-            public string Creatorname { get; set; } = "";
-            public ICollection<string> ModeratorNames = [];
 
-            public bool VotingEnabled { get; set; } = false;
-            public bool SubmissionsEnabled { get; set; } = false;
-            public bool IsMovieCompetition { get; set; } = false;
-            public bool IsMusicCompetition { get; set; } = false;
-
-
-
-        }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
@@ -120,9 +104,9 @@ namespace Backend.Controllers
             {
                 return NotFound("Competition not found");
             }
-            var result = new GetOneCompetitionModel();
+            var result = new GetOneCompetitionDTO();
 
-            result = new GetOneCompetitionModel()
+            result = new GetOneCompetitionDTO()
             {
                 Id = competition.Id,
                 IsCreator = await _userService.IsCreatorInCompetition(competition.Id, user.Id),
@@ -135,7 +119,10 @@ namespace Backend.Controllers
                 VotingEnabled = competition.IsInVotingPhase,
                 SubmissionsEnabled = competition.IsInSubmissionPhase,
                 IsMusicCompetition = competition.IsMusicCompetition,
-                IsMovieCompetition = competition.IsMovieCompetition
+                IsMovieCompetition = competition.IsMovieCompetition,
+                IsShortStoryCompetition = competition.IsShortStoryCompetition
+
+
             };
 
             return Ok(result);
