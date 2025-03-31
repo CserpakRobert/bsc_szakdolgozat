@@ -2,7 +2,7 @@ use szakdol;
 SET GLOBAL event_scheduler = ON;
 
 CREATE EVENT UpdateCompetition
-On SCHEDULE EVERY 15 MINUTE
+On SCHEDULE EVERY 45 MINUTE
 DO
 BEGIN
 

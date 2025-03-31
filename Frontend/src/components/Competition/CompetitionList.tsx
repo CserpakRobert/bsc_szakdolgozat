@@ -15,9 +15,9 @@ export default function CompetitionList() {
     }, []
     )
     return (<>
-        <Grid2 container gap={1} flexGrow="inherit">
+        <Grid2 container gap={4} marginTop={10}>
             {competition?.map(c =>
-                <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 2 }} key={c.id}>
+                <Grid2 size={{ xs: 12, sm: 5, md: 3, lg: 2}} key={c.id}>
                     <CompetitionDetailsCard competition={c} />
                 </Grid2>
             )}
