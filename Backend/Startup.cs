@@ -10,6 +10,7 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Internal;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Unicode;
 
@@ -82,6 +83,26 @@ namespace Backend
                         context.Response.StatusCode = 401;
                         context.Response.ContentType = "application/json";
                         return context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
+                    },
+                    OnTokenValidated =  async context => {
+                        var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+                        var claimsP = context.Principal;
+
+                        var userId = claimsP?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                        if (userId == null)
+                        {
+                            context.Fail("Invalid token");
+                            return;
+                        }
+                        var user = await userManager.FindByIdAsync(userId!);
+                        if  (user == null)
+                        {
+                            context.Fail("User not found");
+                            return;
+                        }
+
+                        context.Success();
                     }
                 };
             });

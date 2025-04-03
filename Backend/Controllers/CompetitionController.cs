@@ -43,8 +43,9 @@ namespace Backend.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("list")]
-        public async Task<IActionResult> GetListDetails(GetCompetitionListDTO listArgs)
+        public async Task<IActionResult> GetListDetails([FromBody]GetCompetitionListDTO listArgs)
         {
+            Debug.WriteLine(listArgs);
             var result = await _competitionService.GetDetailsList(listArgs);
             if (result is null) return BadRequest("nem találhatóak versenyek");
             return Ok(result);
@@ -54,6 +55,7 @@ namespace Backend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateCompetitionDTO model)
         {
+
             var user = await _userService.GetLoggedInUser();
             if (user is null)
             {

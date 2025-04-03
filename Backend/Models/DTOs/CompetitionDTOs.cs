@@ -8,6 +8,11 @@
         public int Page { get; set; } = 0;
     }
 
+    public class CompetitionList
+    {
+        public int pageCount { get; set; } = 0;
+        public IEnumerable<CompetitionListDetails>? Competitions { get; set; } = null;
+    }
     public class CompetitionListDetails
     {
         public int Id { get; set; }

@@ -3,6 +3,7 @@ using Backend.Models.DTOs;
 using Backend.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Backend.Services
 {
@@ -43,9 +44,9 @@ namespace Backend.Services
             return await _context.Moderators.AnyAsync(m => m.UserId == userId && m.CompetitionId == competitionId);
         }
 
-        internal async Task<IEnumerable<CompetitionListDetails>?> GetDetailsList(GetCompetitionListDTO listDTO)
+        internal async Task<CompetitionList?> GetDetailsList(GetCompetitionListDTO listDTO)
         {
-
+            Debug.WriteLine(listDTO.Phase);
             Func<string, Func<Competition, bool>> correctType = (type) => (comp) =>
             {
                 return type switch
@@ -70,10 +71,14 @@ namespace Backend.Services
                 .Where(correctPhase(listDTO.Phase))
                 .Where(correctType(listDTO.Type))
                 .Select(c => new CompetitionListDetails(c))
-                .Skip(listDTO.Page)
+                .Skip(listDTO.Page * 4)//TODO change to 50
+                .Take(4)
                 ;
-
-            return result;
+            var count = _context.Competitions
+                .Where(correctPhase(listDTO.Phase))
+                .Where(correctType(listDTO.Type))
+                .Count();
+            return new CompetitionList() { pageCount = ((count - 1) / 4) + 1, Competitions = result };
         }
 
     }
