@@ -1,17 +1,11 @@
 export default interface CompetitionInterface {
-    id:number;
+    id: number;
     title: string;
     description: string;
-    isCreator: boolean;
-    isModerator: boolean;
-    canSubmit: boolean;
     creatorname: string;
-    votingenabled: boolean;
-    submissionsEnabled: boolean;
-    isMusicCompetition: boolean;
-    isMovieCompetition: boolean;
-    isShortStoryCompetition: boolean;
-
+    phase: string;
+    type: string;
+    relevantDate: string;
 }
 
 export interface CompetitionSmallInterface{

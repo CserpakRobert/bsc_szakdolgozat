@@ -2,6 +2,7 @@
 using Backend.Models.DTOs;
 using Backend.Persistence;
 using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -92,42 +93,15 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _userService.GetLoggedInUser();
-            if (user is null)
+            try
             {
-                return Unauthorized("Invalid Credentials");
+                return Ok(await _competitionService.GetDetails(id));
             }
-
-            var competition = await _context.Competitions
-                .Include(comp => comp.Creator)
-                .Include(comp => comp.Moderators)
-                .FirstOrDefaultAsync(c => c.Id == id);
-            if (competition == null)
+            catch (ExceptionWithDescription e)
             {
-                return NotFound("Competition not found");
+
+                return BadRequest(new { errorMessage= e.Message });
             }
-            var result = new GetOneCompetitionDTO();
-
-            result = new GetOneCompetitionDTO()
-            {
-                Id = competition.Id,
-                IsCreator = await _userService.IsCreatorInCompetition(competition.Id, user.Id),
-                IsModerator = await _userService.IsModeratorInCompetition(competition.Id, user.Id),
-                CanSubmit = await _userService.CanSubmitOnCompetition(competition.Id, user.Id),
-                Title = competition.Title,
-                Description = competition.Description,
-                Creatorname = competition.Creator.UserName,
-                ModeratorNames = [.. competition.Moderators.Select(moderator => moderator.UserName)],
-                VotingEnabled = competition.IsInVotingPhase,
-                SubmissionsEnabled = competition.IsInSubmissionPhase,
-                IsMusicCompetition = competition.IsMusicCompetition,
-                IsMovieCompetition = competition.IsMovieCompetition,
-                IsShortStoryCompetition = competition.IsShortStoryCompetition
-
-
-            };
-
-            return Ok(result);
 
         }
 

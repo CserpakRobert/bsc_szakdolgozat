@@ -18,13 +18,13 @@ export default function CompetitionPhase({ phase }: { phase: string}) {
 
         switch (phase) {
             case "finished":
-                return "befejezett"
+                return "Befejezett"
             case "preparation":
-                return "jelentkezés"
+                return "Jelentkezés"
             case "voting":
-                return "szavazás"
+                return "Szavazás"
             default:
-                return "warning"
+                return "Beadás"
         }
     }
     {

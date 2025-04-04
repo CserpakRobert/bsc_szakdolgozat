@@ -1,6 +1,7 @@
 ﻿using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Persistence;
+using Backend.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -78,7 +79,26 @@ namespace Backend.Services
                 .Where(correctPhase(listDTO.Phase))
                 .Where(correctType(listDTO.Type))
                 .Count();
+            
             return new CompetitionList() { pageCount = ((count - 1) / 4) + 1, Competitions = result };
+        }
+
+        public async Task<GetOneCompetitionDTO> GetDetails(int id)
+        {
+            var user = _userService.GetLoggedInUser();
+            if (user is null)
+            {
+                throw new ExceptionWithDescription("Bejelentkezés nélkül nem elérhető");
+            }
+            var competition = await _context.Competitions
+                .Include(comp => comp.Creator)
+                .Include(comp => comp.Moderators)
+                .Where(comp => comp.Id == id)
+                .Select(c => new GetOneCompetitionDTO(c))
+                .FirstOrDefaultAsync();
+
+            if (competition is null) throw new ExceptionWithDescription("Ez a verseny nem található");
+            return competition;
         }
 
     }

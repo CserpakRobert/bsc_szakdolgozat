@@ -1,4 +1,4 @@
-import { AppBar, Grid2, MenuItem, Pagination, Select, SelectChangeEvent, Toolbar } from "@mui/material"
+    import { AppBar, Grid2, MenuItem, Pagination, Select, SelectChangeEvent, Toolbar } from "@mui/material"
 import { useEffect, useState } from "react"
 import { CompetitionSmallInterface } from "./CompetitionInterface"
 import CompetitionDetailsCard from "./CompetitionDetailsCard"
@@ -65,6 +65,7 @@ export default function CompetitionList() {
                 <Pagination count={pageCount} page={page} onChange={handlePage} />
             </Grid2>
         </Grid2>
+        
 
     </>)
 }

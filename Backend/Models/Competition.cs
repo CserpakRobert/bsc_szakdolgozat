@@ -76,6 +76,7 @@ namespace Backend.Models
         public DateOnly? RelevantDate { get {
                 if (IsInPreparationPhase) return SubmissionStartDate;
                 if (IsInVotingPhase) return FinishDate;
+                if (IsInSubmissionPhase) return VotingStartDate;
                 return null;
             } 
         }

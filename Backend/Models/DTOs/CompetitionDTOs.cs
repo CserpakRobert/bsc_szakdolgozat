@@ -47,22 +47,26 @@
     public class GetOneCompetitionDTO
     {
         public int Id { get; set; }
-        public bool IsCreator { get; set; } = false;
-        public bool IsModerator { get; set; } = false;
-        public bool CanSubmit { get; set; } = true;
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string Creatorname { get; set; } = "";
+        public string Phase { get; set; }
+        public string Type { get; set; }
+        public DateOnly? RelevantDate { get; set; }
 
-        public ICollection<string> ModeratorNames = [];
 
-        public bool VotingEnabled { get; set; } = false;
-        public bool SubmissionsEnabled { get; set; } = false;
-        public bool IsMovieCompetition { get; set; } = false;
-        public bool IsMusicCompetition { get; set; } = false;
+        public GetOneCompetitionDTO(Competition competition)
+        {
+            this.Creatorname = competition.Creator.UserName;
+            this.Id = competition.Id;
+            this.Title = competition.Title;
+            this.Description = competition.Description;
+            this.RelevantDate = competition.RelevantDate;
+            this.Phase = competition.Phase;
+            this.Type = competition.Type;
 
-        public bool IsShortStoryCompetition { get; set; }
 
+        }
 
     }
 

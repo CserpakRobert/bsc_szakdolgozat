@@ -27,7 +27,7 @@ drop database szakdol;
 use szakdol;
 select * from aspnetusers;
 delete  from aspnetusers where id = 1;
-UPDATE competition set isinvotingphase=0, IsInSubmissionPhase = 0, IsInPreparationPhase=1
+UPDATE competition set isinvotingphase=0, IsInSubmissionPhase = 1, IsInPreparationPhase=0
 where Id < 15;
 
 drop database test;
