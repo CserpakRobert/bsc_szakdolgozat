@@ -2,6 +2,7 @@
 using Backend.Models.DTOs;
 using Backend.Persistence;
 using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -29,39 +30,40 @@ namespace Backend.Controllers
             this._userService = userService;
         }
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[HttpPost("{groupId}")]
-        //public async Task<IActionResult> GetById(int groupId)
-        //{
-
-
-        //    var result = _groupService.GetById(groupId);
-        //    if (result is null) return BadRequest("A csoport nem található");
-
-
-
-
-        //}
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("create/{competitionId}")]
         public async Task<IActionResult> CreateClosed(int competitionId, [FromBody] CreateGroupDTO createGroup)
         {
-            var isInPreparationState = await _competitionService.IsInPreparationPhase(competitionId);
-
-            if (isInPreparationState is null) return BadRequest("Nem talált verseny");
-            if (isInPreparationState is false) return BadRequest("A versenyre már nem lehet jelentkezni");
-            if (!await _groupService.CanJoin(competitionId)) return BadRequest("Erre a versenyre nem tudsz jelentkezni");
-
-            var result = _groupService.Create(competitionId, createGroup);
-            if (result is null)
+            try
             {
-                return BadRequest("A csoportot nem sikerült létrehozni");
+                return Ok(await _groupService.Create(competitionId, createGroup));
             }
-            return Ok(result);
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new  { errorMessage= e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> CreateClosed(int id)
+        {
+            try
+            {
+                return Ok(await _groupService.GetById(id));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+        }
+
+
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("join/{groupId}")]
         public async Task<IActionResult> JoinGroup(int groupId, GroupRequestDTO request)
         {

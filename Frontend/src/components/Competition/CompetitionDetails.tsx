@@ -25,7 +25,7 @@ export default function CompetitionDetails() {
     )
     // TODO navigations
     const handleJoin = () => {
-
+        navigate(`/group/${id}`)
     }
 
     const handleFindGroups = () => {

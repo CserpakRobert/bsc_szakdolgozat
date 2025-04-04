@@ -22,34 +22,6 @@ namespace Backend.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("Backend.Models.ClosedGroupJoinRequests", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RequestOwnerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("RequestOwnerId");
-
-                    b.ToTable("ClosedGroupJoinRequests");
-                });
-
             modelBuilder.Entity("Backend.Models.Competition", b =>
                 {
                     b.Property<int>("Id")
@@ -241,6 +213,34 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MusicDetails");
+                });
+
+            modelBuilder.Entity("Backend.Models.OpenGroupJoinRequests", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(3000)
+                        .HasColumnType("varchar(3000)");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestOwnerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("RequestOwnerId");
+
+                    b.ToTable("OpenGroupJoinRequests");
                 });
 
             modelBuilder.Entity("Backend.Models.ShortStoryDetails", b =>
@@ -553,25 +553,6 @@ namespace Backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.Models.ClosedGroupJoinRequests", b =>
-                {
-                    b.HasOne("Backend.Models.Group", "Group")
-                        .WithMany("JoinRequests")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", "RequestOwner")
-                        .WithMany("JoinRequests")
-                        .HasForeignKey("RequestOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("RequestOwner");
-                });
-
             modelBuilder.Entity("Backend.Models.Competition", b =>
                 {
                     b.HasOne("Backend.Models.User", "Creator")
@@ -676,6 +657,25 @@ namespace Backend.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.OpenGroupJoinRequests", b =>
+                {
+                    b.HasOne("Backend.Models.Group", "Group")
+                        .WithMany("JoinRequests")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "RequestOwner")
+                        .WithMany("JoinRequests")
+                        .HasForeignKey("RequestOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("RequestOwner");
                 });
 
             modelBuilder.Entity("Backend.Models.Submission", b =>

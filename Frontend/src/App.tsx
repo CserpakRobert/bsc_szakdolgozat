@@ -17,6 +17,7 @@ import SubmissionSmallDetails from './components/Submission/SubmissionSmallDetai
 import CompetitionList from './components/Competition/CompetitionList';
 import { ErrorProvider } from './globalHelpers/ErrorContext';
 import ErrorComponent from './components/ErrorComponent';
+import CreateGroup from './components/Group/CreateGroup';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
                   <Route path='/submission/create/:id' element={<CreateSubmission />} />
                   <Route path='/submission/:id' element={<SubmissionDetails />} />
                   <Route path='/submission/test' element={<SubmissionSmallDetails submission={{ id: 2, title: "asd", type: "movie" }} />} />
+                  <Route path="/group/:id" element={<CreateGroup/>} />
                 </Routes>
               </BrowserRouter>
 

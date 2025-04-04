@@ -25,9 +25,9 @@
 
         public string Description { get; set; } = null!;
 
+        public bool IsClosed { get; set; }
         public ICollection<string> ParticipateNames { get; set; } = [];
 
-        public bool IsClosed { get; set; }
 
     }
 }

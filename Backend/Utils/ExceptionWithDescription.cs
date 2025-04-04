@@ -8,4 +8,12 @@
         }
 
     }
+    public class UserNotAuthorized : Exception
+    {
+        public UserNotAuthorized(string text) : base(text)
+        {
+
+        }
+
+    }
 }

@@ -120,6 +120,7 @@ namespace Backend
             services.AddScoped<UserService>();
             services.AddScoped<CompetitionService>();
             services.AddScoped<SubmissionService>();
+            services.AddScoped<GroupService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }

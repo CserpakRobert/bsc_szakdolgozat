@@ -1,6 +1,8 @@
 ﻿using Backend.Models;
 using Backend.Models.DTOs;
+using Backend.Models.JoinTables;
 using Backend.Persistence;
+using Backend.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services
@@ -34,13 +36,13 @@ namespace Backend.Services
             userId ??= _userService.GetLoggedInUser().Id;
             if (userId is null) return false;
 
-            var hasJoin = _context.Groups.Include(g => g.Participants)
+            var hasJoin = !await _context.Groups.Include(g => g.Participants)
                 .Where(g => g.CompetitionId == competitionId)
                 .AnyAsync(g => g.GroupOwnerId == userId || g.Participants.Any(p => p.Id == userId));
 
-            var canJoin = _competitionService.IsModerator(competitionId, (int)userId);
+            var canJoin = !await _competitionService.IsModerator(competitionId, (int)userId);
 
-            return await canJoin && await hasJoin;
+            return  canJoin &&  hasJoin;
         }
         public async Task<bool?> IsOwner(int groupId, string? userName = null)
         {
@@ -68,22 +70,47 @@ namespace Backend.Services
 
         }
 
-        public async Task<int?> Create(int competitionId, CreateGroupDTO createGroup)
+        public async Task<int> Create(int competitionId, CreateGroupDTO createGroup)
         {
-            if (!await CanJoin(competitionId)) return null;
+            if (await CanJoin(competitionId) == false) 
+                throw new ExceptionWithDescription("Erre a versenyre nem tudsz jelentkezni");
+
+            if (await _competitionService.IsInPreparationPhase(competitionId) is null or false) 
+                throw new ExceptionWithDescription("A jelentkezési időszak már lejárt");
+
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) 
+                throw new UserNotAuthorized("");
+
             var result = await _context.Groups.AddAsync(new Group()
             {
+                GroupOwner = user,
                 CompetitionId = competitionId,
                 Description = createGroup.Description,
                 IsClosed = createGroup.IsClosed
             });
+
+            var joinTable = await _context.UserParticipateGroups.AddAsync(new UserParticipateGroups()
+            {
+                Group = result.Entity,
+                User = user
+            });
+
             await _context.SaveChangesAsync();
-            if (result is null) return null;
+
+            if (result is null) 
+                throw new ExceptionWithDescription("A csapat létrehozása sikertelen");
             return result.Entity.Id;
         }
 
-        public async Task<Group?> GetById(int groupId)
+        public async Task<Group> GetById(int groupId)
         {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null)
+                throw new UserNotAuthorized("");
+
+            
+
             var group = await _context.Groups.FindAsync(groupId);
             return group;
         }
