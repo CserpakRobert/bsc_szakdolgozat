@@ -1,4 +1,4 @@
-import { Box, Button, FormControlLabel, Grid2, Paper, Radio, RadioGroup, Switch, TextField } from '@mui/material';
+import { Box, Button, FormControlLabel, Grid2, Paper, Radio, RadioGroup, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -20,7 +20,7 @@ const CreateGroup = () => {
     }
 
     const handleJoin = () => {
-        api.post(`/group/create/${id}`, { description, isClosed: !open })
+        api.post(`/group/create/${id}`, { description, isClosed: !open }).then((response) => navigate(`/group/details/${response.data}`))
 
     }
 

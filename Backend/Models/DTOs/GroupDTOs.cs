@@ -13,12 +13,14 @@
     }
     public class GroupRequestDTO
     {
-        public string Description { get; set; }
+
+        public string Description { get; set; } = "";
     }
 
     public class GetGroupDTO
     {
         public int CompetitionId { get; set; }
+        public int GroupId { get; set; }
         public string CompetitionTitle { get; set; } = null!;
 
         public string OwnerName { get; set; } = null!;
@@ -27,6 +29,9 @@
 
         public bool IsClosed { get; set; }
         public ICollection<string> ParticipateNames { get; set; } = [];
+
+        public int InviteCount { get; set; }
+        public int RequestCount { get; set; }
 
 
     }

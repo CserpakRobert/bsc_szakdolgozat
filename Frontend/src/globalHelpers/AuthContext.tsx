@@ -4,7 +4,7 @@ import { createContext, useState, ReactNode } from 'react';
 
 interface AuthContextType {
     isLoggedIn: boolean;
-    userName : string
+    userName: string
     login: (email: string, password: string) => void;
     logout: () => void;
 }
@@ -16,28 +16,28 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    
+
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-    const [userName, setUserName] = useState(localStorage.getItem("userName")??"")
+    const [userName, setUserName] = useState(localStorage.getItem("user") ?? "")
 
     const login = async (email: string, password: string) => {
         await api.post("/user/login", { email, password }).then((resp) => {
             localStorage.setItem("token", resp.data.token);
             localStorage.setItem("user", resp.data.userName);
-             setIsLoggedIn(true);
-             setUserName(resp.data.userName);
+            setIsLoggedIn(true);
+            setUserName(resp.data.userName);
         })
     };
 
     const logout = () => {
-        localStorage.removeItem('token'); 
-        localStorage.removeItem('user'); 
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setIsLoggedIn(false);
         setUserName("")
     };
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn,userName, login, logout }}>
+        <AuthContext.Provider value={{ isLoggedIn, userName, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

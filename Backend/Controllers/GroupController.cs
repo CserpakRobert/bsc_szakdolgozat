@@ -63,32 +63,174 @@ namespace Backend.Controllers
         }
 
 
-            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("join/{groupId}")]
-        public async Task<IActionResult> JoinGroup(int groupId, GroupRequestDTO request)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("invite/{groupId}")]
+        public async Task<IActionResult> Invite(int groupId, [FromBody] InviteDTO invite)
         {
-            var group = await _groupService.GetById(groupId);
-            if (group is null || group.IsClosed) return BadRequest("A csapat nem található");
 
-            var result = await _groupService.RequestJoin(groupId, request);
-            if (result is null) return BadRequest("A jelentkezés sikertelen");
-
-            return Ok(result);
+            try
+            {
+                return Ok(await _groupService.Invite(groupId, invite.UserName));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("request/{groupId}")]
-        public async Task<IActionResult> InviteUser(int groupId, [FromBody] InviteDTO invitedUser)
+        [HttpGet("invites/{groupId}")]
+        public async Task<IActionResult> Invites(int groupId)
         {
-            var inviteUser = await _userService.GetUserByName(invitedUser.UserName);
-            if (inviteUser is null) return BadRequest("A megadott felhasználó nem található");
-            if (await _groupService.CanJoin(inviteUser.Id)) return BadRequest("A megadott felhasználó már jelentkezett erre a versenyre");
 
-            var result = await _groupService.InviteUser(groupId,inviteUser.UserName);
-            if (result is null) return BadRequest("A meghívás sikertelen");
-
-            return Ok();
+            try
+            {
+                return Ok(await _groupService.getInvites(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("invites/delete/{groupId}")]
+        public async Task<IActionResult> DeleteInvite(int groupId, [FromBody]InviteDTO invite)
+        {
+
+            try
+            {
+                return Ok(await _groupService.DeleteInvite(groupId,invite.UserName));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("invites/accept/{groupId}")]
+        public async Task<IActionResult> AcceptInvite(int groupId, [FromBody] InviteDTO invite)
+        {
+            //TODO!
+            try
+            {
+                return Ok(await _groupService.DeleteInvite(groupId, invite.UserName));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("join/{groupId}")]
+        public async Task<IActionResult> RequestJoin(int groupId, [FromBody] GroupRequestDTO request)
+        {
+
+            try
+            {
+                return Ok(await _groupService.RequestJoin(groupId, request.Description));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("hasjoin/{groupId}")]
+        public async Task<IActionResult> RequestJoin(int groupId )
+        {
+
+            try
+            {
+                return Ok(await _groupService.HasJoin(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("requests/{groupId}")]
+        public async Task<IActionResult> Requests(int groupId)
+        {
+
+            try
+            {
+                return Ok(await _groupService.getRequests(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("requests/delete/{groupId}")]
+        public async Task<IActionResult> DeleteRequest(int groupId, [FromBody] InviteDTO invite)
+        {
+
+            try
+            {
+                return Ok(await _groupService.DeleteRequest(groupId, invite.UserName));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("requests/accept/{groupId}")]
+        public async Task<IActionResult> AcceptRequest(int groupId, [FromBody] InviteDTO invite)
+        {
+            try
+            {
+                return Ok(await _groupService.AcceptRequest(groupId, invite.UserName));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("delete/{groupId}")]
