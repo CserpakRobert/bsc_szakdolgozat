@@ -70,7 +70,7 @@ const CreateGroup = () => {
                         </Grid2>
                         <Grid2 size={{ xs: 0, md: 1 }} />
                         <Grid2 size={{ xs: 0, md: 1 }} >
-                            <Button variant="outlined"  onClick={handleJoin}>Jelentkezés</Button>
+                            <Button variant="outlined" onClick={handleJoin}>Jelentkezés</Button>
                         </Grid2>
 
 

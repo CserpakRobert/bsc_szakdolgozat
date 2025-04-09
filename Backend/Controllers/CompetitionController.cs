@@ -57,34 +57,19 @@ namespace Backend.Controllers
         public async Task<IActionResult> Create([FromBody] CreateCompetitionDTO model)
         {
 
-            var user = await _userService.GetLoggedInUser();
-            if (user is null)
+            try
             {
-                return Unauthorized("Invalid Credentials");
+                return Ok(await _competitionService.CreateCompetition(model));
             }
-            if (model.Category is not ("movie" or "music" or "shortstory")) return BadRequest();
-            var result = await _context.Competitions.AddAsync(new Competition()
+            catch (ExceptionWithDescription e)
             {
-                Title = model.Title,
-                Description = model.Description,
-                Creator = user,
-                Moderators = [user],
-                IsPrivate = false,
-                IsInPreparationPhase = true,
-                IsInSubmissionPhase = true,
-                IsInVotingPhase = true,
-                IsMovieCompetition = model.Category == "movie",
-                IsMusicCompetition = model.Category == "music",
-                IsShortStoryCompetition = model.Category == "shortstory"
 
-            });
-            await _context.SaveChangesAsync();
-
-            if (result == null)
-            {
-                return BadRequest();
+                return BadRequest(new { errorMessage = e.Message });
             }
-            return Ok(new { Id = result.Entity.Id });
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
 
         }
 

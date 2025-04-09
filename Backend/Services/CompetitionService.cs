@@ -4,6 +4,7 @@ using Backend.Persistence;
 using Backend.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Diagnostics;
 
 namespace Backend.Services
@@ -22,6 +23,52 @@ namespace Backend.Services
             _context = context;
         }
 
+
+        public async Task<int> CreateCompetition(CreateCompetitionDTO model)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null)
+            {
+                throw new UserNotAuthorized("");
+            }
+            if (model.Category is not ("movie" or "music" or "shortstory"))
+                throw new ExceptionWithDescription("Nem létező kategória");
+
+            if (model.Description.Length > 3000 || model.Description.Length < 10)
+                throw new ExceptionWithDescription("A leírásnak 10 és 3000 karakter között kell lennie");
+            if (model.Title.Length < 10)
+                throw new ExceptionWithDescription("A címnek legalább 10 karakter hosszúnak kell lennie");
+
+            if (model.SubmissionStartDate < DateOnly.FromDateTime(DateTime.Now))
+                throw new ExceptionWithDescription("Hibás dátum");
+            if (model.VotingStartDate < model.SubmissionStartDate)
+                throw new ExceptionWithDescription("Hibás dátum");
+            if (model.FinishDate < model.VotingStartDate)
+                throw new ExceptionWithDescription("Hibás dátum");
+
+            var result = await _context.Competitions.AddAsync(new Competition() {
+                SubmissionStartDate = model.SubmissionStartDate,
+                VotingStartDate = model.VotingStartDate,
+                FinishDate = model.FinishDate,
+                Title = model.Title,
+                Description = model.Description,
+                Creator = user,
+                Moderators = [user],
+                IsPrivate = false,
+                IsInPreparationPhase = true,
+                IsMovieCompetition = model.Category == "movie",
+                IsMusicCompetition = model.Category == "music",
+                IsShortStoryCompetition = model.Category == "shortstory"
+            });
+
+
+            await _context.SaveChangesAsync();
+
+            if (result is null)
+                throw new ExceptionWithDescription("A verseny létrehozása sikertelen");
+
+            return result.Entity.Id;
+        }
         public async Task<bool> VotesEnabled(int id)
         {
             var competition = await _context.Competitions.FirstAsync(e => e.Id == id);

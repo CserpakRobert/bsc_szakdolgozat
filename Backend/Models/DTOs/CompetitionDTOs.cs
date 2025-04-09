@@ -43,6 +43,10 @@
         public string Title { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }
+
+        public DateOnly SubmissionStartDate { get; set; }
+        public DateOnly VotingStartDate { get; set; }
+        public DateOnly FinishDate { get; set; }
     }
     public class GetOneCompetitionDTO
     {
