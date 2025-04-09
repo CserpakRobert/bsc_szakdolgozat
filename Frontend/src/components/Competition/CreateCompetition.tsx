@@ -13,8 +13,6 @@ export default function CreateCompetition() {
     const [submissionLastDate, setsubmissionLastDate] = useState<Dayjs>(dayjs(Date.now()).add(1, "day"))
     const [votingLastDate, setvotingLastDate] = useState<Dayjs>(dayjs(Date.now()).add(2, "day"))
 
-
-
     const navigate = useNavigate()
 
     const handlesubmit = async (event: FormEvent) => {
@@ -24,8 +22,8 @@ export default function CreateCompetition() {
             description,
             category,
             submissionStartDate: preparationLastDate.format("YYYY-MM-DD"),
-            votingStartDate:submissionLastDate.format("YYYY-MM-DD"),
-            finishDate:votingLastDate.format("YYYY-MM-DD")
+            votingStartDate: submissionLastDate.format("YYYY-MM-DD"),
+            finishDate: votingLastDate.format("YYYY-MM-DD")
         })
             .then(resp => navigate(`/competition/details/${resp.data}`))
             .catch(e => console.log(e)
@@ -35,15 +33,16 @@ export default function CreateCompetition() {
     return (
 
         <Box>
-
-
             <Paper variant="createPaper" >
-
-                <Grid2 container spacing={2} width={{ sx: "80%", md: "85%" }} sx={{ alignSelf: "center" }} onSubmit={handlesubmit} >
+                <Grid2 container spacing={2} sx={{ alignSelf: "center" }}
+                    width={{sx:"80%", md:"80%"}} 
+                    onSubmit={handlesubmit} >
                     <Grid2 size={{ sm: 12, md: 12 }}>
                         <h1>Verseny készítése</h1>
                     </Grid2>
-                    <Grid2 size={{ sm: 12, md: 12 }}>
+
+
+                    <Grid2 size={{ xs: 12, sm: 12, md: 12 }}>
                         <TextField
                             sx={{ height: "100%", width: "100%" }}
                             className="outlined-input"
@@ -53,7 +52,9 @@ export default function CreateCompetition() {
                             onChange={(e) => setTitle(e.target.value)}
                         />
                     </Grid2>
-                    <Grid2 size={{ sm: 12, md: 12 }}>
+
+
+                    <Grid2 size={{ xs: 12, sm: 12, md: 12 }}>
                         <TextField
                             sx={{ height: "100%", width: "100%" }}
                             className="outlined-input"
@@ -118,36 +119,4 @@ export default function CreateCompetition() {
             </Paper>
         </Box>
     )
-
-    {/* <Paper variant="createPaper">
-            <h1>Create Competition</h1>
-            <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, width: { xs: "100%" } }} onSubmit={handlesubmit}>
-
-                <TextField
-                    className="outlined-input"
-                    label="title"
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <TextField
-                    className="outlined-input"
-                    label="description"
-                    type="text"
-                    value={description}
-                    multiline
-                    rows={5}
-                    onChange={(e) => setdescription(e.target.value)}
-                />
-                <RadioGroup row value={category} onChange={(e) => setCategory(e.target.value)}>
-                    <FormControlLabel label="Movie" value="movie" control={<Radio />} />
-                    <FormControlLabel label="Music" value="music" control={<Radio />} />
-                    <FormControlLabel label="ShortStory" value="shortstory" control={<Radio />} />
-                </RadioGroup>
-                <Button sx={{ width: "50%", display: "flex", flexDirection: "column", }} variant="outlined" type="submit">Create</Button>
-            </Box>
-
-
-        </Paper > */}
-
 }

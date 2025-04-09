@@ -57,7 +57,7 @@ export default function CompetitionList() {
             </AppBar>
 
             {competitions?.map(c =>
-                <Grid2 size={{ xs: 12, sm: 5, md: 3, lg: 2.5, xl: 2.5 }} key={c.id} >
+                <Grid2 size={{ xs: 12, sm: 5, md: 3, lg: 2.5, xl: 2 }} key={c.id} >
                     <CompetitionDetailsCard competition={c} />
                 </Grid2>
             )}

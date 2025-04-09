@@ -119,15 +119,15 @@ namespace Backend.Services
                 .Where(correctPhase(listDTO.Phase))
                 .Where(correctType(listDTO.Type))
                 .Select(c => new CompetitionListDetails(c))
-                .Skip(listDTO.Page * 4)//TODO change to 50
-                .Take(4)
+                .Skip(listDTO.Page * 50)
+                .Take(50)
                 ;
             var count = _context.Competitions
                 .Where(correctPhase(listDTO.Phase))
                 .Where(correctType(listDTO.Type))
                 .Count();
             
-            return new CompetitionList() { pageCount = ((count - 1) / 4) + 1, Competitions = result };
+            return new CompetitionList() { pageCount = ((count - 1) / 50) + 1, Competitions = result };
         }
 
         public async Task<GetOneCompetitionDTO> GetDetails(int id)
