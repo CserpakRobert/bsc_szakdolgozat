@@ -7,6 +7,7 @@
         public bool IsClosed { get; set; }
 
     }
+
     public class InviteDTO
     {
         public string UserName { get; set; } = null!;
@@ -34,5 +35,26 @@
         public int RequestCount { get; set; }
 
 
+    }
+    public class GetSmallDetailsDTO
+    {
+        public IEnumerable<GroupSmallDetailsDTO> Groups { get; set; } = null!;
+        public int Count { get; set; }
+
+    }
+    public class GroupSmallDetailsDTO
+    {
+        public int GroupId { get; set; }
+        public int CompetitionId { get; set; }
+        public string OwnerName { get; set; } = string.Empty;
+        public int ParticipateCount { get; set; }
+
+        public GroupSmallDetailsDTO(Group Group)
+        {
+            GroupId = Group.Id;
+            CompetitionId = Group.CompetitionId;
+            OwnerName = Group.GroupOwner.UserName;
+            ParticipateCount = Group.Participants.Count;
+        }
     }
 }

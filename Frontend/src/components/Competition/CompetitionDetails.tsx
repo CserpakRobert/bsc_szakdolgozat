@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../../globalHelpers/apiAxios"
-import { Paper, Grid2, Card, Button, Box, CircularProgress } from "@mui/material"
+import { Paper, Grid2, Card, Button, Box, CircularProgress, Pagination } from "@mui/material"
 import CompetitionInterface from "./CompetitionInterface"
 import UserButton from "../User/UserButton"
 import CompetitionDate from "./CompetitionDate"
 import CompetitionPhase from "./CompetitionPhase"
 import CompetitionType from "./CompetitionType"
 import { useAuth } from "../../globalHelpers/useAuth"
+import { GroupSmallListInterface } from "../Group/GroupInterface"
+import { GroupSmallDetails } from "../Group/GroupSmallDetails"
 
 export default function CompetitionDetails() {
     const { id } = useParams()
@@ -15,6 +17,9 @@ export default function CompetitionDetails() {
 
     const [competition, setCompetition] = useState<undefined | CompetitionInterface>(undefined)
     const { userName } = useAuth()
+    const [groupSmalls, setGroupSmalls] = useState<GroupSmallListInterface | undefined>(undefined)
+    const [page, setPage] = useState(0)
+    const [pageCount, setPageCount] = useState(1)
 
     useEffect(() => {
         api.get(`competition/${id}`)
@@ -23,8 +28,17 @@ export default function CompetitionDetails() {
             )
             .catch(
         )
+        api.post(`group/smallDetails/${id}`, 0).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
     }, [id]
     )
+
+    useEffect(() => {
+        api.post(`group/smallDetails/${id}`, page - 1).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
+    }
+        , [page, id])
+    const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value)
+    }
     // TODO navigations
     const handleJoin = () => {
         navigate(`/group/${id}`)
@@ -80,11 +94,8 @@ export default function CompetitionDetails() {
                                         {
                                             competition.creatorname !== userName &&
                                             <>
-                                                <Grid2 size={{ xs: 12, md: 5 }} >
+                                                <Grid2 size={{ xs: 12, md: 12 }} >
                                                     <Button variant="outlined" onClick={handleJoin}>Jelentkezés</Button>
-                                                </Grid2>
-                                                <Grid2 size={{ xs: 12, md: 7 }} >
-                                                    <Button variant="outlined" onClick={handleFindGroups}>Csapat keresése</Button>
                                                 </Grid2>
                                             </>
                                         }
@@ -125,6 +136,20 @@ export default function CompetitionDetails() {
                     </>)}
                 </Box>
             </Paper>
+            {competition?.phase === "preparation" && (<>
+                <Grid2 container size={{ sm: 12, md: 8 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
+
+                    <Grid2 size={12} justifyItems="center">
+                        <Pagination count={pageCount} page={page} onChange={handlePage} />
+                    </Grid2>
+                    {groupSmalls?.groups?.map((group) => (<>
+                        <Grid2 size={{ xs: 6, md: 3, lg: 2 }} key={group.groupId} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            <GroupSmallDetails group={group} />
+                        </Grid2>
+                    </>))}
+
+                </Grid2>
+            </>)}
         </>
     )
 }

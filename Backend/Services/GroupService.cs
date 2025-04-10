@@ -34,18 +34,50 @@ namespace Backend.Services
         public async Task<bool> CanJoin(int competitionId, int? userId = null)
         {
 
-            userId ??= _userService.GetLoggedInUser().Id;
+            if (userId is null)
+            {
+                var user = await _userService.GetLoggedInUser();
+                if (user is null) return false;
+                userId = user.Id;
+            }
+
             if (userId is null) return false;
 
-            var hasJoin = !await _context.Groups.Include(g => g.Participants)
+            var hasJoin = !await _context.Groups
+                .Include(g => g.Participants)
                 .Where(g => g.CompetitionId == competitionId)
-                .AnyAsync(g => g.GroupOwnerId == userId || g.Participants.Any(p => p.Id == userId));
+                .AnyAsync(g => g.Participants.Any(p => p.Id == userId));
 
             var canJoin = !await _competitionService.IsModerator(competitionId, (int)userId);
 
             return canJoin && hasJoin;
         }
 
+        public async Task<GetSmallDetailsDTO> GroupSmallDetails(int competitionId, int page)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+            var groups = await _context.Groups
+                .Where(c => c.CompetitionId == competitionId && !c.IsClosed)
+                .Include(g => g.Participants)
+                .Include(g => g.GroupOwner)
+                .Skip(page * 50)
+                .Take(50)
+                .Select(g => new GroupSmallDetailsDTO(g))
+                .ToListAsync();
+            if (groups is null) throw new ExceptionWithDescription("Nincsenek csapatok a versenyhez");
+
+            var count = await _context.Groups
+                .Where(c => c.CompetitionId == competitionId && !c.IsClosed)
+                .CountAsync();
+
+            return new GetSmallDetailsDTO()
+            {
+                Groups = groups,
+                Count = ((count - 1) / 50) + 1
+            };
+
+        }
         public async Task<bool?> IsOwner(int groupId, string? userName = null)
         {
             User? user;
@@ -74,7 +106,7 @@ namespace Backend.Services
 
         public async Task<int> Create(int competitionId, CreateGroupDTO createGroup)
         {
-            if (await CanJoin(competitionId) == false)
+            if (await CanJoin(competitionId) is false)
                 throw new ExceptionWithDescription("Erre a versenyre nem tudsz jelentkezni");
 
             if (await _competitionService.IsInPreparationPhase(competitionId) is null or false)

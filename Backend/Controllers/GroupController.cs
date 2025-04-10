@@ -64,6 +64,25 @@ namespace Backend.Controllers
 
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("smallDetails/{competitionId}")]
+        public async Task<IActionResult> GetSmallDetails(int competitionId, [FromBody] int page)
+        {
+            try
+            {
+                return Ok(await _groupService.GroupSmallDetails( competitionId,  page));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("invite/{groupId}")]
         public async Task<IActionResult> Invite(int groupId, [FromBody] InviteDTO invite)
         {
