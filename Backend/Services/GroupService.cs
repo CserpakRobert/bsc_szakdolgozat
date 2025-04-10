@@ -45,6 +45,7 @@ namespace Backend.Services
 
             return canJoin && hasJoin;
         }
+
         public async Task<bool?> IsOwner(int groupId, string? userName = null)
         {
             User? user;
@@ -82,6 +83,9 @@ namespace Backend.Services
             var user = await _userService.GetLoggedInUser();
             if (user is null)
                 throw new UserNotAuthorized("");
+
+            if (createGroup.Description.Length > 3000 || createGroup.Description.Length < 10)
+                throw new ExceptionWithDescription("A leírásnak 10 és 3000 karakter között kell lennie");
 
             var result = await _context.Groups.AddAsync(new Models.Group()
             {
@@ -238,8 +242,16 @@ namespace Backend.Services
             if (!await CanJoin(groupId))
                 throw new ExceptionWithDescription("Erre a versenyre nem tudsz jelentkezni");
 
+            if (description.Length > 3000 || description.Length < 10)
+                throw new ExceptionWithDescription("A leírásnak 10 és 3000 karakter között kell lennie");
+
             var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == groupId);
             if (group is null) throw new ExceptionWithDescription("A csapat nem található");
+
+            if (await CanJoin(group.CompetitionId, user.Id) is false)
+            {
+                throw new ExceptionWithDescription("Nem jelentkezhetsz a saját versenyedre");
+            }
 
             if (await _context.JoinRequests.AnyAsync(ji => ji.GroupId == groupId && ji.RequestOwnerId == user.Id))
             {
@@ -313,39 +325,102 @@ namespace Backend.Services
             var addResult = await _context.UserParticipateGroups.AddAsync(new UserParticipateGroups()
             {
                 Group = group,
-                User= addUser
+                User = addUser
             });
 
             await _context.SaveChangesAsync();
 
             return true;
         }
-        public async Task<bool?> Delete(int groupId)
+
+        public async Task<bool> IsInvited(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
-            if (user is null) return null;
+            if (user is null) throw new UserNotAuthorized("");
 
-            var group = await _context.Groups
-                .Include(g => g.Participants)
-                .Include(g => g.JoinRequests)
-                .Include(g => g.Invites)
-                .FirstOrDefaultAsync(g => g.Id == groupId);
+            return await _context.SubmissionInvites.AnyAsync(ji => ji.GroupId == groupId && ji.RecieverUserId == user.Id);
+        }
 
-            if (group is null) return false;
-            _context.Groups.Remove(group);
+        public async Task<bool> AcceptInvite(int groupId)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            if (!await _context.SubmissionInvites.AnyAsync(si => si.RecieverUserId == user.Id || si.GroupId == groupId))
+                throw new ExceptionWithDescription("Ebbe a csoportba nincs meghívásod");
+
+            var deleteR = await _context.SubmissionInvites
+                .Where(si => si.RecieverUserId == user.Id && si.GroupId == groupId)
+                .ExecuteDeleteAsync();
+            var addResult = await _context.UserParticipateGroups.AddAsync(new UserParticipateGroups()
+            {
+                GroupId = groupId,
+                UserId = user.Id
+            });
             await _context.SaveChangesAsync();
             return true;
 
         }
-
-        public async Task DeletePendingGroups(int userId, int groupId)
+        public async Task<bool> DeclineInvite(int groupId)
         {
-            var toDeleteInvites = _context.SubmissionInvites.Where(si => si.GroupId == groupId && si.RecieverUserId == userId);
-            var toDeleteRequests = _context.JoinRequests.Where(jr => jr.GroupId == groupId && jr.RequestOwnerId == userId);
-            _context.SubmissionInvites.RemoveRange(toDeleteInvites);
-            _context.JoinRequests.RemoveRange(toDeleteRequests);
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            if (!await _context.SubmissionInvites.AnyAsync(si => si.RecieverUserId == user.Id || si.GroupId == groupId))
+                throw new ExceptionWithDescription("Ebbe a csoportba nincs meghívásod");
+
+            var deleteR = await _context.SubmissionInvites
+                .Where(si => si.RecieverUserId == user.Id && si.GroupId == groupId)
+                .ExecuteDeleteAsync();
+
             await _context.SaveChangesAsync();
+            return true;
         }
+
+        internal async Task<string> GetDescription(int groupId, string userName)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+            if (await IsOwner(groupId, user.UserName) is null)
+            {
+                throw new ExceptionWithDescription("Csak a csapat tulajdonosa láthatja a jelentkezéseket");
+            }
+            var result = await _context.JoinRequests
+                .Include(jr => jr.RequestOwner)
+                .Where(jr => jr.GroupId == groupId && jr.RequestOwner.UserName == userName)
+                .Select(jr => jr.Description)
+                .FirstOrDefaultAsync();
+
+            if (result is null) throw new ExceptionWithDescription("A jelentkezés nem található");
+            return result;
+        }
+
+        //public async Task<bool?> Delete(int groupId)
+        //{
+        //    var user = await _userService.GetLoggedInUser();
+        //    if (user is null) return null;
+
+        //    var group = await _context.Groups
+        //        .Include(g => g.Participants)
+        //        .Include(g => g.JoinRequests)
+        //        .Include(g => g.Invites)
+        //        .FirstOrDefaultAsync(g => g.Id == groupId);
+
+        //    if (group is null) return false;
+        //    _context.Groups.Remove(group);
+        //    await _context.SaveChangesAsync();
+        //    return true;
+
+        //}
+
+        //public async Task DeletePendingGroups(int userId, int groupId)
+        //{
+        //    var toDeleteInvites = _context.SubmissionInvites.Where(si => si.GroupId == groupId && si.RecieverUserId == userId);
+        //    var toDeleteRequests = _context.JoinRequests.Where(jr => jr.GroupId == groupId && jr.RequestOwnerId == userId);
+        //    _context.SubmissionInvites.RemoveRange(toDeleteInvites);
+        //    _context.JoinRequests.RemoveRange(toDeleteRequests);
+        //    await _context.SaveChangesAsync();
+        //}
 
 
     }

@@ -40,7 +40,7 @@ namespace Backend.Controllers
             }
             catch (ExceptionWithDescription e)
             {
-                return BadRequest(new  { errorMessage= e.Message });
+                return BadRequest(new { errorMessage = e.Message });
             }
             catch (UserNotAuthorized)
             {
@@ -83,6 +83,24 @@ namespace Backend.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("isInvited/{groupId}")]
+        public async Task<IActionResult> IsInvited(int groupId)
+        {
+            try
+            {
+                return Ok(await _groupService.IsInvited(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("invites/{groupId}")]
         public async Task<IActionResult> Invites(int groupId)
         {
@@ -103,27 +121,9 @@ namespace Backend.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("invites/delete/{groupId}")]
-        public async Task<IActionResult> DeleteInvite(int groupId, [FromBody]InviteDTO invite)
+        public async Task<IActionResult> DeleteInvite(int groupId, [FromBody] InviteDTO invite)
         {
 
-            try
-            {
-                return Ok(await _groupService.DeleteInvite(groupId,invite.UserName));
-            }
-            catch (ExceptionWithDescription e)
-            {
-                return BadRequest(new { errorMessage = e.Message });
-            }
-            catch (UserNotAuthorized)
-            {
-                return Unauthorized();
-            }
-        }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("invites/accept/{groupId}")]
-        public async Task<IActionResult> AcceptInvite(int groupId, [FromBody] InviteDTO invite)
-        {
-            //TODO!
             try
             {
                 return Ok(await _groupService.DeleteInvite(groupId, invite.UserName));
@@ -137,6 +137,43 @@ namespace Backend.Controllers
                 return Unauthorized();
             }
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("invites/accept/{groupId}")]
+        public async Task<IActionResult> AcceptInvite(int groupId)
+        {
+            //TODO!
+            try
+            {
+                return Ok(await _groupService.AcceptInvite(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("invites/decline/{groupId}")]
+        public async Task<IActionResult> DeclineInvite(int groupId)
+        {
+            //TODO!
+            try
+            {
+                return Ok(await _groupService.DeclineInvite(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("join/{groupId}")]
@@ -159,7 +196,7 @@ namespace Backend.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("hasjoin/{groupId}")]
-        public async Task<IActionResult> RequestJoin(int groupId )
+        public async Task<IActionResult> RequestJoin(int groupId)
         {
 
             try
@@ -184,6 +221,24 @@ namespace Backend.Controllers
             try
             {
                 return Ok(await _groupService.getRequests(groupId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("requests/{groupId}")]
+        public async Task<IActionResult> GetDescription(int groupId, [FromBody] InviteDTO invite)
+        {
+
+            try
+            {
+                return Ok(await _groupService.GetDescription(groupId, invite.UserName));
             }
             catch (ExceptionWithDescription e)
             {
@@ -232,18 +287,18 @@ namespace Backend.Controllers
         }
 
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("delete/{groupId}")]
-        public async Task<IActionResult> DeleteGroup(int groupId)
-        {
-            var groupOwner = await _groupService.IsOwner(groupId);
-            if (groupOwner is null or false) return BadRequest("Csak saját csapatot törölhetsz");
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[HttpPost("delete/{groupId}")]
+        //public async Task<IActionResult> DeleteGroup(int groupId)
+        //{
+        //    var groupOwner = await _groupService.IsOwner(groupId);
+        //    if (groupOwner is null or false) return BadRequest("Csak saját csapatot törölhetsz");
 
-            var result = await _groupService.Delete(groupId);
-            if (result is null or false) return BadRequest("A törlés sikertelen");
+        //    var result = await _groupService.Delete(groupId);
+        //    if (result is null or false) return BadRequest("A törlés sikertelen");
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
     }
 }

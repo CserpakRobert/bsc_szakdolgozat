@@ -24,6 +24,9 @@ export const darkTheme = createTheme({
         secondary: { main: "#f2be2e" }
 
     },
+    typography: {
+        fontSize: 15,
+    },
     components: {
         MuiPaper: {
             variants: [
@@ -76,12 +79,14 @@ export const darkTheme = createTheme({
                     },
                     style: {
                         display: "flex",
-                        marginTop: "5rem",
-                        // flexGrow: 1,
-                        // flexDirection: "column",
+                        flexDirection: "column",
+                        flexGrow: 1,
+                        alignContent: "center",
+                        margin: "auto",
                         "@media (min-width:600px)": { width: "90%", height: "100%" },
-                        "@media (min-width:960px)": { width: "100%", height: "100%" },
-                        // minWidth: "50vw",
+                        "@media (min-width:960px)": { width: "50%", height: "100%" },
+                        minWidth: "20vw",
+                        marginTop: "5rem",
                         color: "#fafafa",
                         padding: "2rem",
                         borderRadius: "8px",

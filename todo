@@ -1,40 +1,24 @@
-tesztek
-+admin felület/ admin role
 
 
-automatikus lejárat/szavazat lezárás
-Frontend errorok
-Frontend kinézet
-Deploy
-++ Services tárolt eljárásba
 
 
-+ youtube linkekre hossz limit
-+ komponensekre lista szűrés
-+ Indexek
+errorok:
+moderator tud jelentkezni
 
 
-MenuBar:
-    minden route
-submission:
-    Details komponens
-    Delete submission
-    Edit submission
-    User invites
-    vote (frissítés)
-    vote counttal
-    kis komponens listázásra    *1
-    listázás                    *1
-    details:
-        MovieDetails komponens
-        MusicDetails komponens
-competition:
-    Delete Competition
-    Moderator invites
-    linkek validálása
-    kis komponens listázásra    *1
-    listázás                    *1
-User:
-profil oldal:
-    profil
-    *1 -> listák(created competitions, created submissions, participated submissions)
+
+Completely finished:
+Create competition
+
+minor rework:
+login
+register
+list component
+competition details
+group joins
+
+major rework:
+profile
+joins / requests component
+submission modify
+submission lists
