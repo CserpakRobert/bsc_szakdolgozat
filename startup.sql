@@ -1,71 +1,129 @@
 use szakdol;
 SET GLOBAL event_scheduler = ON;
 
-CREATE EVENT UpdateCompetition
-On SCHEDULE EVERY 45 MINUTE
-DO
+CREATE OR REPLACE PROCEDURE VotingEnd()
 BEGIN
 
-    -- set submission phases
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE submissionId, voteCount, lastVoteCount, placement, lastVotes INT;
+
+    DECLARE cur CURSOR FOR 
+    SELECT s.Id submissionId, s.voteCount
+    FROM submissions s
+    JOIN competition c ON c.Id = s.competitionId
+    WHERE c.IsInVotingPhase = 1 AND c.FinishDate < CURDATE()
+    ORDER BY s.voteCount DESC;
+    
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+            ROLLBACK;
+            RESIGNAL;
+    END;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    SET placement = 1;
+    SET lastVoteCount = -1;
+
+    SET AUTOCOMMIT = 0;
+    START TRANSACTION;
+
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO submissionId, voteCount;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        IF voteCount = -1 THEN
+            SET lastVoteCount = voteCount;
+        END IF;
+
+        IF voteCount <> lastVoteCount THEN
+            SET placement = placement + 1;
+        END IF;
+
+        UPDATE submissions s
+            SET s.placement = placement
+            WHERE s.Id = submissionId;
+        SET lastVoteCount = voteCount;
+
+    END LOOP;
+    CLOSE cur;
+
     UPDATE Competition
-    SET IsInPreparationPhase = 0, IsInSubmissionPhase = 1
-    WHERE IsInPreparationPhase = 1 AND SubmissionStartDate < CURDATE();
+        SET isinvotingphase = 0
+        WHERE IsInVotingPhase = 1 AND FinishDate < CURDATE();
 
-    -- set voting phases
-
-    UPDATE Competition
-    SET IsInSubmissionPhase = 0, IsInVotingPhase = 1
-    WHERE IsInSubmissionPhase = 1 AND VotingStartDate < CURDATE();
-
-    -- set finished phase
-    UPDATE Competition
-    SET isinvotingphase = 0
-    WHERE IsInVotingPhase = 1 AND FinishDate < CURDATE();
-
+    COMMIT;
+    SET AUTOCOMMIT = 1;
 END;
 
-DROP EVENT UpdateCompetition;
+CREATE OR REPLACE PROCEDURE SubmissionEnd()
+BEGIN
 
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE competitionId INT;
 
-select LAST_INSERT_ID();
+    DECLARE cur CURSOR FOR 
+    SELECT Id competitionId
+    FROM competition
+    WHERE IsInSubmissionPhase = 1 AND VotingStartDate < CURDATE();
 
-SHOW PROCEDURE STATUS 
-where Db = szakdol;
--- TODO Convert groups into submissions
-SHOW EVENTS;
-SHOW VARIABLES LIKE 'event_scheduler';
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+            ROLLBACK;
+            RESIGNAL;
+    END;
 
-SET SQL_MODE='ORACLE';
-SELECT @@SQL_MODE;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
+    set AUTOCOMMIT = 0;
+    START TRANSACTION;
 
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO competitionId;
 
-select * from competition;
-select * from groups where competitionID = 32;
-select * from userparticipategroups where groupId = 13;
-Update competition
-set SubmissionStartDate="0001-01-01", IsInPreparationPhase = 1, IsInSubmissionPhase = 0, isinvotingphase = 0
-where Id = 32;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
 
-select * from userparticipategroups where groupId = 13;
+        DELETE FROM submissions s
+        where s.competitionId = competitionId and s.IsSubmitted = FALSE;
 
-select * from submissions;
-select * from collaboratedSubmissions;
-delete from submissions;
-delete from collaboratedSubmissions;
-call PreparationEnd();
+        UPDATE Competition c
+        SET c.IsInSubmissionPhase = 0, c.IsInVotingPhase = 1
+        WHERE c.Id = competitionId;
+    END LOOP;
+    CLOSE cur;
 
-SHOW INDEXES FROM collaboratedSubmissions;
---todo details
+    COMMIT;
+    set AUTOCOMMIT = 1;
+END;
+
 CREATE or replace PROCEDURE PreparationEnd()
 BEGIN
 
     DECLARE done INT DEFAULT FALSE;
 
-    DECLARE groupId, ownerId, competitionId, lastSubmissionId INT;
+    DECLARE groupId,
+     ownerId,
+     competitionId,
+     lastSubmissionId,
+     isMovie,
+     isMusic,
+     isStory 
+     INT;
 
     DECLARE cur CURSOR FOR 
-        SELECT g.Id groupId, g.GroupOwnerId ownerId, g.CompetitionId competitionId
+        SELECT g.Id groupId, g.GroupOwnerId ownerId,
+         g.CompetitionId competitionId,
+         c.IsMovieCompetition isMovie,
+         c.IsMusicCompetition isMusic,
+         c.isShortStoryCompetition isStory
         FROM Groups g
         JOIN competition c ON g.competitionId = c.Id
         WHERE c.IsInPreparationPhase = 1 
@@ -84,7 +142,12 @@ BEGIN
 
     OPEN cur;
     read_loop: LOOP
-        FETCH cur INTO groupId, ownerId, competitionId;
+        FETCH cur INTO groupId,
+        ownerId,
+        competitionId,
+        isMovie,
+        isMusic,
+        isStory;
         
         IF done THEN
             LEAVE read_loop;
@@ -92,11 +155,54 @@ BEGIN
 
     -- Create submission
         -- Create blank submission
-        INSERT INTO Submissions (OwnerId, CompetitionId, description, title, IsSubmitted)
-            VALUES (ownerId, competitionId, "", "", FALSE);
+        IF isMovie THEN
+            INSERT INTO Submissions (OwnerId, CompetitionId, description, title, IsSubmitted)
+                VALUES (ownerId, competitionId, "", "", FALSE);
+            SET @lastSubmissionId = LAST_INSERT_ID();
+
+            INSERT INTO moviedetails (TrailerLink, MovieLink, SubmissionId)
+                VALUES ("", "", @lastSubmissionId);
+
+            SET @movieDetailsId = LAST_INSERT_ID();
+
+            UPDATE Submissions
+            set MovieDetailsId = @movieDetailsId
+            where Id = @lastSubmissionId;
+
+        END IF;
+
+        IF isMusic THEN
+            INSERT INTO Submissions (OwnerId, CompetitionId, description, title, IsSubmitted)
+                VALUES (ownerId, competitionId, "", "", FALSE);
+            SET @lastSubmissionId = LAST_INSERT_ID();
+
+            INSERT INTO musicdetails (Link, SubmissionId)
+                VALUES ("", @lastSubmissionId);
+
+            SET @musicDetailsId = LAST_INSERT_ID();
+
+            UPDATE Submissions
+            set MusicDetailsId = @musicDetailsId
+            where Id = @lastSubmissionId;
+        END IF;
+
+        IF isStory THEN
+            INSERT INTO Submissions (OwnerId, CompetitionId, description, title, IsSubmitted)
+                VALUES (ownerId, competitionId, "", "", FALSE);
+            SET @lastSubmissionId = LAST_INSERT_ID();
+
+            INSERT INTO shortstorydetails (Story, SubmissionId)
+                VALUES ("", @lastSubmissionId);
+
+            SET @storyDetailsId = LAST_INSERT_ID();
+
+            UPDATE Submissions
+            set ShortStoryDetailsId = @storyDetailsId
+            where Id = @lastSubmissionId;
+        END IF;
+
 
         -- Get submission's Id
-        SET @lastSubmissionId = LAST_INSERT_ID();
     -- Create submission END
 
     -- Insert into collaboratedSubmissions
@@ -105,12 +211,6 @@ BEGIN
             SELECT UserId, @lastSubmissionId 
             FROM userparticipategroups upg
             WHERE upg.GroupId = groupId  ;
-            -- AND NOT EXISTS (
-            --     SELECT 1
-            --     FROM CollaboratedSubmissions cs
-            --     WHERE cs.UserId = upg.UserId AND cs.SubmissionId = @lastSubmissionId 
-            -- );
-
     -- Insert into collaboratedSubmissions END
 
     -- Delete group
@@ -136,6 +236,15 @@ BEGIN
     set AUTOCOMMIT = 1;
 
 END;
-//
 
-DELIMITER //
+CREATE EVENT UpdateCompetition
+On SCHEDULE EVERY 45 MINUTE
+DO
+BEGIN
+    call PreparationEnd();
+
+
+    call SubmissionEnd();
+
+    call VotingEnd();
+END;
