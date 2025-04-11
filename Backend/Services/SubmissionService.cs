@@ -1,8 +1,10 @@
 ﻿using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Persistence;
+using Backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Backend.Services
 {
@@ -20,86 +22,80 @@ namespace Backend.Services
             _context = context;
         }
 
-
-        public async Task<Submission?> ModifySubmission(IModifySubmission modifySubmission)
+        public async Task<GetSusbmission> GetSubmission(int id)
         {
-            if (modifySubmission is not (ModifyMovieDetails or ModifyMusicDetails or ModifyShortStoryDetails))
-            {
-                return null;
-            }
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
 
             var submission = await _context.Submissions
                 .Include(sub => sub.MovieDetails)
                 .Include(sub => sub.MusicDetails)
                 .Include(sub => sub.ShortStoryDetails)
                 .Include(sub => sub.Competition)
-                .FirstOrDefaultAsync(sub => sub.Id == modifySubmission.Id);
+                .Include(sub => sub.Creators)
+                .Include(sub => sub.Owner)
+                .FirstOrDefaultAsync(sub => sub.Id == id);
 
-            if (submission is null || submission.Competition.IsInSubmissionPhase)
+            if (submission is null) throw new ExceptionWithDescription("Nem található");
+
+            if (submission.Competition.IsInSubmissionPhase)
             {
-                return null;
-            }
-
-            submission.IsSubmitted = modifySubmission.Submitted;
-            submission.Title = modifySubmission.Title;
-            submission.Description = modifySubmission.Description;
-
-
-            // Movie
-            if (submission.MovieDetails is not null && modifySubmission is ModifyMovieDetails modifyMovieSubmission)
-            {
-                var competition = await _context.Competitions.FindAsync(submission.CompetitionId);
-                if (competition is not null && competition.IsInSubmissionPhase && competition.IsMovieCompetition)
+                if (!submission.Creators.Any(c => c.Id == user.Id))
                 {
-                    submission.MovieDetails.MovieLink = modifyMovieSubmission.MovieLink;
-                    submission.MovieDetails.TrailerLink = modifyMovieSubmission.TrailerLink;
+                    throw new ExceptionWithDescription("Ezt a pályázatot még nem tekintheted meg");
                 }
-                else return null;
             }
 
-            // Music
-            if (submission.MusicDetails is not null && modifySubmission is ModifyMusicDetails modifyMusicSubmission)
+            var canVote = await CanVote(id);
+            var hasVote = await HasVote(id);
+
+            return new GetSusbmission
             {
-                var competition = await _context.Competitions.FindAsync(submission.CompetitionId);
-                if (competition is not null && competition.IsInSubmissionPhase && competition.IsMovieCompetition)
+                Id = submission.Id,
+                Title = submission.Title,
+                Description = submission.Description,
+                IsSubmitted = submission.IsSubmitted,
+                VoteCount = submission.VoteCount,
+                CanVote = canVote,
+                HasVote = hasVote,
+                MusicDetails = submission.MusicDetails != null ? new CreateMusicDetailsModel
                 {
-                    submission.MusicDetails.Link = modifyMusicSubmission.Link;
-                }
-                else return null;
-            }
-
-            // ShortStory
-            if (submission.ShortStoryDetails is not null
-                && modifySubmission is ModifyShortStoryDetails modifyShortStorySubmission)
-            {
-                var competition = await _context.Competitions.FindAsync(submission.CompetitionId);
-                if (competition is not null && competition.IsInSubmissionPhase && competition.IsMovieCompetition)
+                    Link = submission.MusicDetails.Link
+                } : null,
+                MovieDetails = submission.MovieDetails != null ? new CreateMovieDetailsModel
                 {
-                    submission.ShortStoryDetails.Story = modifyShortStorySubmission.Story;
-                }
-                else return null;
-            }
+                    TrailerLink = submission.MovieDetails.TrailerLink,
+                    MovieLink = submission.MovieDetails.MovieLink
+                } : null,
+                ShortStoryDetails = submission.ShortStoryDetails != null ? new CreateShortStoryDetailsModel
+                {
+                    Story = submission.ShortStoryDetails.Story
+                } : null,
+                CreatorName = submission.Owner.UserName,
+                ParticipateNames = submission.Creators.Select(c => c.UserName).ToList()
+            };
 
-            await _context.SaveChangesAsync();
-            return submission;
         }
 
         public async Task<bool> VoteForSubmission(int id)
         {
             var user = await _userService.GetLoggedInUser();
-            if (user is null) return false;
+            if (user is null) throw new UserNotAuthorized("");
 
             var submission = await _context.Submissions.FirstOrDefaultAsync(sub => sub.Id == id);
-            if (submission is null) return false;
+            if (submission is null) throw new ExceptionWithDescription("Nem található");
 
             var inVotingPhase = await _context.Competitions.Where(c => c.Id == submission.CompetitionId).Select(c => c.IsInVotingPhase).FirstOrDefaultAsync();
-            if (!inVotingPhase) return false;
+            if (!inVotingPhase) throw new ExceptionWithDescription("A verseny nincs szavazási fázisban");
 
-            var hasVoted = await _context.Submissions.Where(s => s.Id == submission.Id).AnyAsync(sub => sub.VotedUsers.Any(c => c.Id == user.Id));
-            if (hasVoted) return false;
+            var hasVoted = await _context.SubmissionVotes.AnyAsync(sv => sv.UserId == user.Id && sv.SubmissionId == id);
+            if (hasVoted) throw new ExceptionWithDescription("Erre a pályázatra már leadtad a szavazatod");
 
-            var eligibleForVoting = !await _context.Submissions.Where(s => s.Id == submission.Id).AnyAsync(sub => sub.Creators.Any(c => c.Id == user.Id));
-            if (!eligibleForVoting) return false;
+            var eligibleForVoting = !await _context.Submissions
+                                                .Where(s => s.Id == submission.Id)
+                                                .AnyAsync(sub => sub.Creators
+                                                    .Any(c => c.Id == user.Id));
+            if (!eligibleForVoting) throw new ExceptionWithDescription("Nem szavazhatsz a saját pályázatodra");
 
             submission.VoteCount++;
             submission.VotedUsers.Add(user);
@@ -111,25 +107,27 @@ namespace Backend.Services
         public async Task<bool> UnVoteForSubmission(int id)
         {
             var user = await _userService.GetLoggedInUser();
-            if (user is null) return false;
+            if (user is null) throw new UserNotAuthorized("");
 
-            var submission = await _context.Submissions.Include(sub => sub.VotedUsers).FirstOrDefaultAsync(sub => sub.Id == id);
-            if (submission is null) return false;
+            var submission = await _context.Submissions.FirstOrDefaultAsync(sub => sub.Id == id);
+            if (submission is null) throw new ExceptionWithDescription("Nem található");
 
             var inVotingPhase = await _context.Competitions.Where(c => c.Id == submission.CompetitionId).Select(c => c.IsInVotingPhase).FirstOrDefaultAsync();
-            if (!inVotingPhase) return false;
+            if (!inVotingPhase) throw new ExceptionWithDescription("A verseny nincs szavazási fázisban");
 
-            var hasVoted = await _context.Submissions.Where(s => s.Id == submission.Id).AnyAsync(sub => sub.VotedUsers.Any(c => c.Id == user.Id));
-            if (!hasVoted) return false;
+            var hasVoted = await _context.SubmissionVotes.AnyAsync(sv => sv.UserId == user.Id && sv.SubmissionId == id);
+            if (!hasVoted) throw new ExceptionWithDescription("Erre a pályázatra még nem leadtad a szavazatod");
 
-            var eligibleForVoting = !await _context.Submissions.Where(s => s.Id == submission.Id).AnyAsync(sub => sub.Creators.Any(c => c.Id == user.Id));
-            if (!eligibleForVoting) return false;
+            var eligibleForVoting = !await _context.Submissions
+                                                .Where(s => s.Id == submission.Id)
+                                                .AnyAsync(sub => sub.Creators
+                                                .Any(c => c.Id == user.Id));
+            if (!eligibleForVoting) throw new ExceptionWithDescription("Nem szavazhatsz a saját pályázatodra");
 
             submission.VoteCount--;
-            submission.VotedUsers.Remove(user);
+            await _context.SubmissionVotes.Select(sv => sv.UserId == user.Id && sv.SubmissionId == id).ExecuteDeleteAsync();
             await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -174,16 +172,183 @@ namespace Backend.Services
             return true;
         }
 
-        //public async Task<ICollection<Submission>> ListUser(int userId,
-        //    bool owner = true,
-        //    bool creator = true,
-        //    int page = 0,
-        //    int perPage = 50)
-        //{
+        public async Task<string> GetType(int id)
+        {
+            var submission = await _context.Submissions.FirstOrDefaultAsync(sub => sub.Id == id);
+            if (submission is null) throw new ExceptionWithDescription("Nem található");
 
-        //    var result = await _context.Users.Find(userId);
+            var competition = await _context.Competitions.FirstOrDefaultAsync(comp => comp.Id == submission.CompetitionId);
+            if (competition is null) throw new ExceptionWithDescription("Nem található verseny");
 
-        //}
+            return competition.Type;
 
+        }
+        #region Modifies
+        public async Task<int> ModifyMovieSubmission(ModifyMovieDetails modifySubmission)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var submission = await _context.Submissions
+                .Include(sub => sub.MovieDetails)
+                .Include(sub => sub.Competition)
+                .FirstOrDefaultAsync(sub => sub.Id == modifySubmission.Id);
+
+            if (submission is null) throw new ExceptionWithDescription("Nem található pályázat");
+            if (!submission.Competition.IsInSubmissionPhase)
+            {
+                throw new ExceptionWithDescription("A verseny nincs beadási fázisban");
+            }
+
+            if (submission.IsSubmitted) throw new ExceptionWithDescription("A pályázat már le lett adva");
+
+            if (submission.OwnerId != user.Id)
+            {
+                throw new ExceptionWithDescription("Csak a pályázat készítője adhatja be a pályázatot");
+            }
+
+            submission.IsSubmitted = true;
+
+            if (modifySubmission.Title.Length > 200 || modifySubmission.Title.Length < 10)
+            {
+                throw new ExceptionWithDescription("A cím hossza nem megfelelő");
+            }
+            submission.Title = modifySubmission.Title;
+
+            if (modifySubmission.Description.Length > 3000 || modifySubmission.Description.Length < 10)
+            {
+                throw new ExceptionWithDescription("A leírás hossza nem megfelelő");
+            }
+            submission.Description = modifySubmission.Description;
+
+            submission.MovieDetails = new MovieDetails();
+
+            if (modifySubmission.MovieLink is not null && Utils.Utils.IsCorrectVideoId(modifySubmission.MovieLink))
+            {
+                submission.MovieDetails.MovieLink = modifySubmission.MovieLink;
+            }
+            else
+            {
+                throw new ExceptionWithDescription("Hiba a film linkkel");
+            }
+
+            if (modifySubmission.TrailerLink is not null && Utils.Utils.IsCorrectVideoId(modifySubmission.TrailerLink))
+            {
+                submission.MovieDetails.TrailerLink = modifySubmission.TrailerLink;
+            }
+            else
+            {
+                throw new ExceptionWithDescription("Hiba a trailer linkkel");
+            }
+
+            await _context.SaveChangesAsync();
+            return submission.Id;
+        }
+
+        public async Task<int> ModifyMusicSubmission(ModifyMusicDetails modifySubmission)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var submission = await _context.Submissions
+                .Include(sub => sub.MusicDetails)
+                .Include(sub => sub.Competition)
+                .FirstOrDefaultAsync(sub => sub.Id == modifySubmission.Id);
+
+            if (submission is null) throw new ExceptionWithDescription("Nem található pályázat");
+            if (!submission.Competition.IsInSubmissionPhase)
+            {
+                throw new ExceptionWithDescription("A verseny nincs beadási fázisban");
+            }
+
+            if (submission.IsSubmitted) throw new ExceptionWithDescription("A pályázat már le lett adva");
+
+            if (submission.OwnerId != user.Id)
+            {
+                throw new ExceptionWithDescription("Csak a pályázat készítője adhatja be a pályázatot");
+            }
+
+            submission.IsSubmitted = true;
+
+            if (modifySubmission.Title.Length > 200 || modifySubmission.Title.Length < 10)
+            {
+                throw new ExceptionWithDescription("A cím hossza nem megfelelő");
+            }
+            submission.Title = modifySubmission.Title;
+
+            if (modifySubmission.Description.Length > 3000 || modifySubmission.Description.Length < 10)
+            {
+                throw new ExceptionWithDescription("A leírás hossza nem megfelelő");
+            }
+            submission.Description = modifySubmission.Description;
+
+            submission.MusicDetails = new MusicDetails();
+
+            if (modifySubmission.Link is not null && Utils.Utils.IsCorrectVideoId(modifySubmission.Link))
+            {
+                submission.MusicDetails.Link = modifySubmission.Link;
+            }
+            else
+            {
+                throw new ExceptionWithDescription("Hiba a zene linkkel");
+            }
+
+            await _context.SaveChangesAsync();
+            return submission.Id;
+        }
+        public async Task<int> ModifyShortStorySubmission(ModifyShortStoryDetails modifySubmission)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var submission = await _context.Submissions
+                .Include(sub => sub.ShortStoryDetails)
+                .Include(sub => sub.Competition)
+                .FirstOrDefaultAsync(sub => sub.Id == modifySubmission.Id);
+
+            if (submission is null) throw new ExceptionWithDescription("Nem található pályázat");
+            if (!submission.Competition.IsInSubmissionPhase)
+            {
+                throw new ExceptionWithDescription("A verseny nincs beadási fázisban");
+            }
+
+            if (submission.IsSubmitted) throw new ExceptionWithDescription("A pályázat már le lett adva");
+
+            if (submission.OwnerId != user.Id)
+            {
+                throw new ExceptionWithDescription("Csak a pályázat készítője adhatja be a pályázatot");
+            }
+
+            submission.IsSubmitted = true;
+
+            if (modifySubmission.Title.Length > 200 || modifySubmission.Title.Length < 10)
+            {
+                throw new ExceptionWithDescription("A cím hossza nem megfelelő");
+            }
+            submission.Title = modifySubmission.Title;
+
+            if (modifySubmission.Description.Length > 3000 || modifySubmission.Description.Length < 10)
+            {
+                throw new ExceptionWithDescription("A leírás hossza nem megfelelő");
+            }
+            submission.Description = modifySubmission.Description;
+
+            submission.ShortStoryDetails = new ShortStoryDetails();
+
+            if (modifySubmission.Story is not null
+                && modifySubmission.Story.Length > 10
+                && modifySubmission.Story.Length <= 20000)
+            {
+                submission.ShortStoryDetails.Story = modifySubmission.Story;
+            }
+            else
+            {
+                throw new ExceptionWithDescription("A történet hossza nem megfelelő");
+            }
+
+            await _context.SaveChangesAsync();
+            return submission.Id;
+        }
+        #endregion
     }
 }

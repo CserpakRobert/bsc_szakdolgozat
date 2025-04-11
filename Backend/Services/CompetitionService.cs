@@ -132,7 +132,7 @@ namespace Backend.Services
 
         public async Task<GetOneCompetitionDTO> GetDetails(int id)
         {
-            var user = _userService.GetLoggedInUser();
+            var user = await _userService.GetLoggedInUser();
             if (user is null)
             {
                 throw new ExceptionWithDescription("Bejelentkezés nélkül nem elérhető");
@@ -145,6 +145,14 @@ namespace Backend.Services
                 .FirstOrDefaultAsync();
 
             if (competition is null) throw new ExceptionWithDescription("Ez a verseny nem található");
+
+            var ownSubmission = _context.CollaboratedSubmissions
+                .Include(sub => sub.Submission)
+                .Where(sub => sub.UserId == user.Id && sub.Submission.CompetitionId == id)
+                .Select(sub => sub.Submission.Id)
+                .FirstOrDefault();
+            competition.OwnSubmission = ownSubmission;
+
             return competition;
         }
 

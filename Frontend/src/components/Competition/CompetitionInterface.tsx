@@ -6,6 +6,7 @@ export default interface CompetitionInterface {
     phase: string;
     type: string;
     relevantDate: string;
+    ownSubmission:number;
 }
 
 export interface CompetitionSmallInterface{

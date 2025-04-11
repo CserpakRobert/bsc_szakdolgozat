@@ -167,7 +167,10 @@ namespace Backend.Services
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
 
             if (group is null) throw new ExceptionWithDescription("A csapat nem található");
-            if (group.IsClosed && group.OwnerName != user.UserName && !group.ParticipateNames.Any(p => p == user.UserName))
+            if (group.IsClosed 
+                && group.OwnerName != user.UserName 
+                && !group.ParticipateNames.Any(p => p == user.UserName)
+                && !await _context.SubmissionInvites.AnyAsync(si => si.RecieverUserId == user.Id))
             {
                 throw new ExceptionWithDescription("A csapat zárva van, csak a tagjai láthatják");
             }

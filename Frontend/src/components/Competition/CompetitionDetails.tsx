@@ -44,11 +44,12 @@ export default function CompetitionDetails() {
         navigate(`/group/${id}`)
     }
 
-    const handleFindGroups = () => {
-
-    }
     const handleListSubmissions = () => {
 
+    }
+
+    const handleOwnSubmission = () => {
+        navigate(`/submission/${competition?.ownSubmission}`)
     }
 
     return (
@@ -103,9 +104,14 @@ export default function CompetitionDetails() {
                                 )}
                                 {competition.phase === "submit" && (
                                     <>
+                                        {competition.ownSubmission === 0 && (
                                         <Grid2 size={{ xs: 12, md: 12 }} >
                                             <h3>A beadási idő leteltével megnyílik a szavazási időszak</h3>
-                                        </Grid2>
+                                        </Grid2>)}
+                                        {competition.ownSubmission !== 0 && (
+                                        <Grid2 size={{ xs: 12, md: 12 }} >
+                                            <Button variant="outlined" onClick={handleOwnSubmission}>Saját pályázat</Button>
+                                        </Grid2>)}
                                     </>
                                 )}
                                 {competition.phase === "voting" && (

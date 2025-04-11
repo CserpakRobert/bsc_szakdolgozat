@@ -58,6 +58,8 @@
         public string Type { get; set; }
         public DateOnly? RelevantDate { get; set; }
 
+        public int OwnSubmission { get; set; }
+
 
         public GetOneCompetitionDTO(Competition competition)
         {

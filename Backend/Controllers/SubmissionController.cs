@@ -2,6 +2,7 @@
 using Backend.Models.DTOs;
 using Backend.Persistence;
 using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,13 +20,54 @@ namespace Backend.Controllers
             private readonly MariaDBContext _context;
             private readonly SubmissionService _submissionService;
 
-            public SubmissionController(UserManager<User> userManager,
-                MariaDBContext mariaDbContext,
+            public SubmissionController(
+                             MariaDBContext mariaDbContext,
                              SubmissionService submissionService)
             {
                 this._context = mariaDbContext;
                 _submissionService = submissionService;
             }
+
+
+
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            [HttpGet("{id}")]
+            public async Task<IActionResult> GetSubmission(int id)
+            {
+                try
+                {
+                    return Ok(await _submissionService.GetSubmission(id));
+                }
+                catch (ExceptionWithDescription e)
+                {
+
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
+            }
+
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            [HttpGet("type/{id}")]
+            public async Task<IActionResult> GetSubmissionType(int id)
+            {
+                try
+                {
+                    return Ok(await _submissionService.GetType(id));
+                }
+                catch (ExceptionWithDescription e)
+                {
+
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
+            }
+
 
             public class CreateMusicDetailsModel
             {
@@ -37,32 +79,60 @@ namespace Backend.Controllers
                 public string MovieLink { get; set; }
             }
 
-            public class CreateSubmissionModel
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            [HttpPost("create/movie")]
+            public async Task<IActionResult> CreateSubmission([FromBody] ModifyMovieDetails model)
             {
-                public int CompetitionId { get; set; }
-                public string Title { get; set; }
-                public string Description { get; set; }
-                public CreateMusicDetailsModel? musicDetails { get; set; }
-                public CreateMovieDetailsModel? MovieDetails { get; set; }
-                public ICollection<string> InvitedUsers { get; set; } = [];
+                try
+                {
+                    return Ok(await _submissionService.ModifyMovieSubmission(model));
+                }
+                catch (ExceptionWithDescription e)
+                {
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
             }
-
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-            [HttpPost("modify")]
-            public async Task<IActionResult> CreateSubmission([FromBody] IModifySubmission model)
+            [HttpPost("create/music")]
+            public async Task<IActionResult> CreateMusicSubmission([FromBody] ModifyMusicDetails model)
             {
-                if (!await _submissionService.CanEdit(model.Id))
+                try
                 {
-                    BadRequest("Ezt a pályázatot nem szerkesztheted!");
+                    return Ok(await _submissionService.ModifyMusicSubmission(model));
                 }
-                var result = _submissionService.ModifySubmission(model);
-                if (result is not null)
+                catch (ExceptionWithDescription e)
                 {
-                    return Ok();
+                    return BadRequest(new { errorMessage = e.Message });
                 }
-                return BadRequest("Probléma a módosítással");
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
             }
+
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            [HttpPost("create/story")]
+            public async Task<IActionResult> CreateSubmission([FromBody] ModifyShortStoryDetails model)
+            {
+                try
+                {
+                    return Ok(await _submissionService.ModifyShortStorySubmission(model));
+                }
+                catch (ExceptionWithDescription e)
+                {
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
+            }
+
 
             public class GetSubmissionmodel
             {
@@ -74,54 +144,6 @@ namespace Backend.Controllers
                 public CreateMusicDetailsModel? musicDetails { get; set; }
                 public CreateMovieDetailsModel? MovieDetails { get; set; }
             }
-            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-            [HttpGet("{id}")]
-            public async Task<IActionResult> GetSubmission(int id)
-            {
-                var submission = await _context.Submissions.
-                    Include(sub => sub.VotedUsers)
-                    .Include(sub => sub.MovieDetails)
-                    .Include(sub => sub.MusicDetails)
-                    .FirstOrDefaultAsync(sub => sub.Id == id);
-                if (submission is null)
-                {
-                    return BadRequest(new {ErrorMessage = "Submission not found" });
-                }
-                if (submission.MovieDetails is not null)
-                {
-                    return Ok(new GetSubmissionmodel()
-                    {
-                        CanVote = await _submissionService.CanVote(id),
-                        HasVote = await _submissionService.HasVote(id),
-                        Title = submission.Title,
-                        Description = submission.Description,
-                        Votes = submission.VoteCount,
-                        MovieDetails = new CreateMovieDetailsModel()
-                        {
-                            MovieLink = submission.MovieDetails.MovieLink,
-                            TrailerLink = submission.MovieDetails.TrailerLink
-                        }
-
-                    });
-                }
-                if (submission.MusicDetails is not null)
-                {
-                    return Ok(new GetSubmissionmodel()
-                    {
-                        CanVote = await _submissionService.CanVote(id),
-                        HasVote = await _submissionService.HasVote(id),
-                        Title = submission.Title,
-                        Description = submission.Description,
-                        Votes = submission.VotedUsers.Count,
-                        musicDetails = new CreateMusicDetailsModel()
-                        {
-                            Link = submission.MusicDetails.Link,
-                        }
-
-                    });
-                }
-                return BadRequest(new { ErrorMessage = "Unexpected details error" });
-            }
 
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -129,12 +151,20 @@ namespace Backend.Controllers
             public async Task<IActionResult> VoteForSubmission(int id)
             {
 
-                var result = await _submissionService.VoteForSubmission(id);
-                if (result)
+                try
                 {
+                    await _submissionService.VoteForSubmission(id);
                     return Ok();
                 }
-                return BadRequest("Cant Vote for this submission");
+                catch (ExceptionWithDescription e)
+                {
+
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
 
             }
 
@@ -143,13 +173,20 @@ namespace Backend.Controllers
             public async Task<IActionResult> UnVoteForSubmission(int id)
             {
 
-                var result = await _submissionService.UnVoteForSubmission(id);
-                if (result)
+                try
                 {
+                    await _submissionService.UnVoteForSubmission(id);
                     return Ok();
                 }
-                return BadRequest("No vote on submision");
+                catch (ExceptionWithDescription e)
+                {
 
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
             }
         }
 

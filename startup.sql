@@ -180,6 +180,7 @@ BEGIN
                 VALUES ("", @lastSubmissionId);
 
             SET @musicDetailsId = LAST_INSERT_ID();
+            -- SET @lastSubmissionId = 59;
 
             UPDATE Submissions
             set MusicDetailsId = @musicDetailsId
@@ -208,15 +209,15 @@ BEGIN
     -- Insert into collaboratedSubmissions
         -- Insert participants into collaborators
         INSERT INTO CollaboratedSubmissions (UserId, SubmissionId)
-            SELECT UserId, @lastSubmissionId 
+            SELECT UserId, @lastSubmissionId SubmissionId
             FROM userparticipategroups upg
-            WHERE upg.GroupId = groupId  ;
+            WHERE upg.GroupId = groupId;
     -- Insert into collaboratedSubmissions END
 
     -- Delete group
         -- delete group participants
         DELETE FROM userparticipategroups
-            WHERE GroupId = groupId;
+            WHERE GroupId = groupId ;
 
         -- Delete group
         DELETE FROM Groups
@@ -243,8 +244,15 @@ DO
 BEGIN
     call PreparationEnd();
 
-
     call SubmissionEnd();
 
     call VotingEnd();
 END;
+
+drop event UpdateCompetition;
+
+select * from competition;
+update competition 
+    set SubmissionStartDate = "0001-01-01"
+    where Id = 37;
+call PreparationEnd();

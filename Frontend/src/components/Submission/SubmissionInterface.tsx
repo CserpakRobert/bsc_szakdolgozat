@@ -3,9 +3,13 @@ export default interface SubmissionInterface {
     hasVote: boolean;
     title: string;
     description: string;
+    creatorName: string;
+    participateNames: string[];
     votes: number;
+    isSubmitted: boolean;
     musicDetails: undefined | { link: string };
     movieDetails: undefined | { movieLink: string, trailerLink: string }
+    shortStoryDetails: undefined | { story: string };
 }
 
 export interface SubmissionSmallInterface{
