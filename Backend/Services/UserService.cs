@@ -75,7 +75,7 @@ namespace Backend.Services
             var token = GenerateJwt(user);
             return  new LoginDetails(token, user.UserName);
         }
-        public async Task<User?> GetLoggedInUser()
+        public virtual async Task<User?> GetLoggedInUser()
         {
             if (_httpContextAccessor.HttpContext is null)
             {

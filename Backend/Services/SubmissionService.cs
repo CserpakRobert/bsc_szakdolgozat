@@ -22,7 +22,7 @@ namespace Backend.Services
             _context = context;
         }
 
-        public async Task<SubmissionListModel> GetSubmissionList(SubmissionListGetModel listGetModel)
+        public virtual async Task<SubmissionListModel> GetSubmissionList(SubmissionListGetModel listGetModel)
         {
 
             var user = await _userService.GetLoggedInUser();
@@ -34,11 +34,13 @@ namespace Backend.Services
                 .Include(sub => sub.Owner)
                 .AsQueryable();
 
-            query = query.Where(sub => sub.CompetitionId == listGetModel.CompetitionId);
+            if (listGetModel.CompetitionId != null)
+                query = query.Where(sub => sub.CompetitionId == listGetModel.CompetitionId);
 
             if (listGetModel.UserName != null)
                 query = query.Where(sub => sub.Creators.Any(c => c.UserName == listGetModel.UserName));
 
+            var test = query.ToList();
             switch (listGetModel.Phase)
             {
                 case "finished":
@@ -81,7 +83,7 @@ namespace Backend.Services
                 Submissions = getSubmissions
             };
         }
-        public async Task<GetSusbmission> GetSubmission(int id)
+        public virtual async Task<GetSusbmission> GetSubmission(int id)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -137,7 +139,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<bool> VoteForSubmission(int id)
+        public virtual async Task<bool> VoteForSubmission(int id)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -164,7 +166,7 @@ namespace Backend.Services
             return true;
         }
 
-        public async Task<bool> UnVoteForSubmission(int id)
+        public virtual async Task<bool> UnVoteForSubmission(int id)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -191,14 +193,14 @@ namespace Backend.Services
             return true;
         }
 
-        public async Task<Submission?> GetById(int id)
+        public virtual async Task<Submission?> GetById(int id)
         {
             return await _context.Submissions.FindAsync(id);
         }
 
 
 
-        public async Task<bool> CanVote(int id)
+        public virtual async Task<bool> CanVote(int id)
         {
 
             var user = await _userService.GetLoggedInUser();
@@ -215,7 +217,7 @@ namespace Backend.Services
                     );
         }
 
-        public async Task<bool> HasVote(int id)
+        public virtual async Task<bool> HasVote(int id)
         {
             var user = await _userService.GetLoggedInUser();
             var submission = await _context.Submissions
@@ -224,7 +226,7 @@ namespace Backend.Services
             if (user == null || submission == null) return false;
             return submission.VotedUsers.Any(u => u.Id == user.Id);
         }
-        public async Task<bool> CanEdit(int id)
+        public virtual async Task<bool> CanEdit(int id)
         {
             var user = _userService.GetLoggedInUser();
             var submission = await _context.Competitions.FirstAsync(e => e.Id == id);
@@ -232,7 +234,7 @@ namespace Backend.Services
             return true;
         }
 
-        public async Task<string> GetType(int id)
+        public virtual async Task<string> GetType(int id)
         {
             var submission = await _context.Submissions.FirstOrDefaultAsync(sub => sub.Id == id);
             if (submission is null) throw new ExceptionWithDescription("Nem található");
@@ -244,7 +246,7 @@ namespace Backend.Services
 
         }
         #region Modifies
-        public async Task<int> ModifyMovieSubmission(ModifyMovieDetails modifySubmission)
+        public virtual async Task<int> ModifyMovieSubmission(ModifyMovieDetails modifySubmission)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -305,7 +307,7 @@ namespace Backend.Services
             return submission.Id;
         }
 
-        public async Task<int> ModifyMusicSubmission(ModifyMusicDetails modifySubmission)
+        public virtual async Task<int> ModifyMusicSubmission(ModifyMusicDetails modifySubmission)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -356,7 +358,7 @@ namespace Backend.Services
             await _context.SaveChangesAsync();
             return submission.Id;
         }
-        public async Task<int> ModifyShortStorySubmission(ModifyShortStoryDetails modifySubmission)
+        public virtual async Task<int> ModifyShortStorySubmission(ModifyShortStoryDetails modifySubmission)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");

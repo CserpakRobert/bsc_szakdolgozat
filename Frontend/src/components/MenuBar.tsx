@@ -1,10 +1,8 @@
-
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../globalHelpers/useAuth';
 
@@ -14,63 +12,60 @@ export default function MenuBar() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="fixed">
+            <AppBar position="fixed" sx={{}}>
                 <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                    >
-                    </IconButton>
+                    <Typography variant="h6" component="div"  >
+                        <NavLink to={`/home`} className={({ isActive, isPending }) =>
+                            isPending ? "pending" : isActive ? "active" : "inactive"
+                        }>
+                            <Button color='inherit'>Főoldal</Button>
+                        </NavLink>
+                        {isLoggedIn ? (<>
+                            <NavLink to={`/competition/list`} className={({ isActive, isPending }) =>
+                                isPending ? "pending" : isActive ? "active" : "inactive"
+                            }>
+                                <Button color='inherit'>Verseynek Listája</Button>
+                            </NavLink>
+                            <NavLink to={`/competition/create`} className={({ isActive, isPending }) =>
+                                isPending ? "pending" : isActive ? "active" : "inactive"
+                            }>
+                                <Button color='inherit'>Verseny készítése</Button>
+                            </NavLink>
 
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} >
-                        {isLoggedIn?(<>
-                        <NavLink to={`/competition/create`} className={({ isActive, isPending }) =>
-                            isPending ? "pending" : isActive ? "active" : "inactive"
-                        }>
-                            <Button color='inherit'>Create</Button>
-                        </NavLink>
-                        <NavLink to={`/competition/list`} className={({ isActive, isPending }) =>
-                            isPending ? "pending" : isActive ? "active" : "inactive"
-                        }>
-                            <Button color='inherit'>Competitions</Button>
-                        </NavLink>
-                        
-                        
-                        </>):(<></>)}
+
+
+                        </>) : (<></>)}
                     </Typography>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} >
-                    {isLoggedIn ?
-                        (<>
-                            <NavLink to="/login" className={({ isActive, isPending }) =>
-                                isPending ? "pending" : isActive ? "active" : "inactive"
-                            }>
-                                <Button color='inherit' onClick={logout}>Logout</Button>
-                            </NavLink>
-                            <NavLink to={`/user/profile/${userName}`} className={({ isActive, isPending }) =>
-                                isPending ? "pending" : isActive ? "active" : "inactive"
-                            }>
-                                <Button color='inherit'>Profile</Button>
-                            </NavLink>
-                        </>
-                        ) : (
-                            <>
-                                <NavLink to="/register" className={({ isActive, isPending }) =>
+                    <Typography variant="h6" component="div" sx={{ marginLeft: "auto" }} >
+                        {isLoggedIn ?
+                            (<>
+                                <NavLink to={`/user/profile/${userName}`} className={({ isActive, isPending }) =>
                                     isPending ? "pending" : isActive ? "active" : "inactive"
                                 }>
-                                    <Button color='inherit'>Register</Button>
+                                    <Button color='inherit'>Profil</Button>
                                 </NavLink>
                                 <NavLink to="/login" className={({ isActive, isPending }) =>
                                     isPending ? "pending" : isActive ? "active" : "inactive"
                                 }>
-                                    <Button color='inherit'>Login</Button>
+                                    <Button color='inherit' onClick={logout}>Kijelentkezés</Button>
                                 </NavLink>
                             </>
-                        )
-                    }
-                    {/* <Button color="inherit" >Register</Button> */}
+                            ) : (
+                                <>
+                                    <NavLink to="/register" className={({ isActive, isPending }) =>
+                                        isPending ? "pending" : isActive ? "active" : "inactive"
+                                    }>
+                                        <Button color='inherit'>Regisztráció</Button>
+                                    </NavLink>
+                                    <NavLink to="/login" className={({ isActive, isPending }) =>
+                                        isPending ? "pending" : isActive ? "active" : "inactive"
+                                    }>
+                                        <Button color='inherit'>Bejelentkezés</Button>
+                                    </NavLink>
+                                </>
+                            )
+                        }
+                        {/* <Button color="inherit" >Register</Button> */}
                     </Typography>
                 </Toolbar>
             </AppBar>

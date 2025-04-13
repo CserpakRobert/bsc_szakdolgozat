@@ -1,25 +1,21 @@
 
-import { ThemeProvider } from '@emotion/react';
 import './App.css'
 import MenuBar from './components/MenuBar';
 import Register from './components/register';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { darkTheme } from "./globalHelpers/theme"
-import { CssBaseline } from '@mui/material';
 import Login from './components/login';
-import { AuthProvider } from './globalHelpers/AuthContext';
 import CreateCompetition from './components/Competition/CreateCompetition';
 import CompetitionDetails from './components/Competition/CompetitionDetails';
 import UserDetails from './components/User/UserDetails';
 import CreateSubmission from './components/Submission/CreateSubmission';
 import SubmissionDetails from './components/Submission/SubmissionDetails';
-import SubmissionSmallDetails from './components/Submission/SubmissionSmallDetails';
+
 import CompetitionList from './components/Competition/CompetitionList';
 import ErrorComponent from './components/ErrorComponent';
 import CreateGroup from './components/Group/CreateGroup';
 import GroupDetails from './components/Group/GroupDetails';
 import { useAuth } from './globalHelpers/useAuth';
-import { Home } from './components/Home';
+import HomeComponent from './components/Home';
 
 function App() {
   const {isLoggedIn} = useAuth()
@@ -31,16 +27,16 @@ function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           {!isLoggedIn ? (
-            <Route path='*' element={<Home />} />
+            <Route path='*' element={<HomeComponent />} />
           ) : (
             <>
+              <Route path='/home' element={<HomeComponent />} />
               <Route path='/competition/create' element={<CreateCompetition />} />
               <Route path='/competition/list' element={<CompetitionList />} />
               <Route path='/competition/details/:id' element={<CompetitionDetails />} />
               <Route path='/user/profile/:name' element={<UserDetails />} />
               <Route path='/submission/create/:id' element={<CreateSubmission />} />
               <Route path='/submission/:id' element={<SubmissionDetails />} />
-              <Route path='/submission/test' element={<SubmissionSmallDetails submission={{ id: 2, title: "asd", type: "movie" }} />} />
               <Route path="/group/:id" element={<CreateGroup />} />
               <Route path="/group/details/:id" element={<GroupDetails />} />
             </>

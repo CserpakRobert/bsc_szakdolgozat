@@ -13,7 +13,7 @@ export default function CompetitionList() {
     const [pageCount, setPageCount] = useState(1)
     useEffect(() => {
 
-        api.post('/competition/list', { type: selectedType, phase: selectedPhase, page: page - 1 }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pageCount) });
+        api.post('/competition/list', { type: selectedType, phase: selectedPhase, page: page }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pageCount) });
 
     }, [selectedPhase, page, selectedType]
     )
@@ -30,7 +30,6 @@ export default function CompetitionList() {
     return (<>
 
 
-        <Grid2 container position={"relative"} gap={4} marginTop={20} width={"100%"}>
 
             <AppBar position="fixed" sx={{ marginTop: 10, overflow: "hidden" }}>
                 <Toolbar sx={{ gap: 2 }}>
@@ -55,9 +54,10 @@ export default function CompetitionList() {
                     </Select>
                 </Toolbar>
             </AppBar>
+        <Grid2 container position={"relative"} gap={2} marginTop={20} width={"100%"} sx={{justifyContent: "center"}}>
 
             {competitions?.map(c =>
-                <Grid2 size={{ xs: 12, sm: 5, md: 3, lg: 2.5, xl: 2 }} key={c.id} >
+                <Grid2 size={{ xs: 12, sm: 5, md: 3, lg: 2.5, xl: 2.8 }} key={c.id} >
                     <CompetitionDetailsCard competition={c} />
                 </Grid2>
             )}

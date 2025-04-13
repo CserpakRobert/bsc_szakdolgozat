@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Backend.Controllers
 {
@@ -70,6 +71,41 @@ namespace Backend.Controllers
             try
             {
                 return Ok(await _groupService.GroupSmallDetails( competitionId,  page));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("ownGroup/{competitionId}")]
+        public async Task<IActionResult> GetSmallDetails(int competitionId) {
+            try
+            {
+                return Ok(await _groupService.GetOwnGroup(competitionId));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("useropengroups/{username}")]
+        public async Task<IActionResult> GetSmallDetails(string username,[FromBody]int page)
+        {
+            try
+            {
+                return Ok(await _groupService.UserOpenGroups(username, page));
             }
             catch (ExceptionWithDescription e)
             {

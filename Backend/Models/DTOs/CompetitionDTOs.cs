@@ -6,6 +6,7 @@
         public string Type { get; set; } = "";
         public string Phase { get; set; } = "";
         public int Page { get; set; } = 0;
+        public string? UserName { get; set; }
     }
 
     public class CompetitionList

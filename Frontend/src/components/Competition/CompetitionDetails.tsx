@@ -8,9 +8,9 @@ import CompetitionDate from "./CompetitionDate"
 import CompetitionPhase from "./CompetitionPhase"
 import CompetitionType from "./CompetitionType"
 import { useAuth } from "../../globalHelpers/useAuth"
-import { GroupSmallListInterface } from "../Group/GroupInterface"
+import { GroupSmallDetailsInterface } from "../Group/GroupInterface"
 import { GroupSmallDetails } from "../Group/GroupSmallDetails"
-import { SubmissionListDetailsInterface, SubmissionListGetInterface } from "../Submission/SubmissionInterface"
+import { SubmissionListDetailsInterface } from "../Submission/SubmissionInterface"
 import SubmissionSmallDetails from "../Submission/SubmissionSmallDetails"
 
 export default function CompetitionDetails() {
@@ -19,13 +19,13 @@ export default function CompetitionDetails() {
 
     const [competition, setCompetition] = useState<undefined | CompetitionInterface>(undefined)
     const { userName } = useAuth()
-    const [groupSmalls, setGroupSmalls] = useState<GroupSmallListInterface | undefined>(undefined)
-    const [page, setPage] = useState(0)
+    const [groupSmalls, setGroupSmalls] = useState<GroupSmallDetailsInterface[]>([])
+    const [page, setPage] = useState(1)
     const [pageCount, setPageCount] = useState(1)
+    const [ownGrouId, setOwnGroupId] = useState<number>(0)
+
 
     const [submissions, setSubmissions] = useState<SubmissionListDetailsInterface[]>([])
-    const [submissionGet, setSubmissionGet] = useState<SubmissionListGetInterface>({ sortByDate: false, sortByPlacement: false, sortByVoteCount: false })
-
 
     useEffect(() => {
         api.get(`competition/${id}`)
@@ -35,41 +35,56 @@ export default function CompetitionDetails() {
             )
             .catch(
         )
-        api.post(`group/smallDetails/${id}`, 0).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
+        api.post(`group/smallDetails/${id}`, 0).then(resp => {
+            setGroupSmalls(resp.data.groups); console.log(resp.data.groups);
+            setPageCount(resp.data.count)
+        })
+        api.get(`group/ownGroup/${id}`)
+            .then(resp => {
+                if (resp.data) {
+                    setOwnGroupId(resp.data)
+                }
+            })
     }, [id]
     )
 
     useEffect(() => {
         if (competition?.phase === "finished") {
-            api.post(`submission/list`, { competitionId: competition.id,
-                 page: page, sortByDate: false,
-                  sortByPlacement: true,
-                   sortByVoteCount: false
-                 })
-            .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
+            api.post(`submission/list`, {
+                competitionId: competition.id,
+                page: page - 1, sortByDate: false,
+                sortByPlacement: true,
+                sortByVoteCount: false,
+                phase: "voting"
+            })
+                .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
         }
         if (competition?.phase === "voting") {
-            api.post(`submission/list`, { competitionId: competition.id,
-                 page: page, sortByDate: false,
-                  sortByPlacement: false,
-                   sortByVoteCount: true
-                 })
-            .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
+            api.post(`submission/list`, {
+                competitionId: competition.id,
+                page: page, sortByDate: false,
+                sortByPlacement: false,
+                sortByVoteCount: true,
+                phase: "voting"
+            })
+                .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
         }
-    }, [competition, page])
+        // if (competition?.phase === "preparation") {
+        //     api.post(`group/smallDetails/${id}`, page - 1).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
+        // }
+    }, [competition, id, page])
 
 
-
-    useEffect(() => {
-        api.post(`group/smallDetails/${id}`, page - 1).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
-    }
-        , [page, id])
     const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value)
     }
     // TODO navigations
     const handleJoin = () => {
         navigate(`/group/${id}`)
+    }
+
+    const handleOwnGroup = () => {
+        navigate(`/group/details/${ownGrouId}`)
     }
 
     const handleListSubmissions = () => {
@@ -121,13 +136,18 @@ export default function CompetitionDetails() {
                                 {competition.phase === "preparation" && (
                                     <>
                                         {
-                                            competition.creatorname !== userName &&
+                                            (competition.creatorname !== userName && groupSmalls.every(g => g.ownerName != userName)) &&
                                             <>
                                                 <Grid2 size={{ xs: 12, md: 12 }} >
                                                     <Button variant="outlined" onClick={handleJoin}>Jelentkezés</Button>
                                                 </Grid2>
                                             </>
                                         }
+                                        {groupSmalls.some(g => g.ownerName === userName) && (
+                                            <Grid2 size={{ xs: 12, md: 12 }} >
+                                                <Button variant="outlined" onClick={handleOwnGroup}>Saját csapat</Button>
+                                            </Grid2>
+                                        )}
                                     </>
                                 )}
                                 {competition.phase === "submit" && (
@@ -176,7 +196,7 @@ export default function CompetitionDetails() {
                     <Grid2 size={12} justifyItems="center">
                         <Pagination count={pageCount} page={page} onChange={handlePage} />
                     </Grid2>
-                    {groupSmalls?.groups?.map((group) => (<>
+                    {groupSmalls.map((group) => (<>
                         <Grid2 size={{ xs: 6, md: 3, lg: 2 }} key={group.groupId} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                             <GroupSmallDetails group={group} />
                         </Grid2>

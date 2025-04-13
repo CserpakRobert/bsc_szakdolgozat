@@ -31,7 +31,7 @@ namespace Backend.Services
             this._competitionService = competitionService;
         }
 
-        public async Task<bool> CanJoin(int competitionId, int? userId = null)
+        public virtual async Task<bool> CanJoin(int competitionId, int? userId = null)
         {
 
             if (userId is null)
@@ -53,7 +53,7 @@ namespace Backend.Services
             return canJoin && hasJoin;
         }
 
-        public async Task<GetSmallDetailsDTO> GroupSmallDetails(int competitionId, int page)
+        public virtual async Task<GetSmallDetailsDTO> GroupSmallDetails(int competitionId, int page)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -78,7 +78,7 @@ namespace Backend.Services
             };
 
         }
-        public async Task<bool?> IsOwner(int groupId, string? userName = null)
+        public virtual async Task<bool?> IsOwner(int groupId, string? userName = null)
         {
             User? user;
             if (userName is null)
@@ -96,7 +96,7 @@ namespace Backend.Services
             return group.GroupOwnerId == user.Id;
         }
 
-        public async Task<int?> GetGroupsCompetition(int groupId)
+        public virtual async Task<int?> GetGroupsCompetition(int groupId)
         {
             var group = await _context.Groups.FindAsync(groupId);
             if (group is null) return null;
@@ -104,7 +104,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<int> Create(int competitionId, CreateGroupDTO createGroup)
+        public virtual async Task<int> Create(int competitionId, CreateGroupDTO createGroup)
         {
             if (await CanJoin(competitionId) is false)
                 throw new ExceptionWithDescription("Erre a versenyre nem tudsz jelentkezni");
@@ -140,7 +140,7 @@ namespace Backend.Services
             return result.Entity.Id;
         }
 
-        public async Task<GetGroupDTO> GetById(int groupId)
+        public virtual async Task<GetGroupDTO> GetById(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null)
@@ -167,10 +167,11 @@ namespace Backend.Services
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
 
             if (group is null) throw new ExceptionWithDescription("A csapat nem található");
-            if (group.IsClosed 
-                && group.OwnerName != user.UserName 
+            if (group.IsClosed
+                && (group.OwnerName != user.UserName
                 && !group.ParticipateNames.Any(p => p == user.UserName)
                 && !await _context.SubmissionInvites.AnyAsync(si => si.RecieverUserId == user.Id))
+                )
             {
                 throw new ExceptionWithDescription("A csapat zárva van, csak a tagjai láthatják");
             }
@@ -178,7 +179,7 @@ namespace Backend.Services
         }
 
 
-        public async Task<bool> Invite(int groupId, string userName)
+        public virtual async Task<bool> Invite(int groupId, string userName)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -216,7 +217,7 @@ namespace Backend.Services
         }
 
 
-        public async Task<IEnumerable<string>> getInvites(int groupId)
+        public virtual async Task<IEnumerable<string>> getInvites(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -235,7 +236,7 @@ namespace Backend.Services
             return invites;
         }
 
-        internal async Task<IEnumerable<string>> getRequests(int groupId)
+        public virtual async Task<IEnumerable<string>> getRequests(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -254,7 +255,7 @@ namespace Backend.Services
         }
 
 
-        public async Task<bool> DeleteInvite(int groupId, string userName)
+        public virtual async Task<bool> DeleteInvite(int groupId, string userName)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -269,7 +270,7 @@ namespace Backend.Services
         }
 
 
-        public async Task<bool> RequestJoin(int groupId, string description)
+        public virtual async Task<bool> RequestJoin(int groupId, string description)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -303,7 +304,7 @@ namespace Backend.Services
             return true;
         }
 
-        public async Task<bool> DeleteRequest(int groupId, string userName)
+        public virtual async Task<bool> DeleteRequest(int groupId, string userName)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -323,7 +324,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<bool> HasJoin(int groupId)
+        public virtual async Task<bool> HasJoin(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -333,7 +334,7 @@ namespace Backend.Services
 
         }
 
-        internal async Task<bool> AcceptRequest(int groupId, string userName)
+        public virtual async Task<bool> AcceptRequest(int groupId, string userName)
         {
 
             var user = await _userService.GetLoggedInUser();
@@ -368,7 +369,7 @@ namespace Backend.Services
             return true;
         }
 
-        public async Task<bool> IsInvited(int groupId)
+        public virtual async Task<bool> IsInvited(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -376,7 +377,7 @@ namespace Backend.Services
             return await _context.SubmissionInvites.AnyAsync(ji => ji.GroupId == groupId && ji.RecieverUserId == user.Id);
         }
 
-        public async Task<bool> AcceptInvite(int groupId)
+        public virtual async Task<bool> AcceptInvite(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -396,7 +397,7 @@ namespace Backend.Services
             return true;
 
         }
-        public async Task<bool> DeclineInvite(int groupId)
+        public virtual async Task<bool> DeclineInvite(int groupId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -412,7 +413,7 @@ namespace Backend.Services
             return true;
         }
 
-        internal async Task<string> GetDescription(int groupId, string userName)
+        public virtual async Task<string> GetDescription(int groupId, string userName)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -430,33 +431,46 @@ namespace Backend.Services
             return result;
         }
 
-        //public async Task<bool?> Delete(int groupId)
-        //{
-        //    var user = await _userService.GetLoggedInUser();
-        //    if (user is null) return null;
+        public virtual async Task<object?> UserOpenGroups(string username, int page)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
 
-        //    var group = await _context.Groups
-        //        .Include(g => g.Participants)
-        //        .Include(g => g.JoinRequests)
-        //        .Include(g => g.Invites)
-        //        .FirstOrDefaultAsync(g => g.Id == groupId);
+            var queriedUser = await _userService.GetUserByName(username);
+            if (queriedUser is null) throw new ExceptionWithDescription("A felhasználó nem található");
 
-        //    if (group is null) return false;
-        //    _context.Groups.Remove(group);
-        //    await _context.SaveChangesAsync();
-        //    return true;
+            var groups = await _context.Groups
+                .Include(g => g.Participants)
+                .Include(g => g.GroupOwner)
+                .Where(group => group.Participants.Any(p => p.Id == queriedUser.Id) && !group.IsClosed)
+                .Skip(page * 50)
+                .Take(50)
+                .Select(g => new GroupSmallDetailsDTO(g))
+                .ToListAsync();
 
-        //}
+            if (groups is null) throw new ExceptionWithDescription("Nincsenek csapatok a versenyhez");
 
-        //public async Task DeletePendingGroups(int userId, int groupId)
-        //{
-        //    var toDeleteInvites = _context.SubmissionInvites.Where(si => si.GroupId == groupId && si.RecieverUserId == userId);
-        //    var toDeleteRequests = _context.JoinRequests.Where(jr => jr.GroupId == groupId && jr.RequestOwnerId == userId);
-        //    _context.SubmissionInvites.RemoveRange(toDeleteInvites);
-        //    _context.JoinRequests.RemoveRange(toDeleteRequests);
-        //    await _context.SaveChangesAsync();
-        //}
+            var count = groups.Count;
 
+            return new GetSmallDetailsDTO()
+            {
+                Groups = groups,
+                Count = ((count - 1) / 50) + 1
+            };
+        }
 
+        internal async Task<object?> GetOwnGroup(int competitionId)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var groupId = await _context.Groups
+                .Include(g => g.Participants)
+                .Where(g => g.CompetitionId == competitionId && g.Participants.Any(p => p.Id == user.Id))
+                .Select(g => g.Id)
+                .FirstOrDefaultAsync();
+
+            return groupId;
+        }
     }
 }

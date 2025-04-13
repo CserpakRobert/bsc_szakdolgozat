@@ -27,6 +27,7 @@ BEGIN
     SET AUTOCOMMIT = 0;
     START TRANSACTION;
         
+    OPEN cur;
     read_loop: LOOP
         FETCH cur INTO submissionId,voteCount;
 
@@ -277,8 +278,9 @@ BEGIN
 
 END;
 
-CREATE EVENT UpdateCompetition
-On SCHEDULE EVERY 45 MINUTE
+CREATE OR REPLACE EVENT UpdateCompetition
+ON SCHEDULE EVERY '1' DAY
+STARTS (TIMESTAMP(CURRENT_DATE) + INTERVAL 1 DAY + INTERVAL 1 HOUR)
 DO
 BEGIN
     call PreparationEnd();
@@ -288,20 +290,21 @@ BEGIN
     call VotingEnd();
 END;
 
+show events;
 
 
--- drop event UpdateCompetition;
+drop event UpdateCompetition;
 
 -- select * from competition;
--- update competition 
---     set SubmissionStartDate = "0001-01-01"
---     where Id = 23;
--- update competition 
---     set VotingStartDate = "0001-01-01"
---     where Id = 23;
--- update competition 
---     set FinishDate = "0001-01-01"
---     where Id = 23;
--- call PreparationEnd();
--- call SubmissionEnd();
--- call VotingEnd();
+update competition 
+    set SubmissionStartDate = "0001-01-01"
+    where Id = 39;
+update competition 
+    set VotingStartDate = "0001-01-01"
+    where Id = 39;
+update competition 
+    set FinishDate = "0001-01-01"
+    where Id = 39;
+call PreparationEnd();
+call SubmissionEnd();
+call VotingEnd();

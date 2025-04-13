@@ -5,6 +5,7 @@ import CompetitionType from "./CompetitionType";
 import CompetitionPhase from "./CompetitionPhase";
 import CompetitionDate from "./CompetitionDate";
 import { FormEvent } from "react";
+import { Height } from "@mui/icons-material";
 
 
 export default function CompetitionDetailsCard({ competition }: { competition: CompetitionSmallInterface }) {
@@ -14,7 +15,7 @@ export default function CompetitionDetailsCard({ competition }: { competition: C
         navigate(`/competition/details/${competition.id}`)
     }
     return (<>
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{minHeight:250, width:"100%"}}>
             <Grid2 container padding={1} spacing={1} direction="row" justifyContent="space-between">
                 <Grid2 container size={12} gap={0}>
                     <Grid2 size={5.5} >

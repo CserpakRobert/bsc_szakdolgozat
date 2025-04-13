@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField } from "@mui/material";
+import { Box, Button, Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { api } from "../globalHelpers/apiAxios";
 import { useNavigate } from "react-router-dom";
@@ -19,37 +19,51 @@ export default function Register() {
 
     return (
 
-        <Paper variant="userPaper">
-            <h1>Register</h1>
-            <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, width: 300 }} onSubmit={handlesubmit}>
-                <TextField
-                    className="outlined-input"
-                    label="Email"
-                    type="email"
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                    className="outlined-input"
-                    label="UserName"
-                    type="text"
-                    autoComplete="username"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                />
-                <TextField
-                    id="outlined-password-input"
-                    label="Password"
-                    type="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <Button sx={{ width: "50%", display: "flex", flexDirection: "column", }} variant="outlined" type="submit">Register</Button>
-            </Box>
+        <Grid2 container justifyContent={"center"} >
+            <Paper variant="userPaper">
 
+                <h1>Regisztráció</h1>
 
-        </Paper >
+                <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 300 }} onSubmit={handlesubmit}>
+                    <Grid2 size={12}>
+
+                        <TextField
+                            className="outlined-input"
+                            label="Email"
+                            type="email"
+                            autoComplete="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </Grid2>
+                    <Grid2 size={12}>
+                        <TextField
+                            className="outlined-input"
+                            label="UserName"
+                            type="text"
+                            autoComplete="username"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                        />
+                    </Grid2>
+                    <Grid2 size={12}>
+                        <TextField
+                            id="outlined-password-input"
+                            label="Password"
+                            type="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </Grid2>
+                    <Grid2 size={12}>
+                        <Button variant="outlined" type="submit">Regisztráció</Button>
+                    </Grid2>
+
+                </Box>
+            </Paper >
+
+        </Grid2>
+
     )
 }

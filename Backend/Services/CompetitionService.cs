@@ -12,19 +12,17 @@ namespace Backend.Services
     public class CompetitionService
     {
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserService _userService;
         private readonly MariaDBContext _context;
 
-        public CompetitionService(IHttpContextAccessor httpContextAccessor, UserService userService, MariaDBContext context)
+        public CompetitionService( UserService userService, MariaDBContext context)
         {
-            _httpContextAccessor = httpContextAccessor;
             _userService = userService;
             _context = context;
         }
 
 
-        public async Task<int> CreateCompetition(CreateCompetitionDTO model)
+        public virtual async Task<int> CreateCompetition(CreateCompetitionDTO model)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null)
@@ -46,7 +44,8 @@ namespace Backend.Services
             if (model.FinishDate < model.VotingStartDate)
                 throw new ExceptionWithDescription("Hibás dátum");
 
-            var result = await _context.Competitions.AddAsync(new Competition() {
+            var result = await _context.Competitions.AddAsync(new Competition()
+            {
                 SubmissionStartDate = model.SubmissionStartDate,
                 VotingStartDate = model.VotingStartDate,
                 FinishDate = model.FinishDate,
@@ -69,76 +68,81 @@ namespace Backend.Services
 
             return result.Entity.Id;
         }
-        public async Task<bool> VotesEnabled(int id)
+        public virtual async Task<bool> VotesEnabled(int id)
         {
             var competition = await _context.Competitions.FindAsync(id);
             if (competition is null) return false;
             return competition.IsInVotingPhase;
         }
-        public async Task<bool> SubmissionEnabled(int id)
+        public virtual async Task<bool> SubmissionEnabled(int id)
         {
             var competition = await _context.Competitions.FindAsync(id);
             if (competition is null) return false;
             return competition.IsInSubmissionPhase;
         }
 
-        public async Task<bool?> IsInPreparationPhase(int id)
+        public virtual async Task<bool?> IsInPreparationPhase(int id)
         {
             var result = await _context.Competitions.FindAsync(id);
             if (result is null) return false;
             return result.IsInPreparationPhase;
         }
 
-        public async Task<bool> IsModerator(int competitionId, int userId)
+        public virtual async Task<bool> IsModerator(int competitionId, int userId)
         {
             return await _context.Moderators.AnyAsync(m => m.UserId == userId && m.CompetitionId == competitionId);
         }
 
-        internal async Task<CompetitionList?> GetDetailsList(GetCompetitionListDTO listDTO)
+        public virtual async Task<CompetitionList?> GetDetailsList(GetCompetitionListDTO listDTO)
         {
-            Debug.WriteLine(listDTO.Phase);
-            Func<string, Func<Competition, bool>> correctType = (type) => (comp) =>
+
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var query = _context.Competitions
+                .Include(comp => comp.Creator)
+                .Include(comp => comp.Moderators)
+                .AsQueryable();
+
+            if (listDTO.UserName is not null)
             {
-                return type switch
-                {
-                    "movie" => comp.IsMovieCompetition,
-                    "music" => comp.IsMusicCompetition,
-                    "shortstory" => comp.IsShortStoryCompetition,
-                    _ => true,
-                };
-            };
-            Func<string, Func<Competition, bool>> correctPhase = (phase) => (comp) =>
+                query = query.Where(comp => comp.Creator.UserName == listDTO.UserName);
+            }
+
+            if (listDTO.Type is ("movie" or "music" or "shortstory"))
             {
-                return phase switch
-                {
-                    "preparation" => comp.IsInPreparationPhase,
-                    "vote" => comp.IsInVotingPhase,
-                    "finished" => !(comp.IsInVotingPhase || comp.IsInPreparationPhase || comp.IsInSubmissionPhase),
-                    _ => !comp.IsInSubmissionPhase,
-                };
-            };
-            var result = _context.Competitions
-                .Where(correctPhase(listDTO.Phase))
-                .Where(correctType(listDTO.Type))
-                .Select(c => new CompetitionListDetails(c))
+                query = query.Where(comp => comp.IsMovieCompetition == (listDTO.Type == "movie") &&
+                                            comp.IsMusicCompetition == (listDTO.Type == "music") &&
+                                            comp.IsShortStoryCompetition == (listDTO.Type == "shortstory"));
+            }
+            if (listDTO.Phase is ("preparation" or "vote" or "finished"))
+            {
+                query = query.Where(comp => comp.IsInPreparationPhase == (listDTO.Phase == "preparation") &&
+                                            comp.IsInVotingPhase == (listDTO.Phase == "vote") &&
+                                            !(comp.IsInVotingPhase || comp.IsInPreparationPhase || comp.IsInSubmissionPhase) == (listDTO.Phase == "finished"));
+            }
+
+
+            var result = await query
                 .Skip(listDTO.Page * 50)
                 .Take(50)
+                .OrderByDescending(c => c.Id)
+                .Select(c => new CompetitionListDetails(c))
+                .ToListAsync()
                 ;
-            var count = _context.Competitions
-                .Where(correctPhase(listDTO.Phase))
-                .Where(correctType(listDTO.Type))
-                .Count();
-            
+            var count = await query.CountAsync();
+
             return new CompetitionList() { pageCount = ((count - 1) / 50) + 1, Competitions = result };
         }
 
-        public async Task<GetOneCompetitionDTO> GetDetails(int id)
+        public virtual async Task<GetOneCompetitionDTO> GetDetails(int id)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null)
             {
                 throw new ExceptionWithDescription("Bejelentkezés nélkül nem elérhető");
             }
+
             var competition = await _context.Competitions
                 .Include(comp => comp.Creator)
                 .Include(comp => comp.Moderators)
@@ -148,11 +152,11 @@ namespace Backend.Services
 
             if (competition is null) throw new ExceptionWithDescription("Ez a verseny nem található");
 
-            var ownSubmission = _context.CollaboratedSubmissions
+            var ownSubmission = await _context.CollaboratedSubmissions
                 .Include(sub => sub.Submission)
                 .Where(sub => sub.UserId == user.Id && sub.Submission.CompetitionId == id)
                 .Select(sub => sub.Submission.Id)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
             competition.OwnSubmission = ownSubmission;
 
             return competition;

@@ -18,19 +18,10 @@ namespace Backend.Controllers
     [ApiController]
     public class CompetitionController : ControllerBase
     {
-        private readonly MariaDBContext _context;
-        private readonly UserService _userService;
         private readonly CompetitionService _competitionService;
 
-        public CompetitionController(UserManager<User> userManager,
-            MariaDBContext mariaDbContext,
-                CompetitionService competitionService,
-                         IConfiguration configuration,
-                         IHttpContextAccessor httpContextAccessor,
-                         UserService userService)
+        public CompetitionController(CompetitionService competitionService)
         {
-            this._context = mariaDbContext;
-            this._userService = userService;
             this._competitionService = competitionService;
         }
 

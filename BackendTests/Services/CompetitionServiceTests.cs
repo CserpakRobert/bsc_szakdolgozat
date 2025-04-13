@@ -12,30 +12,61 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Backend.Models.JoinTables;
 using Microsoft.EntityFrameworkCore.InMemory;
+using Backend.Utils;
 
 namespace Backend.Services.Tests
 {
     [TestClass()]
     public class CompetitionServiceTests
     {
+
         [TestMethod()]
-        public void GetDetailsTest()
+        public async Task Create_Test()
         {
-            var mockUser = new User { Id = 1, UserName = "TestUser" };
+            //TODO
+            Assert.Fail("Not implemented");
+        }
+        [TestMethod()]
+        public async Task GetDetailsList_Test()
+        {
+            //TODO
+            Assert.Fail("Not implemented");
+        }
 
-            var mockCompetition = new Competition
+        [TestMethod()]
+        public async Task GetDetails_Test()
+        {
+            var mockOptions = new DbContextOptionsBuilder<MariaDBContext>()
+                    .UseInMemoryDatabase(databaseName: "TestGetDetails")
+                    .Options;
+            var mockSubmission = new Submission() { Id = 1, CompetitionId = 1, Title = "test", Description = "test" };
+            var mockCollabs = new CollaboratedSubmissions() { SubmissionId = 1, UserId = 1, Submission = mockSubmission };
+            var mockUser = new User() { Id = 1, UserName = "testUser", Email = "test@test.com" };
+
+            var mockUserService = new Mock<UserService>(null!, null!, null!, null!, null!);
+            mockUserService.Setup(x => x.GetLoggedInUser()).ReturnsAsync(mockUser);
+
+            using (var context = new MariaDBContext(mockOptions))
             {
-                Id = 1,
-                Title = "Test Competition",
-                Description = "Test Description",
-                Creator = mockUser,
-                IsInPreparationPhase = true,
-                IsInSubmissionPhase = false,
-                IsInVotingPhase = false,
-            };
+                context.Competitions.Add(new Competition() { Id = 1, CreatorId = 1, Title = "test", IsInPreparationPhase = true });
+                context.Moderators.Add(new Moderators() { UserId = 1, CompetitionId = 1 });
+                context.Submissions.Add(mockSubmission);
+                context.CollaboratedSubmissions.Add(mockCollabs);
+                context.Users.Add(mockUser);
+                context.SaveChanges();
+            }
 
+            using (var context = new MariaDBContext(mockOptions))
+            {
+                CompetitionService mockCompetititonService = new CompetitionService( mockUserService.Object, context);
+                await Assert.ThrowsExceptionAsync<ExceptionWithDescription>(() => mockCompetititonService.GetDetails(0));
+                var result = await mockCompetititonService.GetDetails(1);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(result.Id, 1);
+                Assert.AreEqual(result.Title, "test");
+                Assert.AreEqual(result.OwnSubmission, 1);
+            }
 
-            Assert.Fail();
         }
 
 
@@ -55,14 +86,14 @@ namespace Backend.Services.Tests
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.IsInPreparationPhase(1);
                 Assert.IsTrue(result);
             }
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.IsInPreparationPhase(2);
                 Assert.IsFalse(result);
             }
@@ -84,14 +115,14 @@ namespace Backend.Services.Tests
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.SubmissionEnabled(1);
                 Assert.IsTrue(result);
             }
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.SubmissionEnabled(2);
                 Assert.IsFalse(result);
             }
@@ -113,14 +144,14 @@ namespace Backend.Services.Tests
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.VotesEnabled(1);
                 Assert.IsTrue(result);
             }
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.VotesEnabled(2);
                 Assert.IsFalse(result);
             }
@@ -146,13 +177,13 @@ namespace Backend.Services.Tests
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.IsModerator(1, 1);
                 Assert.IsTrue(result);
             }
             using (var context = new MariaDBContext(mockOptions))
             {
-                var mockCompetititonService = new CompetitionService(null!, null!, context);
+                var mockCompetititonService = new CompetitionService(null!, context);
                 var result = await mockCompetititonService.IsModerator(2, 1);
                 Assert.IsFalse(result);
             }

@@ -17,21 +17,18 @@ namespace Backend.Controllers
         [ApiController]
         public class SubmissionController : ControllerBase
         {
-            private readonly MariaDBContext _context;
             private readonly SubmissionService _submissionService;
 
             public SubmissionController(
-                             MariaDBContext mariaDbContext,
                              SubmissionService submissionService)
             {
-                this._context = mariaDbContext;
                 _submissionService = submissionService;
             }
 
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpPost("list")]
-            public async Task<IActionResult> GetSubmissionList([FromBody] SubmissionListGetModel listGetModel)
+            public virtual async Task<IActionResult> GetSubmissionList([FromBody] SubmissionListGetModel listGetModel)
             {
                 try
                 {
@@ -50,7 +47,7 @@ namespace Backend.Controllers
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpGet("{id}")]
-            public async Task<IActionResult> GetSubmission(int id)
+            public virtual async Task<IActionResult> GetSubmission(int id)
             {
                 try
                 {
@@ -69,7 +66,7 @@ namespace Backend.Controllers
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpGet("type/{id}")]
-            public async Task<IActionResult> GetSubmissionType(int id)
+            public virtual async Task<IActionResult> GetSubmissionType(int id)
             {
                 try
                 {
@@ -88,7 +85,7 @@ namespace Backend.Controllers
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpPost("create/movie")]
-            public async Task<IActionResult> CreateSubmission([FromBody] ModifyMovieDetails model)
+            public virtual async Task<IActionResult> CreateSubmission([FromBody] ModifyMovieDetails model)
             {
                 try
                 {
@@ -106,7 +103,7 @@ namespace Backend.Controllers
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpPost("create/music")]
-            public async Task<IActionResult> CreateMusicSubmission([FromBody] ModifyMusicDetails model)
+            public virtual async Task<IActionResult> CreateMusicSubmission([FromBody] ModifyMusicDetails model)
             {
                 try
                 {
@@ -124,7 +121,7 @@ namespace Backend.Controllers
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpPost("create/story")]
-            public async Task<IActionResult> CreateSubmission([FromBody] ModifyShortStoryDetails model)
+            public virtual async Task<IActionResult> CreateSubmission([FromBody] ModifyShortStoryDetails model)
             {
                 try
                 {
@@ -140,22 +137,9 @@ namespace Backend.Controllers
                 }
             }
 
-
-            public class GetSubmissionmodel
-            {
-                public bool CanVote { get; set; }
-                public bool HasVote { get; set; }
-                public string Title { get; set; }
-                public string Description { get; set; }
-                public int Votes { get; set; }
-                public CreateMusicDetailsModel? musicDetails { get; set; }
-                public CreateMovieDetailsModel? MovieDetails { get; set; }
-            }
-
-
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpPost("vote/{id}")]
-            public async Task<IActionResult> VoteForSubmission(int id)
+            public virtual async Task<IActionResult> VoteForSubmission(int id)
             {
 
                 try
@@ -177,7 +161,7 @@ namespace Backend.Controllers
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpPost("unvote/{id}")]
-            public async Task<IActionResult> UnVoteForSubmission(int id)
+            public virtual async Task<IActionResult> UnVoteForSubmission(int id)
             {
 
                 try
