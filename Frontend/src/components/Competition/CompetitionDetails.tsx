@@ -10,6 +10,8 @@ import CompetitionType from "./CompetitionType"
 import { useAuth } from "../../globalHelpers/useAuth"
 import { GroupSmallListInterface } from "../Group/GroupInterface"
 import { GroupSmallDetails } from "../Group/GroupSmallDetails"
+import { SubmissionListDetailsInterface, SubmissionListGetInterface } from "../Submission/SubmissionInterface"
+import SubmissionSmallDetails from "../Submission/SubmissionSmallDetails"
 
 export default function CompetitionDetails() {
     const { id } = useParams()
@@ -21,16 +23,42 @@ export default function CompetitionDetails() {
     const [page, setPage] = useState(0)
     const [pageCount, setPageCount] = useState(1)
 
+    const [submissions, setSubmissions] = useState<SubmissionListDetailsInterface[]>([])
+    const [submissionGet, setSubmissionGet] = useState<SubmissionListGetInterface>({ sortByDate: false, sortByPlacement: false, sortByVoteCount: false })
+
+
     useEffect(() => {
         api.get(`competition/${id}`)
-            .then(
-                resp => setCompetition(resp.data)
+            .then(resp => {
+                setCompetition(resp.data);
+            }
             )
             .catch(
         )
         api.post(`group/smallDetails/${id}`, 0).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
     }, [id]
     )
+
+    useEffect(() => {
+        if (competition?.phase === "finished") {
+            api.post(`submission/list`, { competitionId: competition.id,
+                 page: page, sortByDate: false,
+                  sortByPlacement: true,
+                   sortByVoteCount: false
+                 })
+            .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
+        }
+        if (competition?.phase === "voting") {
+            api.post(`submission/list`, { competitionId: competition.id,
+                 page: page, sortByDate: false,
+                  sortByPlacement: false,
+                   sortByVoteCount: true
+                 })
+            .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
+        }
+    }, [competition, page])
+
+
 
     useEffect(() => {
         api.post(`group/smallDetails/${id}`, page - 1).then(resp => { setGroupSmalls(resp.data); setPageCount(resp.data.count) })
@@ -105,13 +133,13 @@ export default function CompetitionDetails() {
                                 {competition.phase === "submit" && (
                                     <>
                                         {competition.ownSubmission === 0 && (
-                                        <Grid2 size={{ xs: 12, md: 12 }} >
-                                            <h3>A beadási idő leteltével megnyílik a szavazási időszak</h3>
-                                        </Grid2>)}
+                                            <Grid2 size={{ xs: 12, md: 12 }} >
+                                                <h3>A beadási idő leteltével megnyílik a szavazási időszak</h3>
+                                            </Grid2>)}
                                         {competition.ownSubmission !== 0 && (
-                                        <Grid2 size={{ xs: 12, md: 12 }} >
-                                            <Button variant="outlined" onClick={handleOwnSubmission}>Saját pályázat</Button>
-                                        </Grid2>)}
+                                            <Grid2 size={{ xs: 12, md: 12 }} >
+                                                <Button variant="outlined" onClick={handleOwnSubmission}>Saját pályázat</Button>
+                                            </Grid2>)}
                                     </>
                                 )}
                                 {competition.phase === "voting" && (
@@ -121,13 +149,13 @@ export default function CompetitionDetails() {
                                         </Grid2>
                                     </>
                                 )}
-                                {competition.phase === "finished" && (
+                                {/* {competition.phase === "finished" && (
                                     <>
                                         <Grid2 size={{ xs: 12, md: 12 }} >
                                             <Button variant="outlined" onClick={handleListSubmissions}>Eredmények megtekintése</Button>
                                         </Grid2>
                                     </>
-                                )}
+                                )} */}
                             </Grid2>
                             <Grid2 size={{ xs: 0, md: 3 }} />
 
@@ -156,6 +184,19 @@ export default function CompetitionDetails() {
 
                 </Grid2>
             </>)}
+            {//TODO: SUBMissions and submissions in voting phase
+                (competition?.phase === "finished" || competition?.phase === "voting") && (<>
+                    <Grid2 container size={{ sm: 12, md: 8 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
+                        <Grid2 size={12} justifyItems="center">
+                            <Pagination count={pageCount} page={page} onChange={handlePage} />
+                        </Grid2>
+                        {submissions?.map((submission) => (<>
+                            <Grid2 size={{ xs: 6, md: 4, lg: 3 }} key={submission.id} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                <SubmissionSmallDetails submission={submission} />
+                            </Grid2>
+                        </>))}
+                    </Grid2>
+                </>)}
         </>
     )
 }

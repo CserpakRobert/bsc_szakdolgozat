@@ -6,7 +6,6 @@ export const setErrorHandler = (handler:(errorMsg: string) => void) => {
   errorHandler = handler;
 };
 
-
 export const api = axios.create({
 
 	baseURL: "http://localhost:5103/api",

@@ -1,37 +1,34 @@
 use szakdol;
 SET GLOBAL event_scheduler = ON;
 
-CREATE OR REPLACE PROCEDURE VotingEnd()
+
+CREATE OR REPLACE PROCEDURE RankSubmission(Id INT)
 BEGIN
 
     DECLARE done INT DEFAULT FALSE;
-    DECLARE submissionId, voteCount, lastVoteCount, placement, lastVotes INT;
 
+    DECLARE submissionId, voteCount, lastVoteCount, placement, lastVotes INT;
     DECLARE cur CURSOR FOR 
-    SELECT s.Id submissionId, s.voteCount
-    FROM submissions s
-    JOIN competition c ON c.Id = s.competitionId
-    WHERE c.IsInVotingPhase = 1 AND c.FinishDate < CURDATE()
-    ORDER BY s.voteCount DESC;
-    
+                SELECT s.Id submissionId, s.voteCount
+                FROM submissions s
+                WHERE s.competitionId = Id
+                ORDER BY s.voteCount DESC;
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-            ROLLBACK;
-            RESIGNAL;
-    END;
+        BEGIN
+                ROLLBACK;
+                RESIGNAL;
+        END;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     SET placement = 1;
     SET lastVoteCount = -1;
-
     SET AUTOCOMMIT = 0;
     START TRANSACTION;
-
-    OPEN cur;
+        
     read_loop: LOOP
-        FETCH cur INTO submissionId, voteCount;
+        FETCH cur INTO submissionId,voteCount;
 
         IF done THEN
             LEAVE read_loop;
@@ -50,7 +47,47 @@ BEGIN
             WHERE s.Id = submissionId;
         SET lastVoteCount = voteCount;
 
+    END LOOP read_loop;
+
+    COMMIT;
+    SET AUTOCOMMIT = 1;
+END;
+
+CREATE OR REPLACE PROCEDURE VotingEnd()
+BEGIN
+
+    DECLARE done INT DEFAULT FALSE;
+
+    DECLARE Id INT;
+
+    DECLARE cur CURSOR FOR 
+        SELECT c.Id Id 
+        FROM competition c
+        WHERE c.IsInVotingPhase = 1 AND c.FinishDate < CURDATE();
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+                ROLLBACK;
+                RESIGNAL;
+        END;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    SET AUTOCOMMIT = 0;
+    START TRANSACTION;
+
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO Id;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        call RankSubmission(Id);
+       
     END LOOP;
+
     CLOSE cur;
 
     UPDATE Competition
@@ -60,6 +97,7 @@ BEGIN
     COMMIT;
     SET AUTOCOMMIT = 1;
 END;
+
 
 CREATE OR REPLACE PROCEDURE SubmissionEnd()
 BEGIN
@@ -92,7 +130,7 @@ BEGIN
         END IF;
 
         DELETE FROM submissions s
-        where s.competitionId = competitionId and s.IsSubmitted = FALSE;
+        where s.competitionId = competitionId and s.IsSubmitted = 0;
 
         UPDATE Competition c
         SET c.IsInSubmissionPhase = 0, c.IsInVotingPhase = 1
@@ -103,6 +141,7 @@ BEGIN
     COMMIT;
     set AUTOCOMMIT = 1;
 END;
+
 
 CREATE or replace PROCEDURE PreparationEnd()
 BEGIN
@@ -249,10 +288,20 @@ BEGIN
     call VotingEnd();
 END;
 
-drop event UpdateCompetition;
 
-select * from competition;
-update competition 
-    set SubmissionStartDate = "0001-01-01"
-    where Id = 37;
-call PreparationEnd();
+
+-- drop event UpdateCompetition;
+
+-- select * from competition;
+-- update competition 
+--     set SubmissionStartDate = "0001-01-01"
+--     where Id = 23;
+-- update competition 
+--     set VotingStartDate = "0001-01-01"
+--     where Id = 23;
+-- update competition 
+--     set FinishDate = "0001-01-01"
+--     where Id = 23;
+-- call PreparationEnd();
+-- call SubmissionEnd();
+-- call VotingEnd();

@@ -29,6 +29,24 @@ namespace Backend.Controllers
             }
 
 
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            [HttpPost("list")]
+            public async Task<IActionResult> GetSubmissionList([FromBody] SubmissionListGetModel listGetModel)
+            {
+                try
+                {
+                    return Ok(await _submissionService.GetSubmissionList(listGetModel));
+                }
+                catch (ExceptionWithDescription e)
+                {
+
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
+            }
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpGet("{id}")]
@@ -66,17 +84,6 @@ namespace Backend.Controllers
                 {
                     return Unauthorized();
                 }
-            }
-
-
-            public class CreateMusicDetailsModel
-            {
-                public string Link { get; set; }
-            }
-            public class CreateMovieDetailsModel
-            {
-                public string TrailerLink { get; set; }
-                public string MovieLink { get; set; }
             }
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

@@ -11,22 +11,22 @@ namespace Backend.Persistence
         {
 
         }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Competition> Competitions { get; set; }
-        public virtual DbSet<Submission> Submissions { get; set; }
-        public virtual DbSet<MovieDetails> MoviesDetails { get; set; }
-        public virtual DbSet<MusicDetails> MusicDetails { get; set; }
-        public virtual DbSet<Group> Groups { get; set; }
-        public virtual DbSet<OpenGroupJoinRequests> JoinRequests { get; set; }
+        public  DbSet<User> Users { get; set; }
+        public  DbSet<Competition> Competitions { get; set; }
+        public  DbSet<Submission> Submissions { get; set; }
+        public  DbSet<MovieDetails> MoviesDetails { get; set; }
+        public DbSet<MusicDetails> MusicDetails { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<OpenGroupJoinRequests> JoinRequests { get; set; }
 
-        public virtual DbSet<SubmissionInvites> SubmissionInvites { get; set; }
+        public   DbSet<SubmissionInvites> SubmissionInvites { get; set; }
 
         // Join tables
 
-        public virtual DbSet<CollaboratedSubmissions> CollaboratedSubmissions { get; set; }
-        public virtual DbSet<Moderators> Moderators { get; set; }
-        public virtual DbSet<SubmissionVotes> SubmissionVotes {get;set;}
-        public virtual DbSet<UserParticipateGroups> UserParticipateGroups { get; set; }
+        public DbSet<CollaboratedSubmissions> CollaboratedSubmissions { get; set; }
+        public DbSet<Moderators> Moderators { get; set; }
+        public DbSet<SubmissionVotes> SubmissionVotes {get;set;}
+        public DbSet<UserParticipateGroups> UserParticipateGroups { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -45,10 +45,10 @@ export default function CreateSubmission() {
             ).then(resp => navigate(`/submission/${resp.data}`))
         }
         if (type == "music") {
-            api.post("submission/create/music", { id: id, title, description, link: extractYouTubeVideoId(musicLink) }).then(resp => navigate(`/submission/${resp.data.id}`))
+            api.post("submission/create/music", { id: id, title, description, link: extractYouTubeVideoId(musicLink) }).then(resp => navigate(`/submission/${resp.data}`))
         }
         if (type == "shortstory") {
-            api.post("submission/create/story", { id: id, title, description, story: shortStory }).then(resp => navigate(`/submission/${resp.data.id}`))
+            api.post("submission/create/story", { id: id, title, description, story: shortStory }).then(resp => navigate(`/submission/${resp.data}`))
         }
 
     }

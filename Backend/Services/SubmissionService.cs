@@ -22,6 +22,65 @@ namespace Backend.Services
             _context = context;
         }
 
+        public async Task<SubmissionListModel> GetSubmissionList(SubmissionListGetModel listGetModel)
+        {
+
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var query = _context.Submissions
+                .Include(sub => sub.Competition)
+                .Include(sub => sub.Creators)
+                .Include(sub => sub.Owner)
+                .AsQueryable();
+
+            query = query.Where(sub => sub.CompetitionId == listGetModel.CompetitionId);
+
+            if (listGetModel.UserName != null)
+                query = query.Where(sub => sub.Creators.Any(c => c.UserName == listGetModel.UserName));
+
+            switch (listGetModel.Phase)
+            {
+                case "finished":
+                    query = query.Where(sub => 
+                    !sub.Competition.IsInPreparationPhase
+                    && !sub.Competition.IsInSubmissionPhase
+                    && !sub.Competition.IsInVotingPhase
+                    );
+                    break;
+                case "voting":
+                    query = query.Where(sub => sub.Competition.IsInVotingPhase);
+                    break;
+            }
+
+            if (listGetModel.SortByPlacement)
+                query = query.OrderBy(sub => sub.Placement);
+            else if (listGetModel.SortByVoteCount)
+                query = query.OrderByDescending(sub => sub.VoteCount);
+            else if (listGetModel.SortByDate)
+                query = query.OrderByDescending(sub => sub.Id);
+
+            var submissions = query.Select(sub => new SubmissionListDetailsModel
+            {
+                Id = sub.Id,
+                Title = sub.Title,
+                Type = sub.Competition.Type,
+                Placement = sub.Placement,
+                VoteCount = sub.VoteCount,
+                Phase = sub.Competition.Phase,
+
+            }).AsQueryable();
+
+            var count = await query.CountAsync();
+
+            var getSubmissions = await submissions.Skip(listGetModel.Page * 50).Take(50).ToListAsync();
+
+            return new SubmissionListModel
+            {
+                pageCount = ((count - 1) / 50) + 1,
+                Submissions = getSubmissions
+            };
+        }
         public async Task<GetSusbmission> GetSubmission(int id)
         {
             var user = await _userService.GetLoggedInUser();
@@ -55,7 +114,7 @@ namespace Backend.Services
                 Title = submission.Title,
                 Description = submission.Description,
                 IsSubmitted = submission.IsSubmitted,
-                VoteCount = submission.VoteCount,
+                Votes = submission.VoteCount,
                 CanVote = canVote,
                 HasVote = hasVote,
                 MusicDetails = submission.MusicDetails != null ? new CreateMusicDetailsModel
@@ -72,7 +131,8 @@ namespace Backend.Services
                     Story = submission.ShortStoryDetails.Story
                 } : null,
                 CreatorName = submission.Owner.UserName,
-                ParticipateNames = submission.Creators.Select(c => c.UserName).ToList()
+                ParticipateNames = submission.Creators.Select(c => c.UserName).ToList(),
+                Placement = submission.Placement
             };
 
         }
@@ -125,7 +185,7 @@ namespace Backend.Services
             if (!eligibleForVoting) throw new ExceptionWithDescription("Nem szavazhatsz a saját pályázatodra");
 
             submission.VoteCount--;
-            await _context.SubmissionVotes.Select(sv => sv.UserId == user.Id && sv.SubmissionId == id).ExecuteDeleteAsync();
+            await _context.SubmissionVotes.Where(sv => sv.UserId == user.Id && sv.SubmissionId == id).ExecuteDeleteAsync();
             await _context.SaveChangesAsync();
 
             return true;

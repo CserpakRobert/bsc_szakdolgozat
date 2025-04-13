@@ -71,19 +71,21 @@ namespace Backend.Services
         }
         public async Task<bool> VotesEnabled(int id)
         {
-            var competition = await _context.Competitions.FirstAsync(e => e.Id == id);
+            var competition = await _context.Competitions.FindAsync(id);
+            if (competition is null) return false;
             return competition.IsInVotingPhase;
         }
         public async Task<bool> SubmissionEnabled(int id)
         {
-            var competition = await _context.Competitions.FirstAsync(e => e.Id == id);
+            var competition = await _context.Competitions.FindAsync(id);
+            if (competition is null) return false;
             return competition.IsInSubmissionPhase;
         }
 
         public async Task<bool?> IsInPreparationPhase(int id)
         {
             var result = await _context.Competitions.FindAsync(id);
-            if (result is null) return null;
+            if (result is null) return false;
             return result.IsInPreparationPhase;
         }
 

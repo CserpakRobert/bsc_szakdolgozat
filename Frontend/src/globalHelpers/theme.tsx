@@ -85,7 +85,7 @@ export const darkTheme = createTheme({
                         margin: "auto",
                         "@media (min-width:600px)": { width: "90%", height: "100%" },
                         "@media (min-width:960px)": { width: "50%", height: "100%" },
-                        minWidth: "20vw",
+                        minWidth: "30vw",
                         marginTop: "5rem",
                         color: "#fafafa",
                         padding: "2rem",
