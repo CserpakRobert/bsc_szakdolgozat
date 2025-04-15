@@ -411,6 +411,19 @@ namespace Backend.Services
             await _context.SaveChangesAsync();
             return submission.Id;
         }
+
+        internal async Task<int> GetOwnSubmission(int competitionId)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var submission = await _context.Submissions
+                .Include(sub => sub.Competition)
+                .Where(sub => sub.CompetitionId == competitionId && sub.Creators.Any(c => c.Id == user.Id))
+                .Select(sub=>sub.Id).FirstOrDefaultAsync();
+
+            return  submission;
+        }
         #endregion
     }
 }

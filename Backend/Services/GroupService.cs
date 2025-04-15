@@ -431,6 +431,22 @@ namespace Backend.Services
             return result;
         }
 
+        public virtual async Task<GetSmallDetailsDTO> GetInvitedGroups()
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+            var groups = await _context.SubmissionInvites
+                .Include(si => si.Group)
+                .Where(si => si.RecieverUserId == user.Id)
+                .Select(si => new GroupSmallDetailsDTO(si.Group)).ToListAsync();
+
+            return new GetSmallDetailsDTO()
+            {
+                Groups = groups,
+                Count = ((groups.Count - 1) / 50) + 1
+            };
+        }
+
         public virtual async Task<object?> UserOpenGroups(string username, int page)
         {
             var user = await _userService.GetLoggedInUser();
@@ -459,7 +475,7 @@ namespace Backend.Services
             };
         }
 
-        internal async Task<object?> GetOwnGroup(int competitionId)
+        internal async Task<int> GetOwnGroup(int competitionId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");

@@ -22,7 +22,7 @@ BEGIN
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-    SET placement = 1;
+    SET placement = 0;
     SET lastVoteCount = -1;
     SET AUTOCOMMIT = 0;
     START TRANSACTION;
@@ -249,9 +249,9 @@ BEGIN
     -- Insert into collaboratedSubmissions
         -- Insert participants into collaborators
         INSERT INTO CollaboratedSubmissions (UserId, SubmissionId)
-            SELECT UserId, @lastSubmissionId SubmissionId
+            SELECT UserId, @lastSubmissionId 
             FROM userparticipategroups upg
-            WHERE upg.GroupId = groupId;
+            WHERE upg.GroupId = 41;
     -- Insert into collaboratedSubmissions END
 
     -- Delete group
@@ -298,13 +298,13 @@ drop event UpdateCompetition;
 -- select * from competition;
 update competition 
     set SubmissionStartDate = "0001-01-01"
-    where Id = 39;
+    where Id = 43;
+call PreparationEnd();
 update competition 
     set VotingStartDate = "0001-01-01"
-    where Id = 39;
+    where Id = 43;
+call SubmissionEnd();
 update competition 
     set FinishDate = "0001-01-01"
-    where Id = 39;
-call PreparationEnd();
-call SubmissionEnd();
+    where Id = 43;
 call VotingEnd();

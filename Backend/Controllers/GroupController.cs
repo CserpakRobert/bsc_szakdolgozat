@@ -84,7 +84,8 @@ namespace Backend.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("ownGroup/{competitionId}")]
-        public async Task<IActionResult> GetSmallDetails(int competitionId) {
+        public async Task<IActionResult> GetSmallDetails(int competitionId)
+        {
             try
             {
                 return Ok(await _groupService.GetOwnGroup(competitionId));
@@ -340,19 +341,22 @@ namespace Backend.Controllers
                 return Unauthorized();
             }
         }
-
-
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[HttpPost("delete/{groupId}")]
-        //public async Task<IActionResult> DeleteGroup(int groupId)
+        //[HttpPost("invitedGroups/{page}")]
+        //public async Task<IActionResult> GetInvitedGroups([FromBody] int page)
         //{
-        //    var groupOwner = await _groupService.IsOwner(groupId);
-        //    if (groupOwner is null or false) return BadRequest("Csak saját csapatot törölhetsz");
-
-        //    var result = await _groupService.Delete(groupId);
-        //    if (result is null or false) return BadRequest("A törlés sikertelen");
-
-        //    return Ok();
+        //    try
+        //    {
+        //        return Ok(await _groupService.GetInvitedGroups(page));
+        //    }
+        //    catch (ExceptionWithDescription e)
+        //    {
+        //        return BadRequest(new { errorMessage = e.Message });
+        //    }
+        //    catch (UserNotAuthorized)
+        //    {
+        //        return Unauthorized();
+        //    }
         //}
 
     }

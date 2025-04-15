@@ -63,6 +63,25 @@ namespace Backend.Controllers
                     return Unauthorized();
                 }
             }
+            [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            [HttpGet("ownSubmission/{competitionId}")]
+            public virtual async Task<IActionResult> GetOwnSubmission(int competitionId)
+            {
+                try
+                {
+                    return Ok(await _submissionService.GetOwnSubmission(competitionId));
+                }
+                catch (ExceptionWithDescription e)
+                {
+
+                    return BadRequest(new { errorMessage = e.Message });
+                }
+                catch (UserNotAuthorized)
+                {
+                    return Unauthorized();
+                }
+
+            }
 
             [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             [HttpGet("type/{id}")]
