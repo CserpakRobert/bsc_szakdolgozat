@@ -38,7 +38,7 @@ export default function CompetitionDetailsCard({ competition }: { competition: C
                     <Grid2 size={12} height={20} />
                 </>)}
                 <Grid2 size={12}>
-                    <Button variant="outlined" onClick={handleOnclick}>Verseny megtekintése!</Button>
+                    <Button variant="outlined" onClick={handleOnclick}>Verseny megtekintése</Button>
                 </Grid2>
             </Grid2>
 

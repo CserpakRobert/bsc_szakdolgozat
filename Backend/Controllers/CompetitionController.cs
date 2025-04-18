@@ -37,7 +37,6 @@ namespace Backend.Controllers
         [HttpPost("list")]
         public async Task<IActionResult> GetListDetails([FromBody]GetCompetitionListDTO listArgs)
         {
-            Debug.WriteLine(listArgs);
             var result = await _competitionService.GetDetailsList(listArgs);
             if (result is null) return BadRequest("nem találhatóak versenyek");
             return Ok(result);

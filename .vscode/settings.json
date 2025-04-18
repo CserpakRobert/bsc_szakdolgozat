@@ -27,6 +27,24 @@
             "username": "root",
             "password": "root",
             "database": "szakdol"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "Bemutatas",
+            "username": "root",
+            "password": "root",
+            "database": "szakdol"
         }
-    ]
+    ],
+    "files.watcherExclude": {
+        "**/target": true
+    },
+    "r.lsp.promptToInstall": false
 }

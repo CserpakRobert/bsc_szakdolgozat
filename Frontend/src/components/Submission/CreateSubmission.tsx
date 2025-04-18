@@ -146,7 +146,7 @@ export default function CreateSubmission() {
                                 sx={{ width: "50%", display: "flex", flexDirection: "column", }}
                                 variant="outlined"
                                 onClick={handleSubmit}>
-                                Create
+                                Beadás
                             </Button>
                         </Grid2>
 

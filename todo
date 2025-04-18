@@ -1,25 +1,10 @@
+Bug:
 
+User register with used email does not fail
 
+User Profile:
 
+Invite/ Request lists ----
+Private groups
 
-errorok:
-moderator tud jelentkezni
-
-
-
-Completely finished:
-Create competition
-Gorup details
-
-minor rework:
-login
-register
-list component
-competition details
-group create
-
-major rework:
-profile
-joins / requests component
-submission modify
-submission lists
+submission phase submissions

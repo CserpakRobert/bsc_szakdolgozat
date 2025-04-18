@@ -9,10 +9,11 @@ import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import { darkTheme } from './globalHelpers/theme.tsx'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import 'dayjs/locale/hu';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='hu'>
       <AuthProvider>
         <ErrorProvider>
           <ThemeProvider theme={darkTheme}>

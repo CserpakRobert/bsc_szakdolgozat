@@ -9,11 +9,11 @@ export default function CompetitionList() {
 
     const [selectedPhase, setPhase] = useState("-")
     const [selectedType, setType] = useState("-")
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(1)
     const [pageCount, setPageCount] = useState(1)
     useEffect(() => {
 
-        api.post('/competition/list', { type: selectedType, phase: selectedPhase, page: page }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pageCount) });
+        api.post('/competition/list', { type: selectedType, phase: selectedPhase, page: page-1 }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pageCount) });
 
     }, [selectedPhase, page, selectedType]
     )

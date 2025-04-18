@@ -1,6 +1,6 @@
+CREATE OR REPLACE DATABASE szakdol;
 use szakdol;
 SET GLOBAL event_scheduler = ON;
-
 
 CREATE OR REPLACE PROCEDURE RankSubmission(Id INT)
 BEGIN
@@ -249,9 +249,9 @@ BEGIN
     -- Insert into collaboratedSubmissions
         -- Insert participants into collaborators
         INSERT INTO CollaboratedSubmissions (UserId, SubmissionId)
-            SELECT UserId, @lastSubmissionId 
+            SELECT upg.UserId, @lastSubmissionId 
             FROM userparticipategroups upg
-            WHERE upg.GroupId = 41;
+            WHERE upg.GroupId = groupId;
     -- Insert into collaboratedSubmissions END
 
     -- Delete group
@@ -298,13 +298,14 @@ drop event UpdateCompetition;
 -- select * from competition;
 update competition 
     set SubmissionStartDate = "0001-01-01"
-    where Id = 43;
+    where Id = 5;
 call PreparationEnd();
 update competition 
     set VotingStartDate = "0001-01-01"
-    where Id = 43;
+    where Id = 2;
 call SubmissionEnd();
 update competition 
     set FinishDate = "0001-01-01"
-    where Id = 43;
+    where Id = 4;
 call VotingEnd();
+delete from competition where id = 3;

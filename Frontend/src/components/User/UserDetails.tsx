@@ -21,7 +21,7 @@ export default function UserDetails() {
     const { userName } = useAuth()
 
     const [privateTab, setprivateTab] = useState(false)
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(1)
     const [pageCount, setPageCount] = useState(1)
 
     const [currentList, setCurrentList] = useState<"finishedSub" | "votingSub" | "createdGroups" | "createdComp" | "pendingGroups" | "privateGroups" | "invites" | "requests" | "inSubmissionSubmissions">("finishedSub")
@@ -30,7 +30,7 @@ export default function UserDetails() {
     const [groups, setGroups] = useState<GroupSmallDetailsInterface[]>([])
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-        setCurrentList(newValue as "finishedSub" | "votingSub" | "createdGroups" | "createdComp" | "pendingGroups"| "privateGroups" | "invites" | "requests" | "inSubmissionSubmissions");
+        setCurrentList(newValue as "finishedSub" | "votingSub" | "createdGroups" | "createdComp" | "pendingGroups" | "privateGroups" | "invites" | "requests" | "inSubmissionSubmissions");
         // if (newValue == "finishedSub") {
         //     api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) })
         // }
@@ -45,20 +45,20 @@ export default function UserDetails() {
         // }
         switch (newValue) {
             case "finishedSub":
-            api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
-            break;
+                api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
+                break;
             case "votingSub":
-            api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page, phase: "voting" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
-            break;
+                api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "voting" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
+                break;
             case "createdComp":
-            api.post(`/competition/list`, { userName: user?.userName, page: page }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pages) });
-            break;
+                api.post(`/competition/list`, { userName: user?.userName, page: page - 1 }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pages) });
+                break;
             case "createdGroups":
-            api.post(`/group/userOpenGroups/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
-            break;
+                api.post(`/group/userOpenGroups/${user?.userName}`, page - 1).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
+                break;
             case "pendingGroups":
-            api.post(`/group/userPendingGroups/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
-            break;
+                api.post(`/group/userPendingGroups/${user?.userName}`, page - 1).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
+                break;
             // case "privateGroups":
             // api.post(`/group/userPrivateGroups/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
             // break;
@@ -72,7 +72,7 @@ export default function UserDetails() {
             // api.post(`/submission/list`, { userName: user?.userName, page: page, phase: "inSubmission" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
             // break;
             default:
-            break;
+                break;
         }
     }
     const handlePrivateTabChange = (_event: React.SyntheticEvent, newValue: boolean) => {
@@ -99,7 +99,7 @@ export default function UserDetails() {
                             <h1>{user?.userName}</h1>
                         </Grid2>
                         <Grid2 size={{ xs: 12, md: 12 }}>
-                            <h1>Profilja</h1>
+                            <h1>profilja</h1>
                         </Grid2>
                     </Paper>
                 </Grid2>

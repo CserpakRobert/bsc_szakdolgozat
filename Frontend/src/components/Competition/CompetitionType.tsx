@@ -8,7 +8,7 @@ export default function CompetitionType({ type }: { type: string }) {
             case "movie":
                 return (
                     <>
-                        <Chip variant="outlined" color="success" label={"rövid film"}></Chip>
+                        <Chip variant="outlined" color="success" label={"rövidfilm"}></Chip>
                     </>
                 )
             case "music":

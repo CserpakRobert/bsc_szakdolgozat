@@ -2,14 +2,14 @@ import { Chip } from "@mui/material";
 
 
 export default function CompetitionPhase({ phase }: { phase: string}) {
-    const phaseToColor = (phase: string):("warning"| "info" | "error") =>  {
+    const phaseToColor = (phase: string):("warning"| "info" | "error"|"secondary") =>  {
         switch (phase) {
             case "finished":
                 return "error"
             case "preparation":
                 return "info"
             case "voting":
-                return "warning"
+                return "secondary"
             default:
                 return "warning"
         }
