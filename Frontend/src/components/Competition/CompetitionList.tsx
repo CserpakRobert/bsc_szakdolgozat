@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { CompetitionSmallInterface } from "./CompetitionInterface"
 import CompetitionDetailsCard from "./CompetitionDetailsCard"
-import { api } from "../../globalHelpers/apiAxios"
+import { api } from "../../Utils/apiAxios"
 
 export default function CompetitionList() {
     const [competitions, setCompetitions] = useState<[CompetitionSmallInterface]>()
@@ -62,7 +62,7 @@ export default function CompetitionList() {
                 </Grid2>
             )}
             <Grid2 size={12} justifyItems="center">
-                <Pagination count={pageCount} page={page} onChange={handlePage} />
+                <Pagination count={15} page={page} onChange={handlePage} />
             </Grid2>
         </Grid2>
         

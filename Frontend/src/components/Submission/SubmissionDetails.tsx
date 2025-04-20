@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { api } from "../../globalHelpers/apiAxios"
+import { api } from "../../Utils/apiAxios"
 import SubmissionInterface from "./SubmissionInterface"
 import { Button, Card, Grid2, List, ListItem, Paper } from "@mui/material"
 import EmbeddedLink from "./embeddedLink"
-import { useAuth } from "../../globalHelpers/useAuth"
+import { useAuth } from "../../Utils/useAuth"
 import UserButton from "../User/UserButton"
 import Placement from "./Placement"
 

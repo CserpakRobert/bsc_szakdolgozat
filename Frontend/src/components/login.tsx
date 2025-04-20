@@ -1,6 +1,6 @@
 import { Box, Button, Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
-import { useAuth } from "../globalHelpers/useAuth";
+import { useAuth } from "../Utils/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -25,7 +25,7 @@ export default function Login() {
 
                         <TextField
                             className="outlined-input"
-                            label="Email"
+                            label="e-mail cím"
                             type="email"
                             sx={{ width: "100%" }}
                             autoComplete="email"
@@ -36,7 +36,7 @@ export default function Login() {
                     <Grid2 size={12}>
                         <TextField
                             className="outlined-password-input"
-                            label="Password"
+                            label="jelszó"
                             type="password"
                             sx={{ width: "100%" }}
                             autoComplete="current-password"

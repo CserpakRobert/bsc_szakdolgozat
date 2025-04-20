@@ -1,14 +1,14 @@
 import { Grid2, Pagination, Paper, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "../../globalHelpers/apiAxios";
+import { api } from "../../Utils/apiAxios";
 import { SubmissionListDetailsInterface } from "../Submission/SubmissionInterface";
 import SubmissionSmallDetails from "../Submission/SubmissionSmallDetails";
 import CompetitionDetailsCard from "../Competition/CompetitionDetailsCard";
 import { CompetitionSmallInterface } from "../Competition/CompetitionInterface";
 import { GroupSmallDetailsInterface } from "../Group/GroupInterface";
 import { GroupSmallDetails } from "../Group/GroupSmallDetails";
-import { useAuth } from "../../globalHelpers/useAuth";
+import { useAuth } from "../../Utils/useAuth";
 
 interface userDetails {
     id: number;
@@ -112,7 +112,7 @@ export default function UserDetails() {
                             variant="scrollable"
                             scrollButtons="auto">
                             <Tab value={false} wrapped label="Publikus" />
-                            <Tab disabled value={true} wrapped label="Privát" />
+                            <Tab  value={true} wrapped label="Privát" />
                         </Tabs>
 
                     )}

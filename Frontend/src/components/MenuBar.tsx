@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../globalHelpers/useAuth';
+import { useAuth } from '../Utils/useAuth';
 
 export default function MenuBar() {
 

@@ -1,6 +1,6 @@
 import { Box, Button, Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
-import { api } from "../globalHelpers/apiAxios";
+import { api } from "../Utils/apiAxios";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -29,7 +29,7 @@ export default function Register() {
 
                         <TextField
                             className="outlined-input"
-                            label="Email"
+                            label="e-mail cím"
                             type="email"
                             autoComplete="email"
                             value={email}
@@ -39,7 +39,7 @@ export default function Register() {
                     <Grid2 size={12}>
                         <TextField
                             className="outlined-input"
-                            label="UserName"
+                            label="felhasználónév"
                             type="text"
                             autoComplete="username"
                             value={userName}
@@ -49,7 +49,7 @@ export default function Register() {
                     <Grid2 size={12}>
                         <TextField
                             id="outlined-password-input"
-                            label="Password"
+                            label="jelszó"
                             type="password"
                             autoComplete="current-password"
                             value={password}

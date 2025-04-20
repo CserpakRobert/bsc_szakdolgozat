@@ -1,7 +1,7 @@
 import {  Button, Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api } from "../../globalHelpers/apiAxios";
+import { api } from "../../Utils/apiAxios";
 
 
 export default function CreateSubmission() {

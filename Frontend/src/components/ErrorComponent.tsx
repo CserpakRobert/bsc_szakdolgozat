@@ -1,5 +1,5 @@
 import { Alert, IconButton, Snackbar, SnackbarCloseReason } from "@mui/material";
-import { useError } from "../globalHelpers/useError"
+import { useError } from "../Utils/useError"
 import { useEffect, useState } from "react";
 import React from "react";
 import CloseIcon from '@mui/icons-material/Close';

@@ -14,7 +14,7 @@ import CompetitionList from './components/Competition/CompetitionList';
 import ErrorComponent from './components/ErrorComponent';
 import CreateGroup from './components/Group/CreateGroup';
 import GroupDetails from './components/Group/GroupDetails';
-import { useAuth } from './globalHelpers/useAuth';
+import { useAuth } from './Utils/useAuth';
 import HomeComponent from './components/Home';
 
 function App() {
