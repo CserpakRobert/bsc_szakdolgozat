@@ -1,0 +1,12 @@
+@startuml
+class ExceptionWithDescription {
+    + ExceptionWithDescription(text:string)
+    + ExceptionWithDescription()
+}
+class UserNotAuthorized {
+    + UserNotAuthorized(text:string)
+    + UserNotAuthorized()
+}
+Exception <|-- ExceptionWithDescription
+Exception <|-- UserNotAuthorized
+@enduml

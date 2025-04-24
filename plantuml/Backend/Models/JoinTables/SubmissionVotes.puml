@@ -1,0 +1,8 @@
+@startuml
+class SubmissionVotes {
+    + UserId : int <<get>> <<set>>
+    + SubmissionId : int <<get>> <<set>>
+}
+SubmissionVotes --> "User" User
+SubmissionVotes --> "Submission" Submission
+@enduml

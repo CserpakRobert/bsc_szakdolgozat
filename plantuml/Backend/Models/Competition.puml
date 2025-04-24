@@ -1,0 +1,27 @@
+@startuml
+class Competition {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>> = ""
+    + Description : string <<get>> <<set>> = ""
+    + IsPrivate : bool <<get>> <<set>>
+    + IsInPreparationPhase : bool <<get>> <<set>>
+    + IsInSubmissionPhase : bool <<get>> <<set>>
+    + IsInVotingPhase : bool <<get>> <<set>>
+    + IsMovieCompetition : bool <<get>> <<set>>
+    + IsMusicCompetition : bool <<get>> <<set>>
+    + IsShortStoryCompetition : bool <<get>> <<set>>
+    + CreatorId : int <<get>> <<set>>
+    + Phase : string <<get>>
+    + Type : string <<get>>
+}
+class "ICollection`1"<T> {
+}
+Competition --> "SubmissionStartDate" DateOnly
+Competition --> "VotingStartDate" DateOnly
+Competition --> "FinishDate" DateOnly
+Competition o-> "Creator" User
+Competition o-> "Moderators<User>" "ICollection`1"
+Competition o-> "Submissions<Submission>" "ICollection`1"
+Competition o-> "Groups<Group>" "ICollection`1"
+Competition --> "RelevantDate" DateOnly
+@enduml

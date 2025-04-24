@@ -1,0 +1,17 @@
+@startuml
+class SubmissionService {
+    + SubmissionService(userService:UserService, context:MariaDBContext)
+    + <<virtual>> <<async>> GetSubmissionList(listGetModel:SubmissionListGetModel) : Task<SubmissionListModel>
+    + <<virtual>> <<async>> GetSubmission(id:int) : Task<GetSusbmission>
+    + <<virtual>> <<async>> VoteForSubmission(id:int) : Task<bool>
+    + <<virtual>> <<async>> UnVoteForSubmission(id:int) : Task<bool>
+    + <<virtual>> <<async>> GetById(id:int) : Task<Submission?>
+    + <<virtual>> <<async>> CanVote(id:int) : Task<bool>
+    + <<virtual>> <<async>> HasVote(id:int) : Task<bool>
+    + <<virtual>> <<async>> CanEdit(id:int) : Task<bool>
+    + <<virtual>> <<async>> GetType(id:int) : Task<string>
+    + <<virtual>> <<async>> ModifyMovieSubmission(modifySubmission:ModifyMovieDetails) : Task<int>
+    + <<virtual>> <<async>> ModifyMusicSubmission(modifySubmission:ModifyMusicDetails) : Task<int>
+    + <<virtual>> <<async>> ModifyShortStorySubmission(modifySubmission:ModifyShortStoryDetails) : Task<int>
+}
+@enduml

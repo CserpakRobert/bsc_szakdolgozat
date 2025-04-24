@@ -1,0 +1,11 @@
+@startuml
+class CompetitionServiceTests {
+    + <<async>> Create_Test() : Task
+    + <<async>> GetDetailsList_Test() : Task
+    + <<async>> GetDetails_Test() : Task
+    + <<async>> IsInPreparationPhase_Test() : Task
+    + <<async>> SubmissionEnabled_Test() : Task
+    + <<async>> VotesEnabled_Test() : Task
+    + <<async>> IsModerator_Test() : Task
+}
+@enduml

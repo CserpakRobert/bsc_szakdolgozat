@@ -1,0 +1,9 @@
+@startuml
+class CompetitionController {
+    + CompetitionController(competitionService:CompetitionService)
+    + <<async>> GetListDetails(listArgs:GetCompetitionListDTO) : Task<IActionResult>
+    + <<async>> Create(model:CreateCompetitionDTO) : Task<IActionResult>
+    + <<async>> GetById(id:int) : Task<IActionResult>
+}
+ControllerBase <|-- CompetitionController
+@enduml

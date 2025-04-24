@@ -1,0 +1,11 @@
+@startuml
+class SubmissionInvites {
+    + Id : int <<get>> <<set>>
+    + SenderUserId : int <<get>> <<set>>
+    + RecieverUserId : int <<get>> <<set>>
+    + GroupId : int <<get>> <<set>>
+}
+SubmissionInvites --> "SenderUser" User
+SubmissionInvites --> "RecieverUser" User
+SubmissionInvites --> "Group" Group
+@enduml

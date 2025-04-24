@@ -1,0 +1,8 @@
+@startuml
+class ShortStoryDetails {
+    + Id : int <<get>> <<set>>
+    + Story : string <<get>> <<set>>
+    + SubmissionId : int <<get>> <<set>>
+}
+ShortStoryDetails --> "Submission" Submission
+@enduml

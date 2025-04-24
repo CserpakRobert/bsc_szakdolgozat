@@ -1,0 +1,8 @@
+@startuml
+class UserParticipateGroups {
+    + UserId : int <<get>> <<set>>
+    + GroupId : int <<get>> <<set>>
+}
+UserParticipateGroups --> "User" User
+UserParticipateGroups --> "Group" Group
+@enduml

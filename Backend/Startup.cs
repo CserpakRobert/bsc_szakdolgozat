@@ -69,8 +69,6 @@ namespace Backend
                     },
                     OnChallenge = context =>
                     {
-                        Debug.WriteLine($"Authentication failed: {"challenged"}");
-
                         context.HandleResponse();
                         context.Response.StatusCode = 401;
                         context.Response.ContentType = "application/json";
@@ -78,8 +76,6 @@ namespace Backend
                     },
                     OnForbidden = context =>
                     {
-                        Debug.WriteLine($"Authentication failed: {"challenged"}");
-
                         context.Response.StatusCode = 401;
                         context.Response.ContentType = "application/json";
                         return context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");

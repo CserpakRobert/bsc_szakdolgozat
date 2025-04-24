@@ -17,11 +17,11 @@ namespace Backend.Persistence
         public  DbSet<MovieDetails> MoviesDetails { get; set; }
         public DbSet<MusicDetails> MusicDetails { get; set; }
         public DbSet<Group> Groups { get; set; }
+        // Join tables
         public DbSet<OpenGroupJoinRequests> JoinRequests { get; set; }
 
         public   DbSet<SubmissionInvites> SubmissionInvites { get; set; }
 
-        // Join tables
 
         public DbSet<CollaboratedSubmissions> CollaboratedSubmissions { get; set; }
         public DbSet<Moderators> Moderators { get; set; }

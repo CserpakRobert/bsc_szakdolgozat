@@ -1,0 +1,23 @@
+@startuml
+class GroupController {
+    + GroupController(groupService:GroupService, competitionService:CompetitionService, userService:UserService)
+    + <<async>> CreateClosed(competitionId:int, createGroup:CreateGroupDTO) : Task<IActionResult>
+    + <<async>> CreateClosed(id:int) : Task<IActionResult>
+    + <<async>> GetSmallDetails(competitionId:int, page:int) : Task<IActionResult>
+    + <<async>> GetSmallDetails(competitionId:int) : Task<IActionResult>
+    + <<async>> GetSmallDetails(username:string, page:int) : Task<IActionResult>
+    + <<async>> Invite(groupId:int, invite:InviteDTO) : Task<IActionResult>
+    + <<async>> IsInvited(groupId:int) : Task<IActionResult>
+    + <<async>> Invites(groupId:int) : Task<IActionResult>
+    + <<async>> DeleteInvite(groupId:int, invite:InviteDTO) : Task<IActionResult>
+    + <<async>> AcceptInvite(groupId:int) : Task<IActionResult>
+    + <<async>> DeclineInvite(groupId:int) : Task<IActionResult>
+    + <<async>> RequestJoin(groupId:int, request:GroupRequestDTO) : Task<IActionResult>
+    + <<async>> RequestJoin(groupId:int) : Task<IActionResult>
+    + <<async>> Requests(groupId:int) : Task<IActionResult>
+    + <<async>> GetDescription(groupId:int, invite:InviteDTO) : Task<IActionResult>
+    + <<async>> DeleteRequest(groupId:int, invite:InviteDTO) : Task<IActionResult>
+    + <<async>> AcceptRequest(groupId:int, invite:InviteDTO) : Task<IActionResult>
+}
+ControllerBase <|-- GroupController
+@enduml

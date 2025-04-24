@@ -1,0 +1,38 @@
+@startuml
+class CreateGroupDTO {
+    + Description : string <<get>> <<set>>
+    + IsClosed : bool <<get>> <<set>>
+}
+class InviteDTO {
+    + UserName : string <<get>> <<set>>
+}
+class GroupRequestDTO {
+    + Description : string <<get>> <<set>> = ""
+}
+class GetGroupDTO {
+    + CompetitionId : int <<get>> <<set>>
+    + GroupId : int <<get>> <<set>>
+    + CompetitionTitle : string <<get>> <<set>>
+    + OwnerName : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + IsClosed : bool <<get>> <<set>>
+    + InviteCount : int <<get>> <<set>>
+    + RequestCount : int <<get>> <<set>>
+}
+class GetSmallDetailsDTO {
+    + Count : int <<get>> <<set>>
+}
+class GroupSmallDetailsDTO {
+    + GroupId : int <<get>> <<set>>
+    + CompetitionId : int <<get>> <<set>>
+    + OwnerName : string <<get>> <<set>>
+    + ParticipateCount : int <<get>> <<set>>
+    + GroupSmallDetailsDTO(Group:Group)
+}
+class "ICollection`1"<T> {
+}
+class "IEnumerable`1"<T> {
+}
+GetGroupDTO o-> "ParticipateNames<string>" "ICollection`1"
+GetSmallDetailsDTO o-> "Groups<GroupSmallDetailsDTO>" "IEnumerable`1"
+@enduml

@@ -1,0 +1,5 @@
+@startuml
+class Utils <<static>> {
+    + {static} IsCorrectVideoId(videoId:string) : bool
+}
+@enduml

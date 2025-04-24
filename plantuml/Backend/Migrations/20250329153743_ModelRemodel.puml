@@ -1,0 +1,5 @@
+@startuml
+class ModelRemodel <<partial>> {
+}
+Migration <|-- ModelRemodel
+@enduml

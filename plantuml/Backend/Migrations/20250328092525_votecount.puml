@@ -1,0 +1,5 @@
+@startuml
+class votecount <<partial>> {
+}
+Migration <|-- votecount
+@enduml

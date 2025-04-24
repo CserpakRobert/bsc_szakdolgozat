@@ -1,0 +1,5 @@
+@startuml
+class JoinsWithKeys <<partial>> {
+}
+Migration <|-- JoinsWithKeys
+@enduml

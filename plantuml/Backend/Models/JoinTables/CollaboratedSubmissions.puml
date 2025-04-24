@@ -1,0 +1,8 @@
+@startuml
+class CollaboratedSubmissions {
+    + UserId : int <<get>> <<set>>
+    + SubmissionId : int <<get>> <<set>>
+}
+CollaboratedSubmissions --> "User" User
+CollaboratedSubmissions --> "Submission" Submission
+@enduml
