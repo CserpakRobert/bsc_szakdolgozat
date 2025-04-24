@@ -17,18 +17,12 @@ namespace Backend.Controllers
     {
 
         private readonly GroupService _groupService;
-        private readonly CompetitionService _competitionService;
-        private readonly UserService _userService;
 
         public GroupController(
-            GroupService groupService,
-            CompetitionService competitionService,
-            UserService userService
+            GroupService groupService
             )
         {
             this._groupService = groupService;
-            this._competitionService = competitionService;
-            this._userService = userService;
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -63,7 +57,57 @@ namespace Backend.Controllers
             }
         }
 
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("privateGroups/{page}")]
+        public async Task<IActionResult> GetPrivateGroups(int page)
+        {
+            try
+            {
+                return Ok(await _groupService.GetPrivateGroups( page));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("invitedGroups/{page}")]
+        public async Task<IActionResult> GetInvitedGroups(int page)
+        {
+            try
+            {
+                return Ok(await _groupService.GetInvitedGroups(page));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("joinedGroups/{page}")]
+        public async Task<IActionResult> GetJoinedGroups(int page)
+        {
+            try
+            {
+                return Ok(await _groupService.GetInvitedGroups(page));
+            }
+            catch (ExceptionWithDescription e)
+            {
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+        }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("smallDetails/{competitionId}")]
         public async Task<IActionResult> GetSmallDetails(int competitionId, [FromBody] int page)

@@ -30,7 +30,6 @@ export default function ErrorComponent() {
         <React.Fragment>
             <IconButton
                 size="small"
-                aria-label="close"
                 color="inherit"
                 onClick={handleClose}
             >

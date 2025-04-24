@@ -36,7 +36,6 @@ namespace Backend.Controllers
                 }
                 catch (ExceptionWithDescription e)
                 {
-
                     return BadRequest(new { errorMessage = e.Message });
                 }
                 catch (UserNotAuthorized)

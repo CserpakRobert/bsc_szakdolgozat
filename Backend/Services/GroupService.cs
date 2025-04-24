@@ -480,6 +480,7 @@ namespace Backend.Services
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
 
+
             var groupId = await _context.Groups
                 .Include(g => g.Participants)
                 .Where(g => g.CompetitionId == competitionId && g.Participants.Any(p => p.Id == user.Id))
@@ -487,6 +488,88 @@ namespace Backend.Services
                 .FirstOrDefaultAsync();
 
             return groupId;
+        }
+
+        internal async Task<object?> GetPrivateGroups(int page)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var queriedUser = await _userService.GetUserByName(user.UserName);
+            if (queriedUser is null) throw new ExceptionWithDescription("A felhasználó nem található");
+
+            var groups = await _context.Groups
+                .Include(g => g.Participants)
+                .Include(g => g.GroupOwner)
+                .Where(group => group.Participants.Any(p => p.Id == queriedUser.Id) && group.IsClosed)
+                .Skip(page * 50)
+                .Take(50)
+                .Select(g => new GroupSmallDetailsDTO(g))
+                .ToListAsync();
+
+            if (groups is null) throw new ExceptionWithDescription("Nincsenek csapatok a versenyhez");
+
+            var count = groups.Count;
+
+            return new GetSmallDetailsDTO()
+            {
+                Groups = groups,
+                Count = ((count - 1) / 50) + 1
+            };
+        }
+        public virtual async Task<object?> GetInvitedGroups(int page)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var queriedUser = await _userService.GetUserByName(user.UserName);
+            if (queriedUser is null) throw new ExceptionWithDescription("A felhasználó nem található");
+
+            var groups = await _context.Groups
+                .Include(g => g.Invites)
+                .Include(g => g.GroupOwner)
+                .Where(group => group.Invites.Any(p => p.RecieverUserId == queriedUser.Id))
+                .Skip(page * 50)
+                .Take(50)
+                .Select(g => new GroupSmallDetailsDTO(g))
+                .ToListAsync();
+
+            if (groups is null) throw new ExceptionWithDescription("Nincsenek csapatok a versenyhez");
+
+            var count = groups.Count;
+
+            return new GetSmallDetailsDTO()
+            {
+                Groups = groups,
+                Count = ((count - 1) / 50) + 1
+            };
+        }
+        public virtual async Task<object?> GetJoinedGroups(int page)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var queriedUser = await _userService.GetUserByName(user.UserName);
+            if (queriedUser is null) throw new ExceptionWithDescription("A felhasználó nem található");
+
+            var groups = await _context.Groups
+                .Include(g => g.JoinRequests)
+                .Include(g => g.GroupOwner)
+                .Where(group => group.JoinRequests.Any(p => p.RequestOwnerId == queriedUser.Id))
+                .Skip(page * 50)
+                .Take(50)
+                .Select(g => new GroupSmallDetailsDTO(g))
+                .ToListAsync();
+
+            if (groups is null) throw new ExceptionWithDescription("Nincsenek csapatok a versenyhez");
+
+            var count = groups.Count;
+
+            return new GetSmallDetailsDTO()
+            {
+                Groups = groups,
+                Count = ((count - 1) / 50) + 1
+            };
         }
     }
 }

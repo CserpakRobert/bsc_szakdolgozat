@@ -39,7 +39,6 @@ export default function CompetitionDetails() {
 
     }, [id]
     )
-
     useEffect(() => {
         if (competition?.phase === "finished") {
             api.post(`submission/list`, {
@@ -62,17 +61,22 @@ export default function CompetitionDetails() {
                 .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
         }
         if (competition?.phase === "submit" || competition?.phase === "finished") {
-            api.get(`submission/ownSubmission/${id}`).then(resp => {setOwnSubmission(resp.data)})
+            api.get(`submission/ownSubmission/${competition.id}`).then(resp => {setOwnSubmission(resp.data)})
         }
         if (competition?.phase === "preparation") {
-            api.get(`group/ownGroup/${id}`)
+            api.get(`group/ownGroup/${competition.id}`)
             .then(resp => {
                 if (resp.data) {
                     setOwnGroupId(resp.data)
                 }
             })
-            api.post(`group/smallDetails/${id}`, page - 1).then(resp => { setGroupSmalls(resp.data.groups); setPageCount(resp.data.count) })
+            api.post(`group/smallDetails/${competition.id}`, page - 1).then(resp => { setGroupSmalls(resp.data.groups); setPageCount(resp.data.count) })
         }
+
+    }, [competition, page]
+    )
+    useEffect(() => {
+
     }, [competition, id, page])
 
 
@@ -144,7 +148,7 @@ export default function CompetitionDetails() {
                                                 </Grid2>
                                             </>
                                         }
-                                        {groupSmalls.some(g => g.ownerName === userName) && (
+                                        {ownGrouId && (
                                             <Grid2 size={{ xs: 12, md: 12 }} >
                                                 <Button variant="outlined" onClick={handleOwnGroup}>Saját csapat</Button>
                                             </Grid2>
@@ -163,20 +167,6 @@ export default function CompetitionDetails() {
                                             </Grid2>)}
                                     </>
                                 )}
-                                {/* {competition.phase === "voting" && (
-                                    <>
-                                        <Grid2 size={{ xs: 12, md: 12 }} >
-                                            <Button variant="outlined" onClick={handleListSubmissions}>Szavazás</Button>
-                                        </Grid2>
-                                    </>
-                                )} */}
-                                {/* {competition.phase === "finished" && (
-                                    <>
-                                        <Grid2 size={{ xs: 12, md: 12 }} >
-                                            <Button variant="outlined" onClick={handleListSubmissions}>Eredmények megtekintése</Button>
-                                        </Grid2>
-                                    </>
-                                )} */}
                             </Grid2>
                             <Grid2 size={{ xs: 0, md: 3 }} />
 
@@ -199,7 +189,7 @@ export default function CompetitionDetails() {
                     </Grid2>
                     {groupSmalls.map((group) => (<>
                         <Grid2 size={{ xs: 6, md: 3, lg: 2 }} key={group.groupId} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            <GroupSmallDetails group={group} />
+                            <GroupSmallDetails  group={group} />
                         </Grid2>
                     </>))}
 

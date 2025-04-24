@@ -50,6 +50,9 @@ namespace Backend.Services
                     && !sub.Competition.IsInVotingPhase
                     );
                     break;
+                case "submission":
+                    query = query.Where(sub => sub.Competition.IsInSubmissionPhase && sub.OwnerId == user.Id);
+                    break;
                 case "voting":
                     query = query.Where(sub => sub.Competition.IsInVotingPhase);
                     break;

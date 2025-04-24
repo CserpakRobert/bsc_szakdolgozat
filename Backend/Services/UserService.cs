@@ -2,6 +2,7 @@
 using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Persistence;
+using Backend.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -38,16 +39,20 @@ namespace Backend.Services
         }
 
 
-        public async Task<bool> RegisterUser(RegisterModel model)
+        public async Task RegisterUser(RegisterModel model)
         {
             var user = new Models.User { Email = model.Email, UserName = model.Username };
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                throw new ExceptionWithDescription("Az e-mail cím foglalt");
+            }
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return true;
             }
-            return false;
+
         }
 
         public async Task<User?> GetUserByName(string name)

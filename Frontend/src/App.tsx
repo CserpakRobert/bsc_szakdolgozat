@@ -18,7 +18,7 @@ import { useAuth } from './Utils/useAuth';
 import HomeComponent from './components/Home';
 
 function App() {
-  const {isLoggedIn} = useAuth()
+  const { isLoggedIn } = useAuth()
   return (
     <>
       <BrowserRouter>

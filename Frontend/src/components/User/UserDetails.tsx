@@ -30,53 +30,53 @@ export default function UserDetails() {
     const [groups, setGroups] = useState<GroupSmallDetailsInterface[]>([])
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+        setSubmissions([])
+        setCompetitions([])
+        setGroups([])
+        setPage(1)
+        setPageCount(1)
         setCurrentList(newValue as "finishedSub" | "votingSub" | "createdGroups" | "createdComp" | "pendingGroups" | "privateGroups" | "invites" | "requests" | "inSubmissionSubmissions");
-        // if (newValue == "finishedSub") {
-        //     api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) })
-        // }
-        // else if (newValue == "votingSub") {
-        //     api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page, phase: "voting" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) })
-        // }
-        // else if (newValue == "createdComp") {
-        //     api.post(`/competition/list`, { userName: user?.userName, page: page }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pages) })
-        // }
-        // else if (newValue == "createdGroups") {
-        //     api.post(`/group/userOpenGroups/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) })
-        // }
         switch (newValue) {
             case "finishedSub":
-                api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
+                api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
                 break;
             case "votingSub":
-                api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "voting" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
+                api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "voting" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
                 break;
             case "createdComp":
                 api.post(`/competition/list`, { userName: user?.userName, page: page - 1 }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pages) });
                 break;
             case "createdGroups":
-                api.post(`/group/userOpenGroups/${user?.userName}`, page - 1).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
+                api.post(`/group/userOpenGroups/${user?.userName}`, page - 1).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.count) });
                 break;
             case "pendingGroups":
-                api.post(`/group/userPendingGroups/${user?.userName}`, page - 1).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
+                api.post(`/group/userPendingGroups/${user?.userName}`, page - 1).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.count) });
                 break;
-            // case "privateGroups":
-            // api.post(`/group/userPrivateGroups/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
-            // break;
-            // case "invites":
-            // api.get(`/group/invitedGroups/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
-            // break;
-            // case "requests":
-            // api.post(`/group/userRequests/${user?.userName}`, page).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.pages) });
-            // break;
-            // case "inSubmissionSubmissions":
-            // api.post(`/submission/list`, { userName: user?.userName, page: page, phase: "inSubmission" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) });
-            // break;
+            case "privateGroups":
+                api.get(`/group/privateGroups/${page - 1}`).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.count) });
+                break;
+            case "invites":
+                api.get(`/group/invitedGroups/${page - 1}`).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.count) });
+                break;
+            case "requests":
+                api.get(`/group/joinedGroups/${page - 1}`).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.count) });
+                break;
+            case "inSubmissionSubmissions":
+                api.post(`/submission/list`, { userName: user?.userName, page: page, phase: "submission" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
+                break;
             default:
                 break;
         }
     }
     const handlePrivateTabChange = (_event: React.SyntheticEvent, newValue: boolean) => {
         setprivateTab(newValue);
+        if (newValue) {
+            setCurrentList("privateGroups")
+            handleTabChange(_event, "privateGroups")
+        } else {
+            setCurrentList("finishedSub")
+            handleTabChange(_event, "finishedSub")
+        }
     }
 
     const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
@@ -85,10 +85,13 @@ export default function UserDetails() {
 
     useEffect(() => {
         api.get(`/user/${name}`).then(resp => setUser(resp.data))
-        api.post(`/submission/list`, { sortByPlacement: true, userName: name, page: page, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pages) })
-
     }
-        , [name, page, setPage, setSubmissions])
+        , [name, page, user?.userName])
+    useEffect(() => {
+        if (user) {
+            api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
+        }
+    }, [page, user])
     return (
         <>
             <Grid2 container spacing={2} width={"100%"} >
@@ -108,11 +111,10 @@ export default function UserDetails() {
 
                         <Tabs value={privateTab}
                             onChange={handlePrivateTabChange}
-                            aria-label="basic tabs example"
                             variant="scrollable"
                             scrollButtons="auto">
                             <Tab value={false} wrapped label="Publikus" />
-                            <Tab  value={true} wrapped label="Privát" />
+                            <Tab value={true} wrapped label="Privát" />
                         </Tabs>
 
                     )}
@@ -121,7 +123,6 @@ export default function UserDetails() {
                     {!privateTab && (
                         <Tabs value={currentList}
                             onChange={handleTabChange}
-                            aria-label="basic tabs example"
                             variant="scrollable"
                             scrollButtons="auto">
                             <Tab value={"finishedSub"} wrapped label="Befejezett Pályázatok" />
@@ -133,7 +134,6 @@ export default function UserDetails() {
                     {privateTab && (
                         <Tabs value={currentList}
                             onChange={handleTabChange}
-                            aria-label="basic tabs example"
                             variant="scrollable"
                             scrollButtons="auto">
                             <Tab value={"privateGroups"} wrapped label="Privát csoportok" />
@@ -150,7 +150,7 @@ export default function UserDetails() {
                     </Grid2>
                     <Grid2 container size={12} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
 
-                        {(currentList == "finishedSub" || currentList == "votingSub") &&
+                        {(currentList == "finishedSub" || currentList == "votingSub" || currentList == "inSubmissionSubmissions") &&
                             <>
                                 {submissions?.map((submission) => (
                                     <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 3 }} key={submission.id} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -158,16 +158,15 @@ export default function UserDetails() {
                                     </Grid2>
                                 ))}
                             </>}
-                        {currentList == "createdComp" && (
+                        {(currentList == "createdComp") && (
                             <>
-
                                 {competitions?.map((competition) => (
                                     <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 3 }} key={competition.id} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                         <CompetitionDetailsCard competition={competition} />
                                     </Grid2>
                                 ))}
                             </>)}
-                        {currentList == "createdGroups" && (
+                        {(currentList == "createdGroups" || currentList == "invites" || currentList == "requests" || currentList == "privateGroups") && (
                             <>
                                 {groups?.map((group) => (
                                     <Grid2 size={{ xs: 12, sm: 6, md: 3, lg: 3 }} key={group.groupId} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -179,9 +178,6 @@ export default function UserDetails() {
                 </Grid2>
 
             </Grid2 >
-
-
-
         </>
 
     )

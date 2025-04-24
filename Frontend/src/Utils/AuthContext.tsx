@@ -1,6 +1,5 @@
-import { useJwt } from "react-jwt";
 import { api } from "./apiAxios";
-import { createContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useState, ReactNode } from 'react';
 
 
 interface AuthContextType {

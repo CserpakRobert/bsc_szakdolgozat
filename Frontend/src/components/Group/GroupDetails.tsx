@@ -183,7 +183,7 @@ const GroupDetails = () => {
                                                 }}>
                                                     {invitedUsers.map((name) =>
                                                         <ListItem key={name} secondaryAction={
-                                                            <IconButton edge="start" aria-label="delete" onClick={() => deleteInvite(name)}>
+                                                            <IconButton edge="start" onClick={() => deleteInvite(name)}>
                                                                 <DeleteIcon />
                                                             </IconButton>
                                                         }>
@@ -208,14 +208,14 @@ const GroupDetails = () => {
                                                     {requestUsers.map((name) =>
                                                         <ListItem key={name} secondaryAction={
                                                             <>
-                                                                <IconButton edge="start" aria-label="accept" onClick={() => getDescription(name)}>
+                                                                <IconButton edge="start"  onClick={() => getDescription(name)}>
                                                                     <InfoIcon />
                                                                 </IconButton>
-                                                                <IconButton edge="start" aria-label="accept" onClick={() => acceptRequest(name)}>
+                                                                <IconButton edge="start"onClick={() => acceptRequest(name)}>
                                                                     <CheckIcon />
                                                                 </IconButton>
 
-                                                                <IconButton edge="start" aria-label="delete" onClick={() => deleteRequest(name)}>
+                                                                <IconButton edge="start" onClick={() => deleteRequest(name)}>
                                                                     <DeleteIcon />
                                                                 </IconButton>
                                                             </>

@@ -1,6 +1,7 @@
 ﻿using Backend.Models;
 using Backend.Models.DTOs;
 using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -30,14 +31,21 @@ namespace Backend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-
-            var result = await _userService.RegisterUser(model);
-            if (result)
+            try
             {
+                await _userService.RegisterUser(model);
                 return Ok();
             }
-            return BadRequest("Regisztráció sikertelen");
-            
+            catch (ExceptionWithDescription e)
+            {
+
+                return BadRequest(new { errorMessage = e.Message });
+            }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
+
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -49,7 +57,7 @@ namespace Backend.Controllers
             {
                 return BadRequest("Nem talált felhasználó");
             }
-            return Ok(new { result.Id, result.UserName});
+            return Ok(new { result.Id, result.UserName });
         }
 
 
@@ -60,9 +68,9 @@ namespace Backend.Controllers
 
             var result = await _userService.LoginUser(model);
 
-            if (result == null )
+            if (result == null)
             {
-                return Unauthorized("Invalid credentials.");
+                return Unauthorized("Bejelnentkezés sikertelen");
             }
 
             return Ok(result);
