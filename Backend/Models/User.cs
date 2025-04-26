@@ -11,11 +11,9 @@ namespace Backend.Models
     {
 
 
-        [MaxLength(25, ErrorMessage ="Felhasználó név nem lehet 26 karakternél hoszabb")]
         [Required]
         public override string UserName { get; set; }
 
-        [EmailAddress(ErrorMessage ="Kérlek adj meg egy valós e-email címet")]
         [Required]
         public override string Email { get; set; }
 

@@ -2,16 +2,23 @@ import { Box, Button, Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { useAuth } from "../Utils/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useError } from "../Utils/useError";
 
 export default function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
     const login = useAuth()
+    const {setErrorMsg} = useError()
     const handlesubmit = async (event: FormEvent) => {
         event.preventDefault()
-        login.login(email, password)
-        navigate("/home")
+        if (email == ""){
+            setErrorMsg("Az email cím nem lehet üres")
+            return
+        }
+        if (await login.login(email, password)){
+            navigate("/home")
+        }
     }
 
     return (

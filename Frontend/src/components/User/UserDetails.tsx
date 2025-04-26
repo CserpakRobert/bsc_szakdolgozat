@@ -92,56 +92,60 @@ export default function UserDetails() {
             api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
         }
     }, [page, user])
+
     return (
         <>
-            <Grid2 container spacing={2} width={"100%"} >
-                <Grid2 size={{ xs: 0, md: 2, lg: 4 }} />
-                <Grid2 position={"relative"} container size={{ xs: 12, md: 6, lg: 4 }}>
-                    <Paper variant="detailsPaper" sx={{ padding: 2, marginTop: 0, width: "30%", display: "relative", justifyContent: "center", alignItems: "center" }}>
-                        <Grid2 size={{ xs: 12, md: 12, lg: 12 }}>
-                            <h1>{user?.userName}</h1>
-                        </Grid2>
-                        <Grid2 size={{ xs: 12, md: 12 }}>
-                            <h1>profilja</h1>
-                        </Grid2>
-                    </Paper>
-                </Grid2>
-                <Grid2 container size={{ sm: 12, md: 12 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
-                    {userName == user?.userName && (
+            <Grid2 container spacing={2} width={"100%"} minHeight={"100%"} marginTop={10}>
+                <Grid2 container size={12} >
+                    <Grid2 size={{ xs: 0, md: 2, lg: 4 }} />
+                    <Grid2 container size={{ xs: 12, md: 6, lg: 4 }}>
+                        <Paper variant="detailsPaper" sx={{ padding: 2, marginTop: 0, width: "30%", display: "relative", justifyContent: "center", alignItems: "center" }}>
+                            <Grid2 size={{ xs: 12, md: 12, lg: 12 }}>
+                                <h1>{user?.userName}</h1>
+                            </Grid2>
+                            <Grid2 size={{ xs: 12, md: 12 }}>
+                                <h1>profilja</h1>
+                            </Grid2>
+                        </Paper>
+                    </Grid2>
 
-                        <Tabs value={privateTab}
-                            onChange={handlePrivateTabChange}
-                            variant="scrollable"
-                            scrollButtons="auto">
-                            <Tab value={false} wrapped label="Publikus" />
-                            <Tab value={true} wrapped label="Privát" />
-                        </Tabs>
+                    <Grid2 container size={{ sm: 12, md: 12 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
+                        {userName == user?.userName && (
 
-                    )}
-                </Grid2>
-                <Grid2 container size={{ sm: 12, md: 12 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
-                    {!privateTab && (
-                        <Tabs value={currentList}
-                            onChange={handleTabChange}
-                            variant="scrollable"
-                            scrollButtons="auto">
-                            <Tab value={"finishedSub"} wrapped label="Befejezett Pályázatok" />
-                            <Tab value={"votingSub"} wrapped label="Szavazás allatt álló pályázatok" />
-                            <Tab value={"createdComp"} label="Készített Versenyek" />
-                            <Tab value={"createdGroups"} label="Jelenlegi csoportok" />
-                        </Tabs>
-                    )}
-                    {privateTab && (
-                        <Tabs value={currentList}
-                            onChange={handleTabChange}
-                            variant="scrollable"
-                            scrollButtons="auto">
-                            <Tab value={"privateGroups"} wrapped label="Privát csoportok" />
-                            <Tab value={"invites"} wrapped label="Meghívások" />
-                            <Tab value={"requests"} label="Jelentkezések" />
-                            <Tab value={"inSubmissionSubmissions"} label="Beadás alatt álló pályázatok" />
-                        </Tabs>
-                    )}
+                            <Tabs value={privateTab}
+                                onChange={handlePrivateTabChange}
+                                variant="scrollable"
+                                scrollButtons="auto">
+                                <Tab value={false} wrapped label="Publikus" />
+                                <Tab value={true} wrapped label="Privát" />
+                            </Tabs>
+
+                        )}
+                    </Grid2>
+                    <Grid2 container size={{ sm: 12, md: 12 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
+                        {!privateTab && (
+                            <Tabs value={currentList}
+                                onChange={handleTabChange}
+                                variant="scrollable"
+                                scrollButtons="auto">
+                                <Tab value={"finishedSub"} wrapped label="Befejezett Pályázatok" />
+                                <Tab value={"votingSub"} wrapped label="Szavazás allatt álló pályázatok" />
+                                <Tab value={"createdComp"} label="Készített Versenyek" />
+                                <Tab value={"createdGroups"} label="Jelenlegi csoportok" />
+                            </Tabs>
+                        )}
+                        {privateTab && (
+                            <Tabs value={currentList}
+                                onChange={handleTabChange}
+                                variant="scrollable"
+                                scrollButtons="auto">
+                                <Tab value={"privateGroups"} wrapped label="Privát csoportok" />
+                                <Tab value={"invites"} wrapped label="Meghívások" />
+                                <Tab value={"requests"} label="Jelentkezések" />
+                                <Tab value={"inSubmissionSubmissions"} label="Beadás alatt álló pályázatok" />
+                            </Tabs>
+                        )}
+                    </Grid2>
                 </Grid2>
 
                 <Grid2 container size={{ sm: 12, md: 12 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>

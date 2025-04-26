@@ -1,4 +1,4 @@
-    import { AppBar, Grid2, MenuItem, Pagination, Select, SelectChangeEvent, Toolbar } from "@mui/material"
+import { AppBar, Grid2, MenuItem, Pagination, Select, SelectChangeEvent, Toolbar } from "@mui/material"
 import { useEffect, useState } from "react"
 import { CompetitionSmallInterface } from "./CompetitionInterface"
 import CompetitionDetailsCard from "./CompetitionDetailsCard"
@@ -13,7 +13,7 @@ export default function CompetitionList() {
     const [pageCount, setPageCount] = useState(1)
     useEffect(() => {
 
-        api.post('/competition/list', { type: selectedType, phase: selectedPhase, page: page-1 }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pageCount) });
+        api.post('/competition/list', { type: selectedType, phase: selectedPhase, page: page - 1 }).then(resp => { setCompetitions(resp.data.competitions); setPageCount(resp.data.pageCount) });
 
     }, [selectedPhase, page, selectedType]
     )
@@ -26,12 +26,9 @@ export default function CompetitionList() {
     const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value)
     }
-    //TODO SCrolling
     return (<>
-
-
-
-            <AppBar position="fixed" sx={{ marginTop: 10, overflow: "hidden" }}>
+        <Grid2 container position={"relative"} gap={2} marginTop={15} width={"100%"} sx={{ justifyContent: "center" }}>
+            <Grid2 size={12}>
                 <Toolbar sx={{ gap: 2 }}>
                     <MenuItem disabled={true}>Szűrés</MenuItem>
                     <Select
@@ -53,8 +50,7 @@ export default function CompetitionList() {
                         <MenuItem value={"music"}>Zene</MenuItem>
                     </Select>
                 </Toolbar>
-            </AppBar>
-        <Grid2 container position={"relative"} gap={2} marginTop={20} width={"100%"} sx={{justifyContent: "center"}}>
+            </Grid2>
 
             {competitions?.map(c =>
                 <Grid2 size={{ xs: 12, sm: 5, md: 3, lg: 2.5, xl: 2.8 }} key={c.id} >
@@ -62,10 +58,10 @@ export default function CompetitionList() {
                 </Grid2>
             )}
             <Grid2 size={12} justifyItems="center">
-                <Pagination count={15} page={page} onChange={handlePage} />
+                <Pagination count={pageCount} page={page} onChange={handlePage} />
             </Grid2>
         </Grid2>
-        
+
 
     </>)
 }

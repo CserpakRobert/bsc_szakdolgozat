@@ -2,15 +2,25 @@ import { Box, Button, Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { api } from "../Utils/apiAxios";
 import { useNavigate } from "react-router-dom";
+import { useError } from "../Utils/useError";
 
 export default function Register() {
     const [email, setEmail] = useState("")
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
+    const {setErrorMsg} = useError()
 
     const navigate = useNavigate();
     const handlesubmit = async (event: FormEvent) => {
         event.preventDefault()
+        if (email == ""){
+            setErrorMsg("Az email cím nem lehet üres")
+            return
+        }
+        if (userName == ""){
+            setErrorMsg("A felhasználó név nem lehet üres")
+            return
+        }
         await api.post("/user/register", { "email": email, "username": userName, "password": password })
             .then(() => navigate("/login"))
             .catch((error) => console.log(error))

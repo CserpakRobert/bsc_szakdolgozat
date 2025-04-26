@@ -47,6 +47,12 @@ namespace Backend.Services
             {
                 throw new ExceptionWithDescription("Az e-mail cím foglalt");
             }
+            var userBySameName = await _userManager.FindByNameAsync(model.Username);
+            if (userBySameName != null)
+            {
+                throw new ExceptionWithDescription("A felhasználó név foglalt");
+
+            }
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
@@ -99,8 +105,6 @@ namespace Backend.Services
             }
             return user;
         }
-
-        //TODO
         private string GenerateJwt(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

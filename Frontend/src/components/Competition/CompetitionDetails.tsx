@@ -22,7 +22,7 @@ export default function CompetitionDetails() {
     const [groupSmalls, setGroupSmalls] = useState<GroupSmallDetailsInterface[]>([])
     const [page, setPage] = useState(1)
     const [pageCount, setPageCount] = useState(1)
-    const [ownGrouId, setOwnGroupId] = useState<number>(0)
+    const [ownGroupId, setOwnGroupId] = useState<number>(0)
     const [ownSubmission, setOwnSubmission] = useState<number>(0)
 
 
@@ -89,7 +89,7 @@ export default function CompetitionDetails() {
     }
 
     const handleOwnGroup = () => {
-        navigate(`/group/details/${ownGrouId}`)
+        navigate(`/group/details/${ownGroupId}`)
     }
 
     const handleListSubmissions = () => {
@@ -148,7 +148,7 @@ export default function CompetitionDetails() {
                                                 </Grid2>
                                             </>
                                         }
-                                        {ownGrouId && (
+                                        { (
                                             <Grid2 size={{ xs: 12, md: 12 }} >
                                                 <Button variant="outlined" onClick={handleOwnGroup}>Saját csapat</Button>
                                             </Grid2>

@@ -2,7 +2,7 @@ CREATE OR REPLACE DATABASE szakdol;
 use szakdol;
 SET GLOBAL event_scheduler = ON;
 
-CREATE OR REPLACE PROCEDURE RankSubmission(Id INT)
+CREATE OR REPLACE PROCEDURE RankSubmissions(Id INT)
 BEGIN
 
     DECLARE done INT DEFAULT FALSE;
@@ -85,7 +85,7 @@ BEGIN
             LEAVE read_loop;
         END IF;
 
-        call RankSubmission(Id);
+        call RankSubmissions(Id);
        
     END LOOP;
 
@@ -278,7 +278,7 @@ BEGIN
 
 END;
 
-CREATE OR REPLACE EVENT UpdateCompetition
+CREATE OR REPLACE EVENT UpdateCompetitions
 ON SCHEDULE EVERY '1' DAY
 STARTS (TIMESTAMP(CURRENT_DATE) + INTERVAL 1 DAY + INTERVAL 1 HOUR)
 DO
@@ -293,7 +293,7 @@ END;
 show events;
 
 
-drop event UpdateCompetition;
+drop event UpdateCompetitions;
 
 -- select * from competition;
 update competition 

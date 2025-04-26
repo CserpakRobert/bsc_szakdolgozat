@@ -1,15 +1,21 @@
-@startuml
-class SubmissionController {
-    + SubmissionController(submissionService:SubmissionService)
-    + <<virtual>> <<async>> GetSubmissionList(listGetModel:SubmissionListGetModel) : Task<IActionResult>
-    + <<virtual>> <<async>> GetSubmission(id:int) : Task<IActionResult>
-    + <<virtual>> <<async>> GetOwnSubmission(competitionId:int) : Task<IActionResult>
-    + <<virtual>> <<async>> GetSubmissionType(id:int) : Task<IActionResult>
-    + <<virtual>> <<async>> CreateSubmission(model:ModifyMovieDetails) : Task<IActionResult>
-    + <<virtual>> <<async>> CreateMusicSubmission(model:ModifyMusicDetails) : Task<IActionResult>
-    + <<virtual>> <<async>> CreateSubmission(model:ModifyShortStoryDetails) : Task<IActionResult>
-    + <<virtual>> <<async>> VoteForSubmission(id:int) : Task<IActionResult>
-    + <<virtual>> <<async>> UnVoteForSubmission(id:int) : Task<IActionResult>
+@startuml asd
+class CompetitionController {
+    + CompetitionController(competitionService:CompetitionService)
+    + <<async>> GetListDetails(listArgs:GetCompetitionListDTO) : Task<IActionResult>
+    + <<async>> Create(model:CreateCompetitionDTO) : Task<IActionResult>
+    + <<async>> GetById(id:int) : Task<IActionResult>
 }
-ControllerBase <|-- SubmissionController
+class CompetitionService {
+    + CompetitionService(userService:UserService, context:MariaDBContext)
+    + <<virtual>> <<async>> CreateCompetition(model:CreateCompetitionDTO) : Task<int>
+    + <<virtual>> <<async>> VotesEnabled(id:int) : Task<bool>
+    + <<virtual>> <<async>> SubmissionEnabled(id:int) : Task<bool>
+    + <<virtual>> <<async>> IsInPreparationPhase(id:int) : Task<bool?>
+    + <<virtual>> <<async>> IsModerator(competitionId:int, userId:int) : Task<bool>
+    + <<virtual>> <<async>> GetDetailsList(listDTO:GetCompetitionListDTO) : Task<CompetitionList?>
+    + <<virtual>> <<async>> GetDetails(id:int) : Task<GetOneCompetitionDTO>
+}
+ControllerBase <|-- CompetitionController
+CompetitionController <-- CompetitionService
+CompetitionService <-- UserService
 @enduml

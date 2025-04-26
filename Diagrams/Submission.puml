@@ -1,0 +1,32 @@
+@startuml asd
+class SubmissionController {
+    + SubmissionController(submissionService:SubmissionService)
+    + <<virtual>> <<async>> GetSubmissionList(listGetModel:SubmissionListGetModel) : Task<IActionResult>
+    + <<virtual>> <<async>> GetSubmission(id:int) : Task<IActionResult>
+    + <<virtual>> <<async>> GetOwnSubmission(competitionId:int) : Task<IActionResult>
+    + <<virtual>> <<async>> GetSubmissionType(id:int) : Task<IActionResult>
+    + <<virtual>> <<async>> CreateSubmission(model:ModifyMovieDetails) : Task<IActionResult>
+    + <<virtual>> <<async>> CreateMusicSubmission(model:ModifyMusicDetails) : Task<IActionResult>
+    + <<virtual>> <<async>> CreateSubmission(model:ModifyShortStoryDetails) : Task<IActionResult>
+    + <<virtual>> <<async>> VoteForSubmission(id:int) : Task<IActionResult>
+    + <<virtual>> <<async>> UnVoteForSubmission(id:int) : Task<IActionResult>
+}
+class SubmissionService {
+    + SubmissionService(userService:UserService)
+    + <<virtual>> <<async>> GetSubmissionList(listGetModel:SubmissionListGetModel) : Task<SubmissionListModel>
+    + <<virtual>> <<async>> GetSubmission(id:int) : Task<GetSusbmission>
+    + <<virtual>> <<async>> VoteForSubmission(id:int) : Task<bool>
+    + <<virtual>> <<async>> UnVoteForSubmission(id:int) : Task<bool>
+    + <<virtual>> <<async>> GetById(id:int) : Task<Submission?>
+    + <<virtual>> <<async>> CanVote(id:int) : Task<bool>
+    + <<virtual>> <<async>> HasVote(id:int) : Task<bool>
+    + <<virtual>> <<async>> CanEdit(id:int) : Task<bool>
+    + <<virtual>> <<async>> GetType(id:int) : Task<string>
+    + <<virtual>> <<async>> ModifyMovieSubmission(modifySubmission:ModifyMovieDetails) : Task<int>
+    + <<virtual>> <<async>> ModifyMusicSubmission(modifySubmission:ModifyMusicDetails) : Task<int>
+    + <<virtual>> <<async>> ModifyShortStorySubmission(modifySubmission:ModifyShortStoryDetails) : Task<int>
+}
+ControllerBase <|-- SubmissionController
+SubmissionController <-- SubmissionService
+SubmissionService <-- UserService
+@enduml

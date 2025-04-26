@@ -5,7 +5,7 @@ import { createContext, useState, ReactNode } from 'react';
 interface AuthContextType {
     isLoggedIn: boolean;
     userName: string
-    login: (email: string, password: string) => void;
+    login: (email: string, password: string) => Promise<boolean>;
     logout: () => void;
 }
 
@@ -21,12 +21,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [userName, setUserName] = useState(localStorage.getItem("user") ?? "")
 
     const login = async (email: string, password: string) => {
+        let loginSuccessful = false;
         await api.post("/user/login", { email, password }).then((resp) => {
             localStorage.setItem("token", resp.data.token);
             localStorage.setItem("user", resp.data.userName);
             setIsLoggedIn(true);
             setUserName(resp.data.userName);
-        })
+            loginSuccessful = true
+        }).catch(()=>loginSuccessful=false)
+        return loginSuccessful
     };
 
     const logout = () => {

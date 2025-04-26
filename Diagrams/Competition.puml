@@ -1,0 +1,21 @@
+@startuml asd
+class CompetitionController {
+    + CompetitionController(competitionService:CompetitionService)
+    + <<async>> GetListDetails(listArgs:GetCompetitionListDTO) : Task<IActionResult>
+    + <<async>> Create(model:CreateCompetitionDTO) : Task<IActionResult>
+    + <<async>> GetById(id:int) : Task<IActionResult>
+}
+class CompetitionService {
+    + CompetitionService(userService:UserService, context:MariaDBContext)
+    + <<virtual>> <<async>> CreateCompetition(model:CreateCompetitionDTO) : Task<int>
+    + <<virtual>> <<async>> VotesEnabled(id:int) : Task<bool>
+    + <<virtual>> <<async>> SubmissionEnabled(id:int) : Task<bool>
+    + <<virtual>> <<async>> IsInPreparationPhase(id:int) : Task<bool?>
+    + <<virtual>> <<async>> IsModerator(competitionId:int, userId:int) : Task<bool>
+    + <<virtual>> <<async>> GetDetailsList(listDTO:GetCompetitionListDTO) : Task<CompetitionList?>
+    + <<virtual>> <<async>> GetDetails(id:int) : Task<GetOneCompetitionDTO>
+}
+ControllerBase <|-- CompetitionController
+CompetitionController <-- CompetitionService
+CompetitionService <-- UserService
+@enduml
