@@ -53,7 +53,6 @@ namespace Backend.Services
                 Description = model.Description,
                 Creator = user,
                 Moderators = [user],
-                IsPrivate = false,
                 IsInPreparationPhase = true,
                 IsMovieCompetition = model.Category == "movie",
                 IsMusicCompetition = model.Category == "music",
@@ -121,6 +120,8 @@ namespace Backend.Services
                                             comp.IsInVotingPhase == (listDTO.Phase == "vote") &&
                                             !(comp.IsInVotingPhase || comp.IsInPreparationPhase || comp.IsInSubmissionPhase) == (listDTO.Phase == "finished"));
             }
+            if (listDTO.Phase is ("submission"))
+                query = query.Where(comp => comp.IsInSubmissionPhase);
 
 
             var result = await query

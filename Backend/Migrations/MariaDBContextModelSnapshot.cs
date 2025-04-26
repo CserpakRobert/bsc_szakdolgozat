@@ -56,9 +56,6 @@ namespace Backend.Migrations
                     b.Property<bool>("IsMusicCompetition")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<bool>("IsShortStoryCompetition")
                         .HasColumnType("tinyint(1)");
 
@@ -77,7 +74,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.ToTable("Competition");
+                    b.ToTable("Competitions");
                 });
 
             modelBuilder.Entity("Backend.Models.Group", b =>
@@ -139,6 +136,46 @@ namespace Backend.Migrations
                     b.HasIndex("CompetitionId");
 
                     b.ToTable("Moderators");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.OpenGroupJoinRequests", b =>
+                {
+                    b.Property<int>("RequestOwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(3000)
+                        .HasColumnType("varchar(3000)");
+
+                    b.HasKey("RequestOwnerId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("JoinRequests");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.SubmissionInvites", b =>
+                {
+                    b.Property<int>("RecieverUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RecieverUserId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("SenderUserId");
+
+                    b.ToTable("GroupInvites");
                 });
 
             modelBuilder.Entity("Backend.Models.JoinTables.SubmissionVotes", b =>
@@ -213,34 +250,6 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MusicDetails");
-                });
-
-            modelBuilder.Entity("Backend.Models.OpenGroupJoinRequests", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(3000)
-                        .HasColumnType("varchar(3000)");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RequestOwnerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("RequestOwnerId");
-
-                    b.ToTable("OpenGroupJoinRequests");
                 });
 
             modelBuilder.Entity("Backend.Models.ShortStoryDetails", b =>
@@ -322,34 +331,6 @@ namespace Backend.Migrations
                         .IsUnique();
 
                     b.ToTable("Submissions");
-                });
-
-            modelBuilder.Entity("Backend.Models.SubmissionInvites", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RecieverUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("RecieverUserId");
-
-                    b.HasIndex("SenderUserId");
-
-                    b.ToTable("InvitedSubmissionUsers");
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
@@ -621,6 +602,52 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Backend.Models.JoinTables.OpenGroupJoinRequests", b =>
+                {
+                    b.HasOne("Backend.Models.Group", "Group")
+                        .WithMany("JoinRequests")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "RequestOwner")
+                        .WithMany("JoinRequests")
+                        .HasForeignKey("RequestOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("RequestOwner");
+                });
+
+            modelBuilder.Entity("Backend.Models.JoinTables.SubmissionInvites", b =>
+                {
+                    b.HasOne("Backend.Models.Group", "Group")
+                        .WithMany("Invites")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "RecieverUser")
+                        .WithMany("RecievedInvites")
+                        .HasForeignKey("RecieverUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.User", "SenderUser")
+                        .WithMany("SentInvites")
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("RecieverUser");
+
+                    b.Navigation("SenderUser");
+                });
+
             modelBuilder.Entity("Backend.Models.JoinTables.SubmissionVotes", b =>
                 {
                     b.HasOne("Backend.Models.Submission", "Submission")
@@ -659,25 +686,6 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.Models.OpenGroupJoinRequests", b =>
-                {
-                    b.HasOne("Backend.Models.Group", "Group")
-                        .WithMany("JoinRequests")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", "RequestOwner")
-                        .WithMany("JoinRequests")
-                        .HasForeignKey("RequestOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("RequestOwner");
-                });
-
             modelBuilder.Entity("Backend.Models.Submission", b =>
                 {
                     b.HasOne("Backend.Models.Competition", "Competition")
@@ -713,33 +721,6 @@ namespace Backend.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("ShortStoryDetails");
-                });
-
-            modelBuilder.Entity("Backend.Models.SubmissionInvites", b =>
-                {
-                    b.HasOne("Backend.Models.Group", "Group")
-                        .WithMany("Invites")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", "RecieverUser")
-                        .WithMany("RecievedInvites")
-                        .HasForeignKey("RecieverUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.User", "SenderUser")
-                        .WithMany("SentInvites")
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("RecieverUser");
-
-                    b.Navigation("SenderUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

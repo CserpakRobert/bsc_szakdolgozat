@@ -2,15 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Backend.Models
+namespace Backend.Models.JoinTables
 {
 
-    [Table("OpenGroupJoinRequests")]
+    [Table("JoinRequests")]
     public class OpenGroupJoinRequests
     {
-
-        [Required]
-        public int Id { get; set; }
 
         [Required]
         public int RequestOwnerId { get; set; }

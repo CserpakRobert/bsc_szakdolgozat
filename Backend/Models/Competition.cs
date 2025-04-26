@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
-    [Table("Competition")]
+    [Table("Competitions")]
     public class Competition
     {
         public int Id { get; set; }
@@ -20,11 +20,6 @@ namespace Backend.Models
         [Description]
         [MaxLength(3000)]
         public string Description { get; set; } = "";
-
-        [Required]
-        [DefaultValue(true)]
-        public bool IsPrivate { get; set; }
-
 
         //Phases
         [Required]

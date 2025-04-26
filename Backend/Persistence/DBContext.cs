@@ -36,13 +36,14 @@ namespace Backend.Persistence
 
             modelBuilder.Entity<User>().HasKey(e => e.Id);
             modelBuilder.Entity<Competition>().HasKey(e => e.Id);
-            modelBuilder.Entity<OpenGroupJoinRequests>().HasKey(e => e.Id);
             modelBuilder.Entity<Group>().HasKey(e => e.Id);
             modelBuilder.Entity<MovieDetails>().HasKey(e => e.Id);
             modelBuilder.Entity<MusicDetails>().HasKey(e => e.Id);
-            modelBuilder.Entity<SubmissionInvites>().HasKey(e => e.Id);
             modelBuilder.Entity<Submission>().HasKey(e => e.Id);
 
+
+            modelBuilder.Entity<SubmissionInvites>().HasKey(e => new {e.RecieverUserId, e.GroupId});
+            modelBuilder.Entity<OpenGroupJoinRequests>().HasKey(e => new {e.RequestOwnerId, e.GroupId});
             modelBuilder.Entity<CollaboratedSubmissions>().HasKey(e => new { e.UserId, e.SubmissionId });
             modelBuilder.Entity<Moderators>().HasKey(e => new { e.UserId, e.CompetitionId });
             modelBuilder.Entity<SubmissionVotes>().HasKey(e => new { e.UserId, e.SubmissionId });
@@ -96,9 +97,6 @@ namespace Backend.Persistence
                 .HasMany(e => e.VotedUsers)
                 .WithMany(e => e.VotedSubmissions)
                 .UsingEntity<SubmissionVotes>();
-
-
-            //TODO: Indexes
 
         }
     }

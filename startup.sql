@@ -1,6 +1,7 @@
-CREATE OR REPLACE DATABASE szakdol;
 use szakdol;
 SET GLOBAL event_scheduler = ON;
+
+DELIMITER //
 
 CREATE OR REPLACE PROCEDURE RankSubmissions(Id INT)
 BEGIN
@@ -53,7 +54,7 @@ BEGIN
     COMMIT;
     SET AUTOCOMMIT = 1;
 END;
-
+//
 CREATE OR REPLACE PROCEDURE VotingEnd()
 BEGIN
 
@@ -63,7 +64,7 @@ BEGIN
 
     DECLARE cur CURSOR FOR 
         SELECT c.Id Id 
-        FROM competition c
+        FROM competitionsc
         WHERE c.IsInVotingPhase = 1 AND c.FinishDate < CURDATE();
     
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -98,7 +99,7 @@ BEGIN
     COMMIT;
     SET AUTOCOMMIT = 1;
 END;
-
+//
 
 CREATE OR REPLACE PROCEDURE SubmissionEnd()
 BEGIN
@@ -133,7 +134,7 @@ BEGIN
         DELETE FROM submissions s
         where s.competitionId = competitionId and s.IsSubmitted = 0;
 
-        UPDATE Competition c
+        UPDATE competitionsc
         SET c.IsInSubmissionPhase = 0, c.IsInVotingPhase = 1
         WHERE c.Id = competitionId;
     END LOOP;
@@ -142,7 +143,7 @@ BEGIN
     COMMIT;
     set AUTOCOMMIT = 1;
 END;
-
+//
 
 CREATE or replace PROCEDURE PreparationEnd()
 BEGIN
@@ -165,7 +166,7 @@ BEGIN
          c.IsMusicCompetition isMusic,
          c.isShortStoryCompetition isStory
         FROM Groups g
-        JOIN competition c ON g.competitionId = c.Id
+        JOIN competitionsc ON g.competitionId = c.Id
         WHERE c.IsInPreparationPhase = 1 
             AND SubmissionStartDate < CURDATE();
 
@@ -259,6 +260,11 @@ BEGIN
         DELETE FROM userparticipategroups
             WHERE GroupId = groupId ;
 
+        DELETE FROM joinrequests
+            WHERE GroupId = groupId ;
+
+        DELETE FROM groupinvites
+            WHERE GroupId = groupId ;
         -- Delete group
         DELETE FROM Groups
             WHERE Id = groupId;
@@ -277,6 +283,7 @@ BEGIN
     set AUTOCOMMIT = 1;
 
 END;
+//
 
 CREATE OR REPLACE EVENT UpdateCompetitions
 ON SCHEDULE EVERY '1' DAY
@@ -289,23 +296,25 @@ BEGIN
 
     call VotingEnd();
 END;
+//
 
+DELIMITER ;
 show events;
 
 
-drop event UpdateCompetitions;
+-- drop event UpdateCompetitions;
 
--- select * from competition;
-update competition 
-    set SubmissionStartDate = "0001-01-01"
-    where Id = 5;
-call PreparationEnd();
-update competition 
-    set VotingStartDate = "0001-01-01"
-    where Id = 2;
-call SubmissionEnd();
-update competition 
-    set FinishDate = "0001-01-01"
-    where Id = 4;
-call VotingEnd();
-delete from competition where id = 3;
+-- -- select * from competition;
+-- update competitions
+--     set SubmissionStartDate = "0001-01-01"
+--     where Id = 5;
+-- call PreparationEnd();
+-- update competitions
+--     set VotingStartDate = "0001-01-01"
+--     where Id = 2;
+-- call SubmissionEnd();
+-- update competitions
+--     set FinishDate = "0001-01-01"
+--     where Id = 4;
+-- call VotingEnd();
+-- delete from competitionswhere id = 3;

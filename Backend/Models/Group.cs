@@ -1,4 +1,5 @@
-﻿using Backend.Utils;
+﻿using Backend.Models.JoinTables;
+using Backend.Utils;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

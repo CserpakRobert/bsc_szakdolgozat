@@ -37,6 +37,7 @@ export default function CompetitionList() {
                     >
                         <MenuItem value={"-"}>Minden Fázis</MenuItem>
                         <MenuItem value={"preparation"}>Jelentkezés</MenuItem>
+                        <MenuItem value={"submission"}>Beadás</MenuItem>
                         <MenuItem value={"vote"}>Szavazás</MenuItem>
                         <MenuItem value={"finished"}>Befejezett</MenuItem>
                     </Select>

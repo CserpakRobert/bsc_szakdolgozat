@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Backend.Models
+namespace Backend.Models.JoinTables
 {
-    [Table("InvitedSubmissionUsers")]
+    [Table("GroupInvites")]
     public class SubmissionInvites
     {
-        [Required]
-        public int Id { get; set; }
 
         [Required]
         public int SenderUserId { get; set; }
