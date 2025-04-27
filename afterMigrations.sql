@@ -141,41 +141,6 @@ BEGIN
     COMMIT;
     set AUTOCOMMIT = 1;
 END;
-//
-CREATE OR REPLACE PROCEDURE GroupToSubmission(Id INT, submissionId INT)
-BEGIN
-    DECLARE done INT DEFAULT FALSE;
-    
-        DECLARE cur CURSOR FOR 
-        SELECT UserId from userparticipategroups;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-            ROLLBACK;
-            RESIGNAL;
-    END;
-
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-
-    set AUTOCOMMIT = 0;
-    START TRANSACTION;
-
-    OPEN cur;
-    read_loop: LOOP
-
-        END LOOP;
-    CLOSE cur;
-
-    -- Update Competition
-        UPDATE Competitions
-            SET IsInPreparationPhase = 0, IsInSubmissionPhase = 1
-            WHERE IsInPreparationPhase = 1 AND SubmissionStartDate < CURDATE();
-    -- Update Competition END
-
-    COMMIT;
-    set AUTOCOMMIT = 1;
-
-END;
 
 //
 CREATE or replace PROCEDURE PreparationEnd()
