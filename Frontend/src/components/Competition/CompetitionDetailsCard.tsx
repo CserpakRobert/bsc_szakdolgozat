@@ -1,11 +1,10 @@
-import { Button, Card, Grid2 } from "@mui/material";
+import { Button, Card, Grid as Grid2 } from "@mui/material";
 import { CompetitionSmallInterface } from "./CompetitionInterface";
 import { useNavigate } from "react-router-dom";
 import CompetitionType from "./CompetitionType";
 import CompetitionPhase from "./CompetitionPhase";
 import CompetitionDate from "./CompetitionDate";
 import { FormEvent } from "react";
-import { Height } from "@mui/icons-material";
 
 
 export default function CompetitionDetailsCard({ competition }: { competition: CompetitionSmallInterface }) {

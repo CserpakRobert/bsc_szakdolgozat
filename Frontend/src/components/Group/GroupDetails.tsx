@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { GroupDetailsInterface } from './GroupInterface';
 import { api } from '../../Utils/apiAxios';
-import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid2, IconButton, List, ListItem, Paper, TextField } from '@mui/material';
+import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid as Grid2, IconButton, List, ListItem, Paper, TextField } from '@mui/material';
 import { useAuth } from '../../Utils/useAuth';
 import UserButton from '../User/UserButton';
 import DeleteIcon from '@mui/icons-material/Delete';

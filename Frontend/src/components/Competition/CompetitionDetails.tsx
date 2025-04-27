@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "../../Utils/apiAxios"
-import { Paper, Grid2, Card, Button, Box, CircularProgress, Pagination } from "@mui/material"
+import { Paper, Grid as Grid2, Card, Button, Box, CircularProgress, Pagination } from "@mui/material"
 import CompetitionInterface from "./CompetitionInterface"
 import UserButton from "../User/UserButton"
 import CompetitionDate from "./CompetitionDate"
@@ -91,12 +91,8 @@ export default function CompetitionDetails() {
         navigate(`/group/details/${ownGroupId}`)
     }
 
-    const handleListSubmissions = () => {
-
-    }
-
     const handleOwnSubmission = () => {
-        navigate(`/submission/${competition?.ownSubmission}`)
+        navigate(`/submission/${ownSubmission}`)
     }
 
     return (

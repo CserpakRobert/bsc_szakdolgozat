@@ -65,7 +65,7 @@ namespace Backend.Services
             }
             else
             {
-                throw new ExceptionWithDescription("Váratlan hiba a felhasználó létrehozása közben");
+                throw new ExceptionWithDescription("Nem megfelelő jelszó");
             }
             
 

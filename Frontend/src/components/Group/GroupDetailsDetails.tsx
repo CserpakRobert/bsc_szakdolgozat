@@ -1,4 +1,4 @@
-import { Button, Card, CircularProgress, Grid2, Paper } from "@mui/material";
+import { Button, Card, CircularProgress, Grid as Grid2, Paper } from "@mui/material";
 import { GroupDetailsInterface } from "./GroupInterface";
 import UserButton from "../User/UserButton";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';

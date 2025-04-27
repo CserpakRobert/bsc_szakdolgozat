@@ -1,4 +1,4 @@
-import { Button, Card, Grid2 } from "@mui/material"
+import { Button, Card, Grid as Grid2, } from "@mui/material"
 import { GroupSmallDetailsInterface } from "./GroupInterface"
 import UserButton from "../User/UserButton"
 import { useNavigate } from "react-router-dom"

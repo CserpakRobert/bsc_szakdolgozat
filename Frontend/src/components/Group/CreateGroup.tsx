@@ -1,4 +1,4 @@
-import { Box, Button, FormControlLabel, Grid2, Paper, Radio, RadioGroup, TextField } from '@mui/material';
+import { Box, Button, FormControlLabel, Grid as Grid2, Paper, Radio, RadioGroup, TextField } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';

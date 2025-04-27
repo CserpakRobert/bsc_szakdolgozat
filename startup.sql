@@ -1,6 +1,4 @@
-use szakdol;
 SET GLOBAL event_scheduler = ON;
-
 DELIMITER //
 
 CREATE OR REPLACE PROCEDURE RankSubmissions(Id INT)

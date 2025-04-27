@@ -6,14 +6,8 @@ internal class Program
     {
         Host.CreateDefaultBuilder(args).
             ConfigureWebHostDefaults(webBuilder => { 
-                webBuilder.UseStartup<Startup>(); 
+                webBuilder.UseStartup<Startup>();
+                webBuilder.UseUrls("http://*:5103");
             }).Build().Run();
-        //var builder = WebApplication.CreateBuilder(args);
-        //var app = builder.Build();
-
-        //app.MapGet("/", () => "Hello World!");
-        //app.Run();
-
-        //app.Start();
     }
 }

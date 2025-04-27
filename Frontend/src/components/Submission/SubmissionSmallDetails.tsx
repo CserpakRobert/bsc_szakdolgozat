@@ -1,4 +1,4 @@
-import { Button, Card, Chip, Grid2 } from "@mui/material";
+import { Button, Card, Chip, Grid as Grid2, } from "@mui/material";
 import { SubmissionListDetailsInterface } from "./SubmissionInterface";
 import { useNavigate } from "react-router-dom";
 import CompetitionType from "../Competition/CompetitionType";

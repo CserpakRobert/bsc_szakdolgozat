@@ -1,4 +1,4 @@
-import { AppBar, Grid2, MenuItem, Pagination, Select, SelectChangeEvent, Toolbar } from "@mui/material"
+import { Grid as Grid2, MenuItem, Pagination, Select, SelectChangeEvent, Toolbar } from "@mui/material"
 import { useEffect, useState } from "react"
 import { CompetitionSmallInterface } from "./CompetitionInterface"
 import CompetitionDetailsCard from "./CompetitionDetailsCard"

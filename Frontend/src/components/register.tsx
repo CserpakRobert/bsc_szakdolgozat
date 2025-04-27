@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, Paper, TextField } from "@mui/material";
+import { Box, Button, Grid as Grid2, Paper, TextField } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { api } from "../Utils/apiAxios";
 import { useNavigate } from "react-router-dom";

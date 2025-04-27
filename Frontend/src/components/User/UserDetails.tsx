@@ -1,4 +1,4 @@
-import { Grid2, Pagination, Paper, Tab, Tabs } from "@mui/material";
+import { Grid as Grid2, Pagination, Paper, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../Utils/apiAxios";

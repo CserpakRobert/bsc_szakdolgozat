@@ -38,7 +38,7 @@ namespace Backend
                         );
             });
 
-            var asd = Configuration.GetConnectionString("MariaDBConnectionString");
+            //var connectionString = Configuration.GetConnectionString("MariaDBConnectionString");
             services.AddDbContext<MariaDBContext>(options => options.UseMySql(Configuration.GetConnectionString("MariaDBConnectionString"),
                 ServerVersion.AutoDetect(Configuration.GetConnectionString("MariaDBConnectionString")
 
@@ -53,7 +53,6 @@ namespace Backend
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    //TODO key to .env
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
 
                 };
@@ -62,8 +61,6 @@ namespace Backend
                 {
                     OnAuthenticationFailed = context =>
                     {
-                        // Log the error
-
                         Debug.WriteLine($"Authentication failed: {context.Exception.Message}");
                         return Task.CompletedTask;
                     },

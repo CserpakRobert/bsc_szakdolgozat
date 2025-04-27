@@ -10,11 +10,17 @@ FLUSH PRIVILEGES;
 -- show global variables like 'log_error';
 -- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
 SELECT user, host, plugin FROM mysql.user;
-create user 'backend'@'localhost' IDENTIFIED by 'pwd'
+create user 'backensd'@'localhost' IDENTIFIED by 'pwd';
 GRANT ALL PRIVILEGES ON *.* TO 'backend'@'localhost' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
+create or replace database versenydb;
+create user 'backenduser' identified by 'backenduserpwd';
+grant all privileges on versenydb.* to 'backenduser';
+flush privileges;
+select * from user;
 
+dotnet tool install --global dotnet-ef
 insert into aspnetusers 
 (username, normalizedusername, email,
  normalizedemail,passwordhash, securitystamp,

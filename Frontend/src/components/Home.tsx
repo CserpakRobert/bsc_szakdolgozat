@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, Paper } from "@mui/material"
+import { Box, Button, Grid as Grid2, Paper } from "@mui/material"
 import { useAuth } from "../Utils/useAuth";
 import { useNavigate } from "react-router-dom";
 
