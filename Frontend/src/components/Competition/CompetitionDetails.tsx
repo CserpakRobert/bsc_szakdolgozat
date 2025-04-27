@@ -53,7 +53,7 @@ export default function CompetitionDetails() {
         if (competition?.phase === "voting") {
             api.post(`submission/list`, {
                 competitionId: competition.id,
-                page: page-1, sortByDate: false,
+                page: page - 1, sortByDate: false,
                 sortByPlacement: false,
                 sortByVoteCount: true,
                 phase: "voting"
@@ -61,15 +61,15 @@ export default function CompetitionDetails() {
                 .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
         }
         if (competition?.phase === "submit" || competition?.phase === "finished") {
-            api.get(`submission/ownSubmission/${competition.id}`).then(resp => {setOwnSubmission(resp.data)})
+            api.get(`submission/ownSubmission/${competition.id}`).then(resp => { setOwnSubmission(resp.data) })
         }
         if (competition?.phase === "preparation") {
             api.get(`group/ownGroup/${competition.id}`)
-            .then(resp => {
-                if (resp.data) {
-                    setOwnGroupId(resp.data)
-                }
-            })
+                .then(resp => {
+                    if (resp.data) {
+                        setOwnGroupId(resp.data)
+                    }
+                })
             api.post(`group/smallDetails/${competition.id}`, page - 1).then(resp => { setGroupSmalls(resp.data.groups); setPageCount(resp.data.count) })
         }
 
@@ -83,7 +83,6 @@ export default function CompetitionDetails() {
     const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value)
     }
-    // TODO navigations
     const handleJoin = () => {
         navigate(`/group/${id}`)
     }
@@ -140,7 +139,7 @@ export default function CompetitionDetails() {
                             <Grid2 container size={{ sm: 12, md: 6, lg: 6 }} sx={{ alignContent: "center" }}>
                                 {competition.phase === "preparation" && (
                                     <>
-                                        {
+                                        {ownGroupId == 0 &&
                                             (competition.creatorname !== userName && groupSmalls.every(g => g.ownerName != userName)) &&
                                             <>
                                                 <Grid2 size={{ xs: 12, md: 12 }} >
@@ -148,14 +147,14 @@ export default function CompetitionDetails() {
                                                 </Grid2>
                                             </>
                                         }
-                                        { (
+                                        {ownGroupId != 0 && (
                                             <Grid2 size={{ xs: 12, md: 12 }} >
                                                 <Button variant="outlined" onClick={handleOwnGroup}>Saját csapat</Button>
                                             </Grid2>
                                         )}
                                     </>
                                 )}
-                                {(competition.phase === "submit"|| competition.phase === "finished") && (
+                                {(competition.phase === "submit" || competition.phase === "finished") && (
                                     <>
                                         {(competition.phase === "submit" && competition.ownSubmission === 0) && (
                                             <Grid2 size={{ xs: 12, md: 12 }} >
@@ -189,13 +188,13 @@ export default function CompetitionDetails() {
                     </Grid2>
                     {groupSmalls.map((group) => (<>
                         <Grid2 size={{ xs: 6, md: 3, lg: 2 }} key={group.groupId} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            <GroupSmallDetails  group={group} />
+                            <GroupSmallDetails group={group} />
                         </Grid2>
                     </>))}
 
                 </Grid2>
             </>)}
-            {//TODO: SUBMissions and submissions in voting phase
+            {
                 (competition?.phase === "finished" || competition?.phase === "voting") && (<>
                     <Grid2 container size={{ sm: 12, md: 8 }} spacing={2} sx={{ marginTop: "2rem", justifyContent: "center", alignItems: "center" }}>
                         <Grid2 size={12} justifyItems="center">

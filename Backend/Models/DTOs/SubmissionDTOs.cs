@@ -25,12 +25,12 @@
 
     public class CreateMusicDetailsModel
     {
-        public string Link { get; set; }
+        public string Link { get; set; } = null!;
     }
     public class CreateMovieDetailsModel
     {
-        public string TrailerLink { get; set; }
-        public string MovieLink { get; set; }
+        public string TrailerLink { get; set; } = null!;
+        public string MovieLink { get; set; } = null!;
     }
     public class CreateShortStoryDetailsModel
     {
@@ -39,8 +39,8 @@
     public class CreateSubmissionModel
     {
         public int CompetitionId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
         public CreateMusicDetailsModel? musicDetails { get; set; }
         public CreateMovieDetailsModel? MovieDetails { get; set; }
 

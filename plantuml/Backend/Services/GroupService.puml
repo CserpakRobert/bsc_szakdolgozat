@@ -21,5 +21,7 @@ class GroupService {
     + <<virtual>> <<async>> GetDescription(groupId:int, userName:string) : Task<string>
     + <<virtual>> <<async>> GetInvitedGroups() : Task<GetSmallDetailsDTO>
     + <<virtual>> <<async>> UserOpenGroups(username:string, page:int) : Task<object?>
+    + <<virtual>> <<async>> GetInvitedGroups(page:int) : Task<object?>
+    + <<virtual>> <<async>> GetJoinedGroups(page:int) : Task<object?>
 }
 @enduml

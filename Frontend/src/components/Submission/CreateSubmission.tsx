@@ -94,7 +94,7 @@ export default function CreateSubmission() {
                             <Grid2 size={{ sm: 12 }}>
                                 <TextField
                                     className="outlined-input"
-                                    label="Trailer Link"
+                                    label="Előzetes Link"
                                     type="text"
                                     sx={{ width: "80%" }}
                                     value={trailerLink}
@@ -104,7 +104,7 @@ export default function CreateSubmission() {
                             <Grid2 size={{ sm: 12 }}>
                                 <TextField
                                     className="outlined-input"
-                                    label="Movie Link"
+                                    label="Film Link"
                                     type="text"
                                     sx={{ width: "80%" }}
                                     value={movieLink}
@@ -117,7 +117,7 @@ export default function CreateSubmission() {
                             <Grid2 size={{ sm: 12 }}>
                                 <TextField
                                     className="outlined-input"
-                                    label="Music Link"
+                                    label="Zene Link"
                                     type="text"
                                     sx={{ width: "80%" }}
                                     value={musicLink}

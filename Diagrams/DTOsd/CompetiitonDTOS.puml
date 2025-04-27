@@ -1,0 +1,51 @@
+@startuml
+
+class GetCompetitionListDTO {
+    + Type : string <<get>> <<set>> = ""
+    + Phase : string <<get>> <<set>> = ""
+    + Page : int <<get>> <<set>> = 0
+    + UserName : string? <<get>> <<set>>
+}
+
+class CompetitionList {
+    + pageCount : int <<get>> <<set>> = 0
+    + Competitions : ICollection<CompetitionListDetails>? <<get>> <<set>> = null
+}
+
+class CompetitionListDetails {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + RelevantDate : DateOnly? <<get>> <<set>>
+    + Phase : string <<get>> <<set>>
+    + Type : string <<get>> <<set>>
+    + CompetitionListDetails(competition : Competition) <<constructor>>
+}
+
+class CompetitionStates {
+    + IsInPreparationPhase : bool <<get>> <<set>>
+    + IsInSubmissionPhase : bool <<get>> <<set>>
+    + IsInVotingPhase : bool <<get>> <<set>>
+}
+
+class CreateCompetitionDTO {
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Category : string <<get>> <<set>>
+    + SubmissionStartDate : DateOnly <<get>> <<set>>
+    + VotingStartDate : DateOnly <<get>> <<set>>
+    + FinishDate : DateOnly <<get>> <<set>>
+}
+
+class GetOneCompetitionDTO {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>> = ""
+    + Description : string <<get>> <<set>> = ""
+    + Creatorname : string <<get>> <<set>> = ""
+    + Phase : string <<get>> <<set>>
+    + Type : string <<get>> <<set>>
+    + RelevantDate : DateOnly? <<get>> <<set>>
+    + OwnSubmission : int <<get>> <<set>>
+    + GetOneCompetitionDTO(competition : Competition) <<constructor>>
+}
+
+@enduml

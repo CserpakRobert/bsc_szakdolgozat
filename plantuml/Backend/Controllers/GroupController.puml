@@ -1,8 +1,11 @@
 @startuml
 class GroupController {
-    + GroupController(groupService:GroupService, competitionService:CompetitionService, userService:UserService)
+    + GroupController(groupService:GroupService)
     + <<async>> CreateClosed(competitionId:int, createGroup:CreateGroupDTO) : Task<IActionResult>
     + <<async>> CreateClosed(id:int) : Task<IActionResult>
+    + <<async>> GetPrivateGroups(page:int) : Task<IActionResult>
+    + <<async>> GetInvitedGroups(page:int) : Task<IActionResult>
+    + <<async>> GetJoinedGroups(page:int) : Task<IActionResult>
     + <<async>> GetSmallDetails(competitionId:int, page:int) : Task<IActionResult>
     + <<async>> GetSmallDetails(competitionId:int) : Task<IActionResult>
     + <<async>> GetSmallDetails(username:string, page:int) : Task<IActionResult>

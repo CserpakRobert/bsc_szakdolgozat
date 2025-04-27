@@ -1,0 +1,70 @@
+@startuml
+
+class GetCompetitionListDTO {
+    +string Type
+    +string Phase
+    +int Page
+    +string? UserName
+}
+
+class CompetitionList {
+    +int pageCount
+    +IEnumerable<CompetitionListDetails>? Competitions
+}
+
+class CompetitionListDetails {
+    +int Id
+    +string Title
+    +DateOnly? RelevantDate
+    +string Phase
+    +string Type
+    +CompetitionListDetails(Competition competition)
+}
+
+class CompetitionStates {
+    +bool IsInPreparationPhase
+    +bool IsInSubmissionPhase
+    +bool IsInVotingPhase
+}
+
+class CreateCompetitionDTO {
+    +string Title
+    +string Description
+    +string Category
+    +DateOnly SubmissionStartDate
+    +DateOnly VotingStartDate
+    +DateOnly FinishDate
+}
+
+class GetOneCompetitionDTO {
+    +int Id
+    +string Title
+    +string Description
+    +string Creatorname
+    +string Phase
+    +string Type
+    +DateOnly? RelevantDate
+    +int OwnSubmission
+    +GetOneCompetitionDTO(Competition competition)
+}
+
+class Competition {
+    +int Id
+    +string Title
+    +string Description
+    +DateOnly RelevantDate
+    +string Phase
+    +string Type
+    +User Creator
+}
+
+class User {
+    +string UserName
+}
+
+CompetitionList --> CompetitionListDetails : contains
+CompetitionListDetails --> Competition : constructor parameter
+GetOneCompetitionDTO --> Competition : constructor parameter
+Competition --> User : Creator
+
+@enduml

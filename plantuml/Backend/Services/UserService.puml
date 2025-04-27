@@ -1,7 +1,7 @@
 @startuml
 class UserService {
     + UserService(httpContextAccessor:IHttpContextAccessor, userManager:UserManager<User>, context:MariaDBContext, configuration:IConfiguration, signInManager:SignInManager<User>)
-    + <<async>> RegisterUser(model:RegisterModel) : Task<bool>
+    + <<async>> RegisterUser(model:RegisterModel) : Task
     + <<async>> GetUserByName(name:string) : Task<User?>
     + <<async>> LoginUser(model:LoginModel) : Task<LoginDetails?>
     + <<virtual>> <<async>> GetLoggedInUser() : Task<User?>

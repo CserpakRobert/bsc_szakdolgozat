@@ -3,7 +3,6 @@ class Competition {
     + Id : int <<get>> <<set>>
     + Title : string <<get>> <<set>> = ""
     + Description : string <<get>> <<set>> = ""
-    + IsPrivate : bool <<get>> <<set>>
     + IsInPreparationPhase : bool <<get>> <<set>>
     + IsInSubmissionPhase : bool <<get>> <<set>>
     + IsInVotingPhase : bool <<get>> <<set>>

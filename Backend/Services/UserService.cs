@@ -41,6 +41,11 @@ namespace Backend.Services
 
         public async Task RegisterUser(RegisterModel model)
         {
+            if (model.Username.Contains(" "))
+            {
+                throw new ExceptionWithDescription("A felhasználónévben nem szerepelhet szünet");
+            }
+
             var user = new Models.User { Email = model.Email, UserName = model.Username };
             var existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
@@ -58,6 +63,11 @@ namespace Backend.Services
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
             }
+            else
+            {
+                throw new ExceptionWithDescription("Váratlan hiba a felhasználó létrehozása közben");
+            }
+            
 
         }
 
@@ -86,6 +96,7 @@ namespace Backend.Services
             var token = GenerateJwt(user);
             return  new LoginDetails(token, user.UserName);
         }
+
         public virtual async Task<User?> GetLoggedInUser()
         {
             if (_httpContextAccessor.HttpContext is null)
@@ -105,6 +116,7 @@ namespace Backend.Services
             }
             return user;
         }
+
         private string GenerateJwt(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -126,8 +138,6 @@ namespace Backend.Services
         }
 
 
-
-
         public async Task<bool> IsCreatorInCompetition(int competitionId, int userId)
         {
             var competition = await _context.Competitions.FirstAsync(comp => comp.Id == competitionId);
@@ -145,7 +155,6 @@ namespace Backend.Services
         public async Task<bool> CanSubmitOnCompetition(int competitionId, int userId)
         {
             var canSubmit =  await _context.Competitions
-                //.Include(comp => comp.Submissions)
                 .AnyAsync(comp => 
                 comp.Submissions.Any(sub => sub.OwnerId == userId 
                     || sub.Creators.Any(crea => crea.Id == userId)) 

@@ -1,0 +1,23 @@
+class Models.Competition {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + IsPrivate : bool <<get>> <<set>>
+    + IsInPreparationPhase : bool <<get>> <<set>>
+    + IsInSubmissionPhase : bool <<get>> <<set>>
+    + IsInVotingPhase : bool <<get>> <<set>>
+    + IsMovieCompetition : bool <<get>> <<set>>
+    + IsMusicCompetition : bool <<get>> <<set>>
+    + IsShortStoryCompetition : bool <<get>> <<set>>
+    + CreatorId : int <<get>> <<set>>
+    + Phase : string <<get>>
+    + Type : string <<get>>
+    + SubmissionStartDate : DateOnly <<get>> <<set>>
+    + VotingStartDate : DateOnly <<get>> <<set>>
+    + FinishDate : DateOnly <<get>> <<set>>
+    + RelevantDate : DateOnly <<get>> <<set>>
+    + Creator : User <<get>> <<set>>
+    + Moderators : ICollection<User> <<get>> <<set>>
+    + Submissions : ICollection<Submission> <<get>> <<set>>
+    + Groups : ICollection<Group> <<get>> <<set>>
+}

@@ -1,4 +1,5 @@
-@startuml asd
+@startuml Competition
+rectangle {
 class CompetitionController {
     + CompetitionController(competitionService:CompetitionService)
     + <<async>> GetListDetails(listArgs:GetCompetitionListDTO) : Task<IActionResult>
@@ -15,7 +16,77 @@ class CompetitionService {
     + <<virtual>> <<async>> GetDetailsList(listDTO:GetCompetitionListDTO) : Task<CompetitionList?>
     + <<virtual>> <<async>> GetDetails(id:int) : Task<GetOneCompetitionDTO>
 }
+
+class Models.DTOs.GetCompetitionListDTO {
+    + Type : string <<get>> <<set>>
+    + Phase : string <<get>> <<set>>
+    + Page : int <<get>> <<set>>
+    + UserName : string? <<get>> <<set>>
+}
+class Models.DTOs.CompetitionList {
+    + pageCount : int <<get>> <<set>> = 0
+    + Competitions : IEnumerable<CompetitionListDetails>? <<get>> <<set>> 
+}
+class Models.DTOs.CompetitionListDetails {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + RelevantDate : DateOnly?
+    + Phase : string <<get>> <<set>>
+    + Type : string <<get>> <<set>>
+    + CompetitionListDetails(competition:Competition)
+}
+class Models.DTOs.CompetitionStates {
+    + IsInPreparationPhase : bool <<get>> <<set>>
+    + IsInSubmissionPhase : bool <<get>> <<set>>
+    + IsInVotingPhase : bool <<get>> <<set>>
+}
+class Models.DTOs.CreateCompetitionDTO {
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Category : string <<get>> <<set>>
+    + SubmissionStartDate : DateOnly <<get>> <<set>>
+    + VotingStartDate : DateOnly <<get>> <<set>>
+    + FinishDate : DateOnly <<get>> <<set>>
+}
+class Models.DTOs.GetOneCompetitionDTO {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>> 
+    + Description : string <<get>> <<set>> 
+    + Creatorname : string <<get>> <<set>> 
+    + Phase : string <<get>> <<set>>
+    + Type : string <<get>> <<set>>
+    + OwnSubmission : int <<get>> <<set>>
+    + GetOneCompetitionDTO(competition:Competition)
+    + RelevantDate : DateOnly?
+}
+class Models.Competition {
+    + Id : int <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + IsPrivate : bool <<get>> <<set>>
+    + IsInPreparationPhase : bool <<get>> <<set>>
+    + IsInSubmissionPhase : bool <<get>> <<set>>
+    + IsInVotingPhase : bool <<get>> <<set>>
+    + IsMovieCompetition : bool <<get>> <<set>>
+    + IsMusicCompetition : bool <<get>> <<set>>
+    + IsShortStoryCompetition : bool <<get>> <<set>>
+    + CreatorId : int <<get>> <<set>>
+    + Phase : string <<get>>
+    + Type : string <<get>>
+    + SubmissionStartDate : DateOnly <<get>> <<set>>
+    + VotingStartDate : DateOnly <<get>> <<set>>
+    + FinishDate : DateOnly <<get>> <<set>>
+    + RelevantDate : DateOnly <<get>> <<set>>
+    + Creator : User <<get>> <<set>>
+    + Moderators : ICollection<User> <<get>> <<set>>
+    + Submissions : ICollection<Submission> <<get>> <<set>>
+    + Groups : ICollection<Group> <<get>> <<set>>
+}
+
 ControllerBase <|-- CompetitionController
 CompetitionController <-- CompetitionService
-CompetitionService <-- UserService
+CompetitionService <- UserService
+CompetitionController ..> Models : imports
+CompetitionService ..> Models : imports
+}
 @enduml

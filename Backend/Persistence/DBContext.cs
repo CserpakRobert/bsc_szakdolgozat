@@ -11,7 +11,7 @@ namespace Backend.Persistence
         {
 
         }
-        public  DbSet<User> Users { get; set; }
+        public override DbSet<User> Users { get; set; }
         public  DbSet<Competition> Competitions { get; set; }
         public  DbSet<Submission> Submissions { get; set; }
         public  DbSet<MovieDetails> MoviesDetails { get; set; }

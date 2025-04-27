@@ -1,22 +1,19 @@
 @startuml
-class MariaDBContext <<partial>> {
-    + MariaDBContext(options:DbContextOptions<MariaDBContext>)
+
+class MariaDBContext {
+    + MariaDBContext(options : DbContextOptions<MariaDBContext>)
+    + Users : DbSet<User> <<get>> <<set>>
+    + Competitions : DbSet<Competition> <<get>> <<set>>
+    + Submissions : DbSet<Submission> <<get>> <<set>>
+    + MoviesDetails : DbSet<MovieDetails> <<get>> <<set>>
+    + MusicDetails : DbSet<MusicDetails> <<get>> <<set>>
+    + Groups : DbSet<Group> <<get>> <<set>>
+    + JoinRequests : DbSet<OpenGroupJoinRequests> <<get>> <<set>>
+    + SubmissionInvites : DbSet<SubmissionInvites> <<get>> <<set>>
+    + CollaboratedSubmissions : DbSet<CollaboratedSubmissions> <<get>> <<set>>
+    + Moderators : DbSet<Moderators> <<get>> <<set>>
+    + SubmissionVotes : DbSet<SubmissionVotes> <<get>> <<set>>
+    + UserParticipateGroups : DbSet<UserParticipateGroups> <<get>> <<set>>
 }
-class "IdentityDbContext`3"<T1,T2,T3> {
-}
-class "DbSet`1"<T> {
-}
-"IdentityDbContext`3" "<User,UserRole,int>" <|-- MariaDBContext
-MariaDBContext --> "Users<User>" "DbSet`1"
-MariaDBContext --> "Competitions<Competition>" "DbSet`1"
-MariaDBContext --> "Submissions<Submission>" "DbSet`1"
-MariaDBContext --> "MoviesDetails<MovieDetails>" "DbSet`1"
-MariaDBContext --> "MusicDetails<MusicDetails>" "DbSet`1"
-MariaDBContext --> "Groups<Group>" "DbSet`1"
-MariaDBContext --> "JoinRequests<OpenGroupJoinRequests>" "DbSet`1"
-MariaDBContext --> "SubmissionInvites<SubmissionInvites>" "DbSet`1"
-MariaDBContext --> "CollaboratedSubmissions<CollaboratedSubmissions>" "DbSet`1"
-MariaDBContext --> "Moderators<Moderators>" "DbSet`1"
-MariaDBContext --> "SubmissionVotes<SubmissionVotes>" "DbSet`1"
-MariaDBContext --> "UserParticipateGroups<UserParticipateGroups>" "DbSet`1"
+IdentityDbContext <|-- MariaDBContext
 @enduml

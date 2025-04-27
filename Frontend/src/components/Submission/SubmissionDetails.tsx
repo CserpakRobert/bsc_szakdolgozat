@@ -68,7 +68,7 @@ export default function SubmissionDetails() {
                         {submission.participateNames.includes(userName) && !submission.isSubmitted && (
                             <h1>Még nem adtatok be pályázatot</h1>
                         )}
-                        {/*TODO*/}
+                        {}
                     </>)}
 
                     {submission.isSubmitted && (<>

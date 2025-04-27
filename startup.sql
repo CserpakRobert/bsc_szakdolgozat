@@ -64,7 +64,7 @@ BEGIN
 
     DECLARE cur CURSOR FOR 
         SELECT c.Id Id 
-        FROM competitionsc
+        FROM competitions c
         WHERE c.IsInVotingPhase = 1 AND c.FinishDate < CURDATE();
     
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -92,7 +92,7 @@ BEGIN
 
     CLOSE cur;
 
-    UPDATE Competition
+    UPDATE Competitions
         SET isinvotingphase = 0
         WHERE IsInVotingPhase = 1 AND FinishDate < CURDATE();
 
@@ -109,7 +109,7 @@ BEGIN
 
     DECLARE cur CURSOR FOR 
     SELECT Id competitionId
-    FROM competition
+    FROM competitions
     WHERE IsInSubmissionPhase = 1 AND VotingStartDate < CURDATE();
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -134,7 +134,7 @@ BEGIN
         DELETE FROM submissions s
         where s.competitionId = competitionId and s.IsSubmitted = 0;
 
-        UPDATE competitionsc
+        UPDATE competitions c
         SET c.IsInSubmissionPhase = 0, c.IsInVotingPhase = 1
         WHERE c.Id = competitionId;
     END LOOP;
@@ -144,7 +144,25 @@ BEGIN
     set AUTOCOMMIT = 1;
 END;
 //
+CREATE OR REPLACE PROCEDURE GroupToSubmission(Id INT, submissionId INT)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+            ROLLBACK;
+            RESIGNAL;
+    END;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    set AUTOCOMMIT = 0;
+    START TRANSACTION;
+
+END;
+
+//
 CREATE or replace PROCEDURE PreparationEnd()
 BEGIN
 
@@ -166,7 +184,7 @@ BEGIN
          c.IsMusicCompetition isMusic,
          c.isShortStoryCompetition isStory
         FROM Groups g
-        JOIN competitionsc ON g.competitionId = c.Id
+        JOIN competitions c ON g.competitionId = c.Id
         WHERE c.IsInPreparationPhase = 1 
             AND SubmissionStartDate < CURDATE();
 
@@ -209,7 +227,6 @@ BEGIN
             UPDATE Submissions
             set MovieDetailsId = @movieDetailsId
             where Id = @lastSubmissionId;
-
         END IF;
 
         IF isMusic THEN
@@ -221,7 +238,6 @@ BEGIN
                 VALUES ("", @lastSubmissionId);
 
             SET @musicDetailsId = LAST_INSERT_ID();
-            -- SET @lastSubmissionId = 59;
 
             UPDATE Submissions
             set MusicDetailsId = @musicDetailsId
@@ -242,9 +258,6 @@ BEGIN
             set ShortStoryDetailsId = @storyDetailsId
             where Id = @lastSubmissionId;
         END IF;
-
-
-        -- Get submission's Id
     -- Create submission END
 
     -- Insert into collaboratedSubmissions
@@ -274,7 +287,7 @@ BEGIN
     CLOSE cur;
 
     -- Update Competition
-        UPDATE Competition
+        UPDATE Competitions
             SET IsInPreparationPhase = 0, IsInSubmissionPhase = 1
             WHERE IsInPreparationPhase = 1 AND SubmissionStartDate < CURDATE();
     -- Update Competition END
@@ -285,7 +298,7 @@ BEGIN
 END;
 //
 
-CREATE OR REPLACE EVENT UpdateCompetitions
+CREATE OR REPLACE EVENT Updatecompetitions 
 ON SCHEDULE EVERY '1' DAY
 STARTS (TIMESTAMP(CURRENT_DATE) + INTERVAL 1 DAY + INTERVAL 1 HOUR)
 DO
@@ -302,19 +315,19 @@ DELIMITER ;
 show events;
 
 
--- drop event UpdateCompetitions;
+-- drop event Updatecompetitions ;
 
--- -- select * from competition;
--- update competitions
---     set SubmissionStartDate = "0001-01-01"
---     where Id = 5;
--- call PreparationEnd();
--- update competitions
---     set VotingStartDate = "0001-01-01"
---     where Id = 2;
--- call SubmissionEnd();
--- update competitions
---     set FinishDate = "0001-01-01"
---     where Id = 4;
--- call VotingEnd();
--- delete from competitionswhere id = 3;
+-- select * from competition;
+update competitions 
+    set SubmissionStartDate = "0001-01-01"
+    where Id = 7;
+call PreparationEnd();
+update competitions 
+    set VotingStartDate = "0001-01-01"
+    where Id = 7;
+call SubmissionEnd();
+update competitions 
+    set FinishDate = "0001-01-01"
+    where Id = 7;
+call VotingEnd();
+-- delete from competitions where id = 3;

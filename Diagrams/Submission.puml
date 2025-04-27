@@ -28,5 +28,5 @@ class SubmissionService {
 }
 ControllerBase <|-- SubmissionController
 SubmissionController <-- SubmissionService
-SubmissionService <-- UserService
+SubmissionService <- UserService
 @enduml
