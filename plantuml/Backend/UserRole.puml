@@ -1,9 +1,0 @@
-@startuml
-class UserRole {
-    + UserRole()
-    + UserRole(roleName:string)
-}
-class "IdentityRole`1"<T> {
-}
-"IdentityRole`1" "<int>" <|-- UserRole
-@enduml

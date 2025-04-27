@@ -1,5 +1,0 @@
-@startuml
-class test <<partial>> {
-}
-Migration <|-- test
-@enduml

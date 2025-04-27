@@ -1,4 +1,0 @@
-@startuml
-class ShortStory <<partial>> {
-}
-@enduml

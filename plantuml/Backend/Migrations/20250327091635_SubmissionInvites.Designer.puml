@@ -1,4 +1,0 @@
-@startuml
-class SubmissionInvites <<partial>> {
-}
-@enduml

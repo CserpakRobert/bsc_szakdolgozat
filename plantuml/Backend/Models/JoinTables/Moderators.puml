@@ -1,8 +1,0 @@
-@startuml
-class Moderators {
-    + UserId : int <<get>> <<set>>
-    + CompetitionId : int <<get>> <<set>>
-}
-Moderators --> "User" User
-Moderators --> "Competition" Competition
-@enduml

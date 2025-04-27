@@ -1,5 +1,0 @@
-@startuml
-class CompetitionTypes <<partial>> {
-}
-Migration <|-- CompetitionTypes
-@enduml

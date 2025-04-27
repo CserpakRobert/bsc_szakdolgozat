@@ -1,9 +1,0 @@
-@startuml
-class MovieDetails {
-    + Id : int <<get>> <<set>>
-    + TrailerLink : string <<get>> <<set>>
-    + MovieLink : string <<get>> <<set>>
-    + SubmissionId : int <<get>> <<set>>
-}
-MovieDetails --> "Submission" Submission
-@enduml

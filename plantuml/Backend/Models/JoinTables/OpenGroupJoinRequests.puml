@@ -1,9 +1,0 @@
-@startuml
-class OpenGroupJoinRequests {
-    + RequestOwnerId : int <<get>> <<set>>
-    + Description : string <<get>> <<set>>
-    + GroupId : int <<get>> <<set>>
-}
-OpenGroupJoinRequests --> "RequestOwner" User
-OpenGroupJoinRequests --> "Group" Group
-@enduml

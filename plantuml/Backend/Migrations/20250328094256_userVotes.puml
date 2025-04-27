@@ -1,5 +1,0 @@
-@startuml
-class userVotes <<partial>> {
-}
-Migration <|-- userVotes
-@enduml

@@ -1,4 +1,0 @@
-@startuml
-class votes <<partial>> {
-}
-@enduml

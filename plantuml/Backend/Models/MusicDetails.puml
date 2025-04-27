@@ -1,8 +1,0 @@
-@startuml
-class MusicDetails {
-    + Id : int <<get>> <<set>>
-    + Link : string <<get>> <<set>>
-    + SubmissionId : int <<get>> <<set>>
-}
-MusicDetails --> "Submission" Submission
-@enduml

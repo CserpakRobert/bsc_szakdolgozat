@@ -1,5 +1,0 @@
-@startuml
-class finalMigration <<partial>> {
-}
-Migration <|-- finalMigration
-@enduml

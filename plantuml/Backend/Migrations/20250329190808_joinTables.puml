@@ -1,5 +1,0 @@
-@startuml
-class joinTables <<partial>> {
-}
-Migration <|-- joinTables
-@enduml

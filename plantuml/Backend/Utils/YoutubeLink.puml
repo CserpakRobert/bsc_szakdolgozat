@@ -1,5 +1,0 @@
-@startuml
-class YouTubeLink {
-}
-ValidationAttribute <|-- YouTubeLink
-@enduml

@@ -1,5 +1,0 @@
-@startuml
-class ShortStory <<partial>> {
-}
-Migration <|-- ShortStory
-@enduml

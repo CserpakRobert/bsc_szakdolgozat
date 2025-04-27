@@ -1,4 +1,0 @@
-@startuml
-class ModelRemodel <<partial>> {
-}
-@enduml

@@ -1,5 +1,0 @@
-@startuml
-class Model <<partial>> {
-}
-Migration <|-- Model
-@enduml

@@ -1,5 +1,0 @@
-@startuml
-class Title {
-}
-ValidationAttribute <|-- Title
-@enduml

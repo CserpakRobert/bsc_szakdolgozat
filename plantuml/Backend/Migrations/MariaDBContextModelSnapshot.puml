@@ -1,5 +1,0 @@
-@startuml
-class MariaDBContextModelSnapshot <<partial>> {
-}
-ModelSnapshot <|-- MariaDBContextModelSnapshot
-@enduml

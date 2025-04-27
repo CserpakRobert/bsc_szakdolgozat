@@ -1,5 +1,0 @@
-@startuml
-class SubmissionInvites <<partial>> {
-}
-Migration <|-- SubmissionInvites
-@enduml

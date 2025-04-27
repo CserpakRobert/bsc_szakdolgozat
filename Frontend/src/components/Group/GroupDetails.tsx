@@ -294,7 +294,7 @@ const GroupDetails = () => {
                 keepMounted
                 onClose={handleClose}
             >
-                {/*TODO*/}
+                
                 <DialogTitle>{"Jelentkezés leírása"}</DialogTitle>
                 <DialogContent>
                     

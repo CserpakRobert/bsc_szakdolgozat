@@ -1,4 +1,0 @@
-@startuml
-class votecount <<partial>> {
-}
-@enduml

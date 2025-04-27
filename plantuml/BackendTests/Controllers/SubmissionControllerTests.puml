@@ -1,5 +1,0 @@
-@startuml
-class SubmissionControllerTests {
-    + CreateMovie_Test() : void
-}
-@enduml

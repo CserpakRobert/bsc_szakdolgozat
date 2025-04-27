@@ -35,7 +35,6 @@ namespace Backend.Models
 
 
 
-        //Remove not used fields
         public override string? PhoneNumber { get; set; } = null!;
         public override bool PhoneNumberConfirmed { get; set; } = false;
         public override bool TwoFactorEnabled { get; set; } = false;

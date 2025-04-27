@@ -241,7 +241,6 @@ namespace Backend.Controllers
         [HttpPost("invites/accept/{groupId}")]
         public async Task<IActionResult> AcceptInvite(int groupId)
         {
-            //TODO!
             try
             {
                 return Ok(await _groupService.AcceptInvite(groupId));
@@ -259,7 +258,6 @@ namespace Backend.Controllers
         [HttpPost("invites/decline/{groupId}")]
         public async Task<IActionResult> DeclineInvite(int groupId)
         {
-            //TODO!
             try
             {
                 return Ok(await _groupService.DeclineInvite(groupId));
