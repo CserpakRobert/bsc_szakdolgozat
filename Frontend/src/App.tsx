@@ -2,7 +2,7 @@
 import './App.css'
 import MenuBar from './components/MenuBar';
 import Register from './components/register';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Login from './components/login';
 import CreateCompetition from './components/Competition/CreateCompetition';
 import CompetitionDetails from './components/Competition/CompetitionDetails';
@@ -16,12 +16,31 @@ import CreateGroup from './components/Group/CreateGroup';
 import GroupDetails from './components/Group/GroupDetails';
 import { useAuth } from './Utils/useAuth';
 import HomeComponent from './components/Home';
+import { useEffect } from 'react';
+import { isExpired } from 'react-jwt';
+import { useError } from './Utils/useError';
 
 function App() {
   const { isLoggedIn } = useAuth()
+
+  const WatchPathChange = () => {
+    const { logout } = useAuth()
+    const location = useLocation()
+    const {setErrorMsg} = useError()
+    useEffect(() => {
+      if (localStorage.getItem("token") && isExpired(localStorage.getItem("token") ?? "")) {
+        logout()
+        setErrorMsg("Kérlek jelentkezz be újra")
+      }
+    }
+      , [location.pathname, logout,setErrorMsg])
+    return null;
+  }
+
   return (
     <>
       <BrowserRouter>
+        <WatchPathChange />
         <MenuBar></MenuBar>
         <Routes>
           <Route path='/register' element={<Register />} />

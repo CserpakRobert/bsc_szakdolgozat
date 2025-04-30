@@ -21,12 +21,12 @@ export default function HomeComponent() {
                                 A versenyek 3 különböző kategóriában elérhetőek, amelyek Film, Zene és Történetek.
                                 <br />
                                 <br />
-                                A verseny szervezésének megkönnyebítésére a szervezőknek a verseny létrehozásán kívül nincs teendőjük a verseny lebonyolítása során.
+                                A verseny szervezésének megkönnyebbítésére  a szervezőknek a verseny létrehozásán kívül nincs teendőjük a verseny lebonyolítása során.
                                 Az oldalon készült versenyek nyilvánosak, ezért az elbírálás is az oldal felhasználói segítségével történik szavazatok leadásával.
                                 <br />
                                 <br />
                                 Az oldal lehetővé teszi az elkészített versenyekre való jelentkezést csapatok létrehozásával, illetve ezekre a csapatokra való jelentkezéssel.
-                                A csoport készítőjének lehetősége van további csapattagok meghívására, illetve ha az oldal felhasználóiból szeretne csapattagokat keresni,
+                                A csoport készítőjének lehetősége van további csapattagok meghívására, illetve, ha az oldal felhasználóiból szeretne csapattagokat keresni,
                                 akkor lehetősége van jelentkezések fogadására és annak elbírálására is.
                             </p>
                         </Grid2>
