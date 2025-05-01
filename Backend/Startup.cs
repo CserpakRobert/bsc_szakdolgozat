@@ -53,7 +53,7 @@ namespace Backend
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]!))
 
                 };
 
@@ -61,7 +61,6 @@ namespace Backend
                 {
                     OnAuthenticationFailed = context =>
                     {
-                        Debug.WriteLine($"Authentication failed: {context.Exception.Message}");
                         return Task.CompletedTask;
                     },
                     OnChallenge = context =>

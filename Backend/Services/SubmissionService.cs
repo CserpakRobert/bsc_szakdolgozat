@@ -274,7 +274,6 @@ namespace Backend.Services
                 throw new ExceptionWithDescription("Csak a pályázat készítője adhatja be a pályázatot");
             }
 
-            submission.IsSubmitted = true;
 
             if (modifySubmission.Title.Length > 200 || modifySubmission.Title.Length < 10)
             {
@@ -307,6 +306,7 @@ namespace Backend.Services
             {
                 throw new ExceptionWithDescription("Hiba a trailer linkkel");
             }
+            submission.IsSubmitted = true;
 
             await _context.SaveChangesAsync();
             return submission.Id;
@@ -347,7 +347,6 @@ namespace Backend.Services
                 throw new ExceptionWithDescription("Csak a pályázat készítője adhatja be a pályázatot");
             }
 
-            submission.IsSubmitted = true;
 
             if (modifySubmission.Title.Length > 200 || modifySubmission.Title.Length < 10)
             {
@@ -372,6 +371,7 @@ namespace Backend.Services
                 throw new ExceptionWithDescription("Hiba a zene linkkel");
             }
 
+            submission.IsSubmitted = true;
             await _context.SaveChangesAsync();
             return submission.Id;
         }
@@ -398,7 +398,6 @@ namespace Backend.Services
                 throw new ExceptionWithDescription("Csak a pályázat készítője adhatja be a pályázatot");
             }
 
-            submission.IsSubmitted = true;
 
             if (modifySubmission.Title.Length > 200 || modifySubmission.Title.Length < 10)
             {
@@ -425,6 +424,7 @@ namespace Backend.Services
                 throw new ExceptionWithDescription("A történet hossza nem megfelelő");
             }
 
+            submission.IsSubmitted = true;
             await _context.SaveChangesAsync();
             return submission.Id;
         }

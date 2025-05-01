@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.InMemory;
 using Backend.Utils;
 using Backend.Models.DTOs;
 using BackendTests;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Services.Tests
 {
@@ -23,17 +24,44 @@ namespace Backend.Services.Tests
     {
 
         [TestMethod]
-        public async Task Create_Test()
+        public async Task CreateTest()
         {
-            //TODO
-            Assert.Fail("Not implemented");
+            var mockOptions = new DbContextOptionsBuilder<MariaDBContext>()
+                .UseInMemoryDatabase(databaseName: "testCreateCompetition")
+                .Options;
+            var mockUser = new User() { Id = 10, UserName = "testUser", Email = "test@test.com" };
 
-        }
-        [TestMethod()]
-        public async Task GetDetailsList_Test()
-        {
-            //TODO
-            Assert.Fail("Not implemented");
+            var mockUserService = new Mock<UserService>(null!, null!, null!, null!, null!);
+            mockUserService.Setup(x => x.GetLoggedInUser()).ReturnsAsync(mockUser);
+
+
+            using (var context = new MariaDBContext(mockOptions))
+            {
+                CompetitionService mockCompetititonService = new CompetitionService(mockUserService.Object, context);
+
+                Assert.IsTrue(mockCompetititonService.CreateCompetition(new CreateCompetitionDTO()
+                {
+                    Title = "testtesttest",
+                    Description = "Test123456789101112131415",
+                    Category = "movie",
+                    SubmissionStartDate = DateOnly.FromDateTime(DateTime.Now).AddDays(10),
+                    VotingStartDate = DateOnly.FromDateTime(DateTime.Now).AddDays(2),
+                    FinishDate = DateOnly.FromDateTime(DateTime.Now).AddDays(3)
+
+                }).IsFaulted);
+
+                var result = await mockCompetititonService.CreateCompetition(new CreateCompetitionDTO()
+                {
+                    Title = "testtesttest",
+                    Description = "Test123456789101112131415",
+                    Category = "movie",
+                    SubmissionStartDate = DateOnly.FromDateTime(DateTime.Now).AddDays(1),
+                    VotingStartDate = DateOnly.FromDateTime(DateTime.Now).AddDays(2),
+                    FinishDate = DateOnly.FromDateTime(DateTime.Now).AddDays(3)
+
+                });
+                Assert.AreEqual(1, result);
+            }
         }
 
         [TestMethod()]
@@ -61,7 +89,7 @@ namespace Backend.Services.Tests
 
             using (var context = new MariaDBContext(mockOptions))
             {
-                CompetitionService mockCompetititonService = new CompetitionService( mockUserService.Object, context);
+                CompetitionService mockCompetititonService = new CompetitionService(mockUserService.Object, context);
                 await Assert.ThrowsExceptionAsync<ExceptionWithDescription>(() => mockCompetititonService.GetDetails(0));
                 var result = await mockCompetititonService.GetDetails(1);
                 Assert.IsNotNull(result);

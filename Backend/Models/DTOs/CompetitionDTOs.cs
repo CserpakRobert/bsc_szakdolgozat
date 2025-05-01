@@ -41,9 +41,9 @@
     }
     public class CreateCompetitionDTO
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Category { get; set; }
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string Category { get; set; } = null!;
 
         public DateOnly SubmissionStartDate { get; set; }
         public DateOnly VotingStartDate { get; set; }

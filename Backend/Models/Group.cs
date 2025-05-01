@@ -15,19 +15,19 @@ namespace Backend.Models
         public int CompetitionId { get; set; }
 
         [Required]
-        public Competition Competition { get; set; }
+        public Competition Competition { get; set; } = null!;
 
         [Required]
         public int GroupOwnerId { get; set; }
 
         [Required]
-        public User GroupOwner { get; set; }
+        public User GroupOwner { get; set; } = null!;
 
 
         [Required]
         [ValidDescription]
         [MaxLength(3000)]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         [Required]
         public bool IsClosed { get; set; } = false;

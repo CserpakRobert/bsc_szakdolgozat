@@ -35,7 +35,6 @@ namespace Backend.Services
             this._context = context;
             this._configuration = configuration;
             this._signInManager = signInManager;
-
         }
 
 

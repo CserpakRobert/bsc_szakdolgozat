@@ -14,12 +14,12 @@ namespace Backend.Models
         [MaxLength(20000)]
         [StringLength(20000, ErrorMessage=("Egy történet maximum 20000 karakter lehet"))]
 
-        public string Story { get; set; }
+        public string Story { get; set; } = null!;
 
         [Required]
         public int SubmissionId { get; set; }
 
         [Required]
-        public Submission Submission { get; set; }
+        public Submission Submission { get; set; } = null!;
     }
 }

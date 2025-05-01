@@ -60,7 +60,6 @@ export default function CompetitionDetails() {
             })
                 .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
         }
-        //TODO
         if (competition?.phase === "submit"|| competition?.phase == "finished" || competition?.phase == "voting" || competition?.phase === "finished") {
             api.get(`submission/ownSubmission/${competition.id}`).then(resp => { setOwnSubmission(resp.data) })
         }

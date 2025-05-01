@@ -10,17 +10,17 @@ namespace Backend.Models.JoinTables
         [Required]
         public int SenderUserId { get; set; }
         [Required]
-        public User SenderUser { get; set; }
+        public User SenderUser { get; set; } = null!;
 
         [Required]
         public int RecieverUserId { get; set; }
         [Required]
-        public User RecieverUser { get; set; }
+        public User RecieverUser { get; set; } = null!;
 
         [Required]
         public int GroupId { get; set; }
 
         [Required]
-        public Group Group { get; set; }
+        public Group Group { get; set; } = null!;
     }
 }

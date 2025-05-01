@@ -24,27 +24,27 @@ namespace Backend.Models
         public int OwnerId { get; set; }
 
         [Required]
-        public User Owner { get; set; }
+        public User Owner { get; set; } = null!;
 
         [Required]
         [Title]
         [MaxLength(200)]
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         [Required]
         [ValidDescription]
         [MaxLength(3000)]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
 
         //Table connections
         [Required]
-        public Competition Competition { get; set; }
+        public Competition Competition { get; set; } = null!;
 
         [Required]
         public int CompetitionId { get; set; }
 
-        public ICollection<User> Creators { get; set; }
+        public ICollection<User> Creators { get; set; } = null!;
 
         public ICollection<User> VotedUsers { get; set; } = [];
 

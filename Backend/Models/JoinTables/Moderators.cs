@@ -6,9 +6,9 @@ namespace Backend.Models.JoinTables
     public class Moderators
     {
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public int CompetitionId { get; set; }
-        public Competition Competition { get; set; }
+        public Competition Competition { get; set; } = null!;
     }
 }

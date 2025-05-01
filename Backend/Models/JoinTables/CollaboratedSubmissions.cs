@@ -6,9 +6,9 @@ namespace Backend.Models.JoinTables
     public class CollaboratedSubmissions
     {
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User User { get; set; } = null!;
 
         public int SubmissionId { get; set; }
-        public Submission Submission { get; set; }
+        public Submission Submission { get; set; } = null!;
     }
 }

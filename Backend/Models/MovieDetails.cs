@@ -11,16 +11,16 @@ namespace Backend.Models
 
         [Required]
         [YouTubeLink]
-        public string TrailerLink { get; set; }
+        public string TrailerLink { get; set; } = null!;
 
         [Required]
         [YouTubeLink]
-        public string MovieLink { get; set; }
+        public string MovieLink { get; set; } = null!;
 
         [Required]
         public int SubmissionId { get; set; }
 
         [Required]
-        public Submission Submission { get; set; }
+        public Submission Submission { get; set; } = null!;
     }
 }
