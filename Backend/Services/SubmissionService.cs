@@ -51,7 +51,7 @@ namespace Backend.Services
                     );
                     break;
                 case "submission":
-                    query = query.Where(sub => sub.Competition.IsInSubmissionPhase && sub.OwnerId == user.Id);
+                    query = query.Where(sub => sub.Competition.IsInSubmissionPhase && sub.Creators.Any(c=>c.Id == user.Id));
                     break;
                 case "voting":
                     query = query.Where(sub => sub.Competition.IsInVotingPhase);

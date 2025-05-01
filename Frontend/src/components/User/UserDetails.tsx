@@ -62,7 +62,7 @@ export default function UserDetails() {
                 api.get(`/group/joinedGroups/${page - 1}`).then(resp => { setGroups(resp.data.groups); setPageCount(resp.data.count) });
                 break;
             case "inSubmissionSubmissions":
-                api.post(`/submission/list`, { userName: user?.userName, page: page, phase: "submission" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
+                api.post(`/submission/list`, { userName: user?.userName, page: page-1, phase: "submission" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
                 break;
             default:
                 break;
@@ -84,9 +84,12 @@ export default function UserDetails() {
     }
 
     useEffect(() => {
-        api.get(`/user/${name}`).then(resp => setUser(resp.data))
+        api.get(`/user/${name}`).then(resp => setUser(resp.data));
+        setprivateTab(false);
+        setCurrentList("finishedSub");
     }
         , [name, page, user?.userName])
+
     useEffect(() => {
         if (user) {
             api.post(`/submission/list`, { sortByPlacement: true, userName: user?.userName, page: page - 1, phase: "finished" }).then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) });
