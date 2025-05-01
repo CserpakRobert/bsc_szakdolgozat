@@ -312,7 +312,7 @@ namespace Backend.Services
             return submission.Id;
         }
 
-        internal async Task<int> GetOwnSubmission(int competitionId)
+        public virtual async Task<int> GetOwnSubmission(int competitionId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");

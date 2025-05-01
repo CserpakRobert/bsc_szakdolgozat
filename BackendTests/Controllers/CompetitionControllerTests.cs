@@ -45,7 +45,7 @@ namespace Backend.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
         }
         [TestMethod()]
-        public async Task Create_UNA_Test()
+        public void Create_UNA_Test()
         {
             var mockCompetitionService = new Mock<CompetitionService>(null!, null!);
             mockCompetitionService.Setup(x => x.CreateCompetition(It.IsAny<CreateCompetitionDTO>()))

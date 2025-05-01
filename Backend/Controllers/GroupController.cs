@@ -55,6 +55,10 @@ namespace Backend.Controllers
             {
                 return BadRequest(new { errorMessage = e.Message });
             }
+            catch (UserNotAuthorized)
+            {
+                return Unauthorized();
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -63,7 +67,7 @@ namespace Backend.Controllers
         {
             try
             {
-                return Ok(await _groupService.GetPrivateGroups( page));
+                return Ok(await _groupService.GetPrivateGroups(page));
             }
             catch (ExceptionWithDescription e)
             {
@@ -97,7 +101,7 @@ namespace Backend.Controllers
         {
             try
             {
-                return Ok(await _groupService.GetInvitedGroups(page));
+                return Ok(await _groupService.GetJoinedGroups(page));
             }
             catch (ExceptionWithDescription e)
             {
@@ -114,7 +118,7 @@ namespace Backend.Controllers
         {
             try
             {
-                return Ok(await _groupService.GroupSmallDetails( competitionId,  page));
+                return Ok(await _groupService.GroupSmallDetails(competitionId, page));
             }
             catch (ExceptionWithDescription e)
             {
@@ -146,7 +150,7 @@ namespace Backend.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("useropengroups/{username}")]
-        public async Task<IActionResult> GetSmallDetails(string username,[FromBody]int page)
+        public async Task<IActionResult> GetSmallDetails(string username, [FromBody] int page)
         {
             try
             {
@@ -383,23 +387,7 @@ namespace Backend.Controllers
                 return Unauthorized();
             }
         }
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[HttpPost("invitedGroups/{page}")]
-        //public async Task<IActionResult> GetInvitedGroups([FromBody] int page)
-        //{
-        //    try
-        //    {
-        //        return Ok(await _groupService.GetInvitedGroups(page));
-        //    }
-        //    catch (ExceptionWithDescription e)
-        //    {
-        //        return BadRequest(new { errorMessage = e.Message });
-        //    }
-        //    catch (UserNotAuthorized)
-        //    {
-        //        return Unauthorized();
-        //    }
-        //}
+
 
     }
 }

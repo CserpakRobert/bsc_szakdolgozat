@@ -15,20 +15,15 @@ namespace Backend.Services
     public class GroupService
     {
         private readonly MariaDBContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserService _userService;
-        private readonly CompetitionService _competitionService;
 
-        public GroupService(IHttpContextAccessor httpContextAccessor,
+        public GroupService(
             UserService userService,
-            MariaDBContext context,
-            CompetitionService competitionService
+            MariaDBContext context
             )
         {
-            _httpContextAccessor = httpContextAccessor;
             _userService = userService;
             _context = context;
-            this._competitionService = competitionService;
         }
 
         public virtual async Task<bool> CanJoin(int competitionId, int? userId = null)
@@ -48,7 +43,7 @@ namespace Backend.Services
                 .Where(g => g.CompetitionId == competitionId)
                 .AnyAsync(g => g.Participants.Any(p => p.Id == userId));
 
-            var canJoin = !await _competitionService.IsModerator(competitionId, (int)userId);
+            var canJoin = !await _context.Moderators.AnyAsync(m => m.UserId == userId && m.CompetitionId == competitionId);
 
             return canJoin && hasJoin;
         }
@@ -109,7 +104,7 @@ namespace Backend.Services
             if (await CanJoin(competitionId) is false)
                 throw new ExceptionWithDescription("Erre a versenyre nem tudsz jelentkezni");
 
-            if (await _competitionService.IsInPreparationPhase(competitionId) is null or false)
+            if ( _context.Competitions.Find(competitionId)?.IsInPreparationPhase is null or false)
                 throw new ExceptionWithDescription("A jelentkezési időszak már lejárt");
 
             var user = await _userService.GetLoggedInUser();
@@ -475,7 +470,7 @@ namespace Backend.Services
             };
         }
 
-        internal async Task<int> GetOwnGroup(int competitionId)
+        public virtual async Task<int> GetOwnGroup(int competitionId)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
@@ -490,7 +485,7 @@ namespace Backend.Services
             return groupId;
         }
 
-        internal async Task<object?> GetPrivateGroups(int page)
+        public virtual async Task<object?> GetPrivateGroups(int page)
         {
             var user = await _userService.GetLoggedInUser();
             if (user is null) throw new UserNotAuthorized("");
