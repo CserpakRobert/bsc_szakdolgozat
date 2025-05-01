@@ -60,7 +60,8 @@ export default function CompetitionDetails() {
             })
                 .then(resp => { setSubmissions(resp.data.submissions); setPageCount(resp.data.pageCount) })
         }
-        if (competition?.phase === "submit" || competition?.phase === "finished") {
+        //TODO
+        if (competition?.phase === "submit"|| competition?.phase == "finished" || competition?.phase == "voting" || competition?.phase === "finished") {
             api.get(`submission/ownSubmission/${competition.id}`).then(resp => { setOwnSubmission(resp.data) })
         }
         if (competition?.phase === "preparation") {
@@ -112,13 +113,13 @@ export default function CompetitionDetails() {
 
                             <Grid2 size={{ xs: 0, md: 2 }} />
                             <Grid2 container size={{ sm: 12, md: 8 }}>
-                                <Grid2 size={{ xs: 12, md: 4 }}>
+                                <Grid2 size={{ sm: 12, lg: 3.5 }}>
                                     <CompetitionType type={competition.type} />
                                 </Grid2>
-                                <Grid2 size={{ xs: 12, md: 4 }}>
+                                <Grid2 size={{ sm: 12, lg: 3.5 }}>
                                     <CompetitionPhase phase={competition.phase} />
                                 </Grid2>
-                                <Grid2 size={{ xs: 12, md: 4 }}>
+                                <Grid2 size={{ sm: 12, lg: 5 }}>
                                     <CompetitionDate phase={competition.phase} date={competition.relevantDate} />
                                 </Grid2>
                             </Grid2>
@@ -150,7 +151,7 @@ export default function CompetitionDetails() {
                                         )}
                                     </>
                                 )}
-                                {(competition.phase === "submit" || competition.phase === "finished") && (
+                                {(competition.phase === "submit" || competition.phase === "voting" || competition.phase === "finished") && (
                                     <>
                                         {(competition.phase === "submit" && competition.ownSubmission === 0) && (
                                             <Grid2 size={{ xs: 12, md: 12 }} >

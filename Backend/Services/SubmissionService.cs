@@ -59,22 +59,24 @@ namespace Backend.Services
             }
 
             if (listGetModel.SortByPlacement)
-                query = query.OrderBy(sub => sub.Placement);
+                query = query.OrderBy(sub => sub.Id).OrderBy(sub => sub.Placement);
             else if (listGetModel.SortByVoteCount)
-                query = query.OrderByDescending(sub => sub.VoteCount);
+                query = query.OrderBy(sub => sub.Id).OrderByDescending(sub => sub.VoteCount);
             else if (listGetModel.SortByDate)
-                query = query.OrderByDescending(sub => sub.Id);
+                query = query.OrderBy(sub => sub.Id).OrderByDescending(sub => sub.Competition.RelevantDate);
+            else
+                query = query.OrderBy(sub => sub.Id);
 
             var submissions = query.Select(sub => new SubmissionListDetailsModel
-            {
-                Id = sub.Id,
-                Title = sub.Title,
-                Type = sub.Competition.Type,
-                Placement = sub.Placement,
-                VoteCount = sub.VoteCount,
-                Phase = sub.Competition.Phase,
+                {
+                    Id = sub.Id,
+                    Title = sub.Title,
+                    Type = sub.Competition.Type,
+                    Placement = sub.Placement,
+                    VoteCount = sub.VoteCount,
+                    Phase = sub.Competition.Phase,
 
-            }).AsQueryable();
+                }).AsQueryable();
 
             var count = await query.CountAsync();
 
@@ -310,6 +312,18 @@ namespace Backend.Services
             return submission.Id;
         }
 
+        internal async Task<int> GetOwnSubmission(int competitionId)
+        {
+            var user = await _userService.GetLoggedInUser();
+            if (user is null) throw new UserNotAuthorized("");
+
+            var submission = await _context.Submissions
+                .Include(sub => sub.Competition)
+                .Where(sub => sub.CompetitionId == competitionId && sub.Creators.Any(c => c.Id == user.Id))
+                .Select(sub => sub.Id).FirstOrDefaultAsync();
+
+            return submission;
+        }
         public virtual async Task<int> ModifyMusicSubmission(ModifyMusicDetails modifySubmission)
         {
             var user = await _userService.GetLoggedInUser();
@@ -415,18 +429,7 @@ namespace Backend.Services
             return submission.Id;
         }
 
-        internal async Task<int> GetOwnSubmission(int competitionId)
-        {
-            var user = await _userService.GetLoggedInUser();
-            if (user is null) throw new UserNotAuthorized("");
 
-            var submission = await _context.Submissions
-                .Include(sub => sub.Competition)
-                .Where(sub => sub.CompetitionId == competitionId && sub.Creators.Any(c => c.Id == user.Id))
-                .Select(sub=>sub.Id).FirstOrDefaultAsync();
-
-            return  submission;
-        }
         #endregion
     }
 }

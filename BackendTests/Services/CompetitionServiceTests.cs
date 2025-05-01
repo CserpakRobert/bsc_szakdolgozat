@@ -13,6 +13,8 @@ using System.Linq.Expressions;
 using Backend.Models.JoinTables;
 using Microsoft.EntityFrameworkCore.InMemory;
 using Backend.Utils;
+using Backend.Models.DTOs;
+using BackendTests;
 
 namespace Backend.Services.Tests
 {
@@ -20,11 +22,12 @@ namespace Backend.Services.Tests
     public class CompetitionServiceTests
     {
 
-        [TestMethod()]
+        [TestMethod]
         public async Task Create_Test()
         {
             //TODO
             Assert.Fail("Not implemented");
+
         }
         [TestMethod()]
         public async Task GetDetailsList_Test()

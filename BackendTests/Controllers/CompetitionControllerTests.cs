@@ -41,10 +41,11 @@ namespace Backend.Controllers.Tests
 
             var result = mockCompetitionController.Create(new CreateCompetitionDTO()).Result;
 
+            mockCompetitionService.Verify(x => x.CreateCompetition(It.IsAny<CreateCompetitionDTO>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
         }
         [TestMethod()]
-        public void Create_UNA_Test()
+        public async Task Create_UNA_Test()
         {
             var mockCompetitionService = new Mock<CompetitionService>(null!, null!);
             mockCompetitionService.Setup(x => x.CreateCompetition(It.IsAny<CreateCompetitionDTO>()))
@@ -54,8 +55,10 @@ namespace Backend.Controllers.Tests
 
             var result = mockCompetitionController.Create(new CreateCompetitionDTO()).Result;
 
+            mockCompetitionService.Verify(x => x.CreateCompetition(It.IsAny<CreateCompetitionDTO>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
         }
+
         [TestMethod()]
         public void GetById_Ok_Test()
         {
@@ -96,6 +99,7 @@ namespace Backend.Controllers.Tests
             var mockCompetitionController = new CompetitionController(mockCompetitionService.Object);
 
             var result = mockCompetitionController.GetListDetails(new GetCompetitionListDTO()).Result;
+
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
 
         }

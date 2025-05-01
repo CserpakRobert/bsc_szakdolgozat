@@ -39,7 +39,7 @@ namespace Backend.Services
         }
 
 
-        public async Task RegisterUser(RegisterModel model)
+        public virtual async Task RegisterUser(RegisterModel model)
         {
             if (model.Username.Contains(" "))
             {
@@ -71,7 +71,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<User?> GetUserByName(string name)
+        public virtual async Task<User?> GetUserByName(string name)
         {
             var result = await _userManager.FindByNameAsync(name);
             if (result is null)
@@ -82,7 +82,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<LoginDetails?> LoginUser(LoginModel model)
+        public virtual async Task<LoginDetails?> LoginUser(LoginModel model)
         {
             var email = model.Email;
             var password = model.Password;
@@ -97,7 +97,7 @@ namespace Backend.Services
             return  new LoginDetails(token, user.UserName);
         }
 
-        public virtual async Task<User?> GetLoggedInUser()
+        public  virtual async Task<User?> GetLoggedInUser()
         {
             if (_httpContextAccessor.HttpContext is null)
             {
@@ -138,21 +138,21 @@ namespace Backend.Services
         }
 
 
-        public async Task<bool> IsCreatorInCompetition(int competitionId, int userId)
+        public virtual async Task<bool> IsCreatorInCompetition(int competitionId, int userId)
         {
             var competition = await _context.Competitions.FirstAsync(comp => comp.Id == competitionId);
 
             return competition != null && competition.CreatorId == userId;
         }
 
-        public async Task<bool> IsModeratorInCompetition(int competitionId, int userId)
+        public virtual async Task<bool> IsModeratorInCompetition(int competitionId, int userId)
         {
             var competition = await _context.Competitions.Include(comp => comp.Moderators).FirstAsync(comp => comp.Id == competitionId);
 
             return competition != null && competition.Moderators.Any(mod=>mod.Id == userId);
         }
 
-        public async Task<bool> CanSubmitOnCompetition(int competitionId, int userId)
+        public virtual async Task<bool> CanSubmitOnCompetition(int competitionId, int userId)
         {
             var canSubmit =  await _context.Competitions
                 .AnyAsync(comp => 
