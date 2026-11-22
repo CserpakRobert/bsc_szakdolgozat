@@ -23,14 +23,18 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
         resetState();
     },
     paginateList: async p => {
-        //TODO FILL TESTS
-        expect(true) 
+        await expect(p.getByRole('listitem').nth(3)).toBeDisabled();
+        await p.goto('/competition/list');
+        await expect(p.getByRole('listitem').nth(3)).toBeEnabled();
     },
-    selectPhase1: async p => { expect(true) },
-    navigateCompetitionPhase0: async p => { expect(true) },
-    navigateCompetition: async p => { expect(true) },
-    paginate: async p => { expect(true) },
-    navigateSubmission: async p => { expect(true) },
+    selectPhase1: async p => { expect(p).toHaveURL(/\/competition\/details\/\d+$/) },
+    navigateCompetitionPhase0: async p => { expect(p).toHaveURL(/\/competition\/details\/\d+$/) },
+    navigateCompetition: async p => { expect(p).toHaveURL(/\/competition\/details\/\d+$/) },
+    paginate: async p => {
+        //TODO REMOVE?
+        expect(true);
+    },
+    navigateSubmission: async p => { await expect(p).toHaveURL(/\/competition\/submission\/\d+$/) },
     vote: async p => { expect(true) },
     logout: async p => {
         await expect(p).toHaveURL('/login');
