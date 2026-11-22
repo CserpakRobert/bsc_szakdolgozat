@@ -15,11 +15,11 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
     createFailed: async p => { await expect(p.getByRole('alert')).toBeVisible() },
     navigateLists: async p => expect(p).toHaveURL('/competition/list'),
     selectPhase: async p => {
-        expect(phaseCheck(p));
+        await phaseCheck(p);
         resetState();
     },
     selectType: async p => {
-        expect(typeCheck(p));
+        await typeCheck(p);
         resetState();
     },
     paginateList: async p => {
@@ -39,8 +39,11 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
     },
     navigateSubmission: async p => { await expect(p).toHaveURL(/\/submission\/\d+$/) },
     vote: async p => {
-        //TODO
-        expect(true)
+        if (state.votestate === 'voted') {
+            await expect(p.getByRole('button', { name: 'visszavonás' })).toBeVisible();
+        } else if (state.votestate === 'unvoted') {
+            await expect(p.getByRole('button', { name: 'Szavazás' })).toBeVisible();
+        }
     },
     logout: async p => {
         await expect(p).toHaveURL('/login');
@@ -50,10 +53,30 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
 
 };
 
-function typeCheck(p: Page) {
-    return true;
+const typeLabels: Record<string, string> = {
+  Film: 'rövidfilm',
+  Zene: 'zene',
+  Történet: 'történet',
+};
+
+async function typeCheck(p: Page) {
+  if (!state.selectedType) return; 
+
+  for (const [type, text] of Object.entries(typeLabels)) {
+    if (type !== state.selectedType) {
+      await expect(p.getByText(text)).toHaveCount(0);
+    }
+  }
 }
 
-function phaseCheck(p: Page) {
-    return true;
+const phases = ['Jelentkezés', /*'Beadás',*/ 'Szavazás', 'Befejezett'];
+
+async function phaseCheck(p: Page) {
+  if (!state.selectedPhase) return;  
+
+  for (const phase of phases) {
+    if (phase !== state.selectedPhase) {
+      await expect(p.getByText(phase, { exact: true })).toHaveCount(0);
+    }
+  }
 }

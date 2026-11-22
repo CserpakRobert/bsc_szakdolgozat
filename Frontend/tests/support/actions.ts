@@ -90,9 +90,11 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
     vote: async (p) => {
         if (await p.getByRole('button', { name: 'Szavazás' }).isVisible()) {
             await p.getByRole('button', { name: 'Szavazás' }).click();
+            state.votestate = 'voted';
         } else if (await p.getByRole('button', { name: 'visszavonás' }).isVisible()) {
             await p.getByRole('button', { name: 'visszavonás' }).click();
-        }
+            state.votestate = 'unvoted';
+        }else state.votestate = null;
     },
     logout: async (p) => await p.getByRole('button', { name: 'Kijelentkezés' }).click(),
 

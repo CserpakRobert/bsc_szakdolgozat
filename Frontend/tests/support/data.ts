@@ -5,6 +5,7 @@ type State = {
     selectedPhase: string | null,
     registeredUser: any | null,
     newUser: any | null,
+    votestate: any | null,
 }
 
 export const state: State = {
@@ -12,16 +13,19 @@ export const state: State = {
     selectedPhase: null,
     registeredUser: null,
     newUser: null,
+    votestate: null,
 }
 
 export function resetState() {
     state.selectedType = null;
     state.selectedPhase = null;
+    state.votestate = null;
 }
 
 export function hardResetState() {
     state.selectedType = null;
     state.selectedPhase = null;
+    state.votestate = null;
     state.registeredUser = null;
     state.newUser = null;
 }
