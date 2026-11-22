@@ -1,5 +1,3 @@
-use versenydb;
-
 SET GLOBAL event_scheduler = ON;
 DELIMITER //
 
