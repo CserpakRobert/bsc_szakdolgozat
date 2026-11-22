@@ -1,0 +1,48 @@
+{
+    "test_suite": {
+        "name": "Online_Competitions-efsm_trans",
+        "id": "09724a51-f45a-4dda-9d53-8ed344b541c8-efsm_trans",
+        "method": "AS",
+        "parameters": {
+            "consider_reset_transitions": "NO"
+        },
+        "input_list": [
+            "navigateRegister",
+            "registerSuccess",
+            "login",
+            "navigateCreate",
+            "createSuccess",
+            "navigateLists",
+            "selectPhase1",
+            "navigateCreate",
+            "navigateLists",
+            "navigateMain",
+            "logout",
+            "navigateRegister",
+            "registerSuccess",
+            "login",
+            "navigateLists",
+            "selectPhase1",
+            "navigateSubmission"
+        ],
+        "output_list": [
+            "navigateRegister",
+            "registerSuccess",
+            "loginSuccess",
+            "navigateCreate",
+            "createSuccess",
+            "navigateLists",
+            "selectPhase1",
+            "navigateCreate",
+            "navigateLists",
+            "navigateMain",
+            "logout",
+            "navigateRegister",
+            "registerSuccess",
+            "loginSuccess",
+            "navigateLists",
+            "selectPhase1",
+            "navigateSubmission"
+        ]
+    }
+}
