@@ -22,7 +22,7 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
         const user = makeUser();
         state.newUser = user;
         await p.getByRole('textbox', { name: 'e-mail cím' }).fill(user.email);
-        await p.getByRole('textbox', { name: 'felhasználónév' }).fill(user.email);
+        await p.getByRole('textbox', { name: 'felhasználónév' }).fill(user.name);
         await p.getByRole('textbox', { name: 'jelszó' }).fill(user.password);
         await p.locator('form').getByRole('button', { name: 'Regisztráció' }).click();
     },
@@ -58,7 +58,7 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
         const phases = ['Jelentkezés', 'Beadás', 'Szavazás', 'Befejezett'];
         const phase = phases[Math.floor(Math.random() * phases.length)];
         state.selectedPhase = phase;
-        await p.getByText('Minden Típus').click();
+        await p.getByText('Minden Fázis').click();
         await p.getByRole('option', { name: phase }).click();
     },
     selectType: async (p) => {

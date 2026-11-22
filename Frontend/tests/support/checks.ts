@@ -10,7 +10,7 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
     navigateRegister: async p => await expect(p).toHaveURL('/register'),
     registerSuccess: async p => await expect(p).toHaveURL('/'),
     registerFailed: async p => await expect(p.getByRole('alert')).toBeVisible(),
-    navigateCreate: async p => await expect(p).toHaveURL('/create'),
+    navigateCreate: async p => await expect(p).toHaveURL('/competition/create'),
     createSuccess: async p => await expect(p).toHaveURL(/\/competition\/details\/\d+$/),
     createFailed: async p => { await expect(p.getByRole('alert')).toBeVisible() },
     navigateLists: async p => expect(p).toHaveURL('/competition/list'),
@@ -33,7 +33,7 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
     navigateSubmission: async p => { expect(true) },
     vote: async p => { expect(true) },
     logout: async p => {
-        await expect(p).toHaveURL('/home');
+        await expect(p).toHaveURL('/login');
 
     },
 
