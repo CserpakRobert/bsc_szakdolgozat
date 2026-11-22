@@ -3,14 +3,18 @@ import fs from 'fs';
 import path from 'path';
 import { actions } from './support/actions';
 import { checks } from './support/checks';
+import { resetState, makeUser, setupUser, state,hardResetState } from './support/data';
 
-const suitesDir = path.join('C:\\Users\\Bobelt\\Desktop\\szakdolgozat2025\\Frontend\\tests\\suites');
+// const suitesDir = path.join('C:\\Users\\Bobelt\\Desktop\\szakdolgozat2025\\Frontend\\tests\\suites');
+const suitesDir = path.join('C:\\Users\\Asus\\Desktop\\szak\\bsc_szakdolgozat\\Frontend\\tests\\suites');
 const files = fs.readdirSync(suitesDir).filter((f) => f.endsWith('.json')).sort();
 
 
 
-test.beforeEach(async ({ request }) => {
+test.beforeEach(async ({ page }) => {
     //TODO
+    hardResetState();
+    await setupUser(page);
   console.log(`test`);
 });
 
@@ -23,7 +27,7 @@ for (const file of files) {
     //TODO remove only for testing
     const max = Number(12);
     test(`${name} ${method}`, async ({ page }) => {
-        await page.goto('/home');
+        await page.goto('home');
         for (let i = 0; i < max; i++) {
             const inp = input_list[i];
             const out = output_list[i];

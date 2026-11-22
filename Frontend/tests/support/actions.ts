@@ -1,12 +1,13 @@
 import { Page } from '@playwright/test';
-import { state, resetState } from './data';
+import { state, resetState, makeUser } from './data';
 
-const user = { email: "", password: "" };
+;
 const userFail = { email: "fail@fail.fail", password: "fail" };
 export const actions: Record<string, (p: Page) => Promise<void>> = {
     navigateMain: async (p) => await p.getByRole('button', { name: 'Főoldal' }).click(),
     navigateLogin: async (p) => await p.getByRole('link', { name: 'Bejelentkezés' }).getByRole('button').click(),
     login: async (p) => {
+        const user = state.newUser ?? state.registeredUser;
         await p.getByRole('textbox', { name: 'e-mail cím' }).fill(user.email);
         await p.getByRole('textbox', { name: 'jelszó' }).fill(user.password);
         await p.locator('form').getByRole('button', { name: 'Bejelentkezés' }).click();
@@ -18,6 +19,8 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
     },
     navigateRegister: async (p) => await p.getByRole('link', { name: 'Regisztráció' }).getByRole('button').click(),
     registerSuccess: async (p) => {
+        const user = makeUser();
+        state.newUser = user;
         await p.getByRole('textbox', { name: 'e-mail cím' }).fill(user.email);
         await p.getByRole('textbox', { name: 'felhasználónév' }).fill(user.email);
         await p.getByRole('textbox', { name: 'jelszó' }).fill(user.password);
