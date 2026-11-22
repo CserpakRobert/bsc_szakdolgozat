@@ -12,10 +12,8 @@ const files = fs.readdirSync(suitesDir).filter((f) => f.endsWith('.json')).sort(
 
 
 test.beforeEach(async ({ page }) => {
-    //TODO
     hardResetState();
     await setupUser(page);
-  console.log(`test`);
 });
 
 for (const file of files) {

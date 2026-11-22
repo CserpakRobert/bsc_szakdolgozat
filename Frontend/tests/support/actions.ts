@@ -55,6 +55,7 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
         await p.getByRole('button', { name: 'Verseynek Listája' }).click()
     },
     selectPhase: async (p) => {
+        await p.goto('/competition/list');
         const phases = ['Jelentkezés', 'Beadás', 'Szavazás', 'Befejezett'];
         const phase = phases[Math.floor(Math.random() * phases.length)];
         state.selectedPhase = phase;
@@ -62,6 +63,7 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
         await p.getByRole('option', { name: phase }).click();
     },
     selectType: async (p) => {
+        await p.goto('/competition/list');
         const types = ['Film', 'Zene', 'Történet'];
         const type = types[Math.floor(Math.random() * types.length)];
         state.selectedType = type;
