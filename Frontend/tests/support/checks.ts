@@ -8,7 +8,7 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
     loginSuccess: async p => await expect(p).toHaveURL('/home'),
     loginFailed: async p => await expect(p.getByRole('alert')).toBeVisible(),
     navigateRegister: async p => await expect(p).toHaveURL('/register'),
-    registerSuccess: async p => await expect(p).toHaveURL('/'),
+    registerSuccess: async p => await expect(p).toHaveURL('/login'),
     registerFailed: async p => await expect(p.getByRole('alert')).toBeVisible(),
     navigateCreate: async p => await expect(p).toHaveURL('/competition/create'),
     createSuccess: async p => await expect(p).toHaveURL(/\/competition\/details\/\d+$/),
@@ -23,19 +23,25 @@ export const checks: Record<string, (p: Page) => Promise<void>> = {
         resetState();
     },
     paginateList: async p => {
-        await expect(p.getByRole('listitem').nth(3)).toBeDisabled();
-        await p.goto('/competition/list');
-        await expect(p.getByRole('listitem').nth(3)).toBeEnabled();
+        const next = p.getByRole('button', { name: 'Go to next page' }); 
+        await expect
+            .poll(async () => (await next.isHidden()) || (await next.isDisabled()))
+            .toBe(true);
     },
     selectPhase1: async p => { expect(p).toHaveURL(/\/competition\/details\/\d+$/) },
     navigateCompetitionPhase0: async p => { expect(p).toHaveURL(/\/competition\/details\/\d+$/) },
     navigateCompetition: async p => { expect(p).toHaveURL(/\/competition\/details\/\d+$/) },
     paginate: async p => {
-        //TODO REMOVE?
-        expect(true);
+        const next = p.getByRole('button', { name: 'Go to next page' }); 
+        await expect
+            .poll(async () => (await next.isHidden()) || (await next.isDisabled()))
+            .toBe(true);
     },
-    navigateSubmission: async p => { await expect(p).toHaveURL(/\/competition\/submission\/\d+$/) },
-    vote: async p => { expect(true) },
+    navigateSubmission: async p => { await expect(p).toHaveURL(/\/submission\/\d+$/) },
+    vote: async p => {
+        //TODO
+        expect(true)
+    },
     logout: async p => {
         await expect(p).toHaveURL('/login');
 

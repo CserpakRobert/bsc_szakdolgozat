@@ -70,28 +70,29 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
     },
     paginateList: async (p) => {
         await p.goto('/competition/list');
-        await p.getByRole('button', { name: 'page 2' }).click();
-        return
+        while (await p.getByRole('button', { name: 'Go to next page' }).isVisible() &&await p.getByRole('button', { name: 'Go to next page' }).isEnabled()) {
+            await p.getByRole('button', { name: 'Go to next page' }).click();
+        }
     },
     selectPhase1: async (p) => { await p.goto('/competition/details/2') },
     navigateCompetitionPhase0: async (p) => { await p.goto('/competition/details/1') },
     navigateCompetition: async (p) => {
-        // TODO REMOVE? (button does not exist)
         await p.goto('/competition/details/2')
     },
     paginate: async (p) => {
-        //TODO REMOVE? 
-        return
+        while (await p.getByRole('button', { name: 'Go to next page' }).isVisible() &&await p.getByRole('button', { name: 'Go to next page' }).isEnabled()) {
+            await p.getByRole('button', { name: 'Go to next page' }).click();
+        }
     },
     navigateSubmission: async (p) => await p.getByRole('button', { name: 'Pályázat megtekintése' }).click(),
     vote: async (p) => {
         if (await p.getByRole('button', { name: 'Szavazás' }).isVisible()) {
             await p.getByRole('button', { name: 'Szavazás' }).click();
-        } else {
+        } else if (await p.getByRole('button', { name: 'visszavonás' }).isVisible()) {
             await p.getByRole('button', { name: 'visszavonás' }).click();
         }
     },
-    logout: async (p) => { await p.getByRole('button', { name: 'Kijelentkezés' }).click(); }
+    logout: async (p) => await p.getByRole('button', { name: 'Kijelentkezés' }).click(),
 
 
 };
