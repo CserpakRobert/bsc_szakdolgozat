@@ -19,6 +19,7 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
     },
     navigateRegister: async (p) => await p.getByRole('link', { name: 'Regisztráció' }).getByRole('button').click(),
     registerSuccess: async (p) => {
+        resetState();
         const user = makeUser();
         state.newUser = user;
         await p.getByRole('textbox', { name: 'e-mail cím' }).fill(user.email);
@@ -51,11 +52,14 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
         await p.getByRole('button', { name: 'Verseny Készítése', exact: true }).click();
     },
     navigateLists: async (p) => {
-        resetState();
+        state.selectedPhase = null;
+        state.selectedType = null;
         await p.getByRole('button', { name: 'Verseynek Listája' }).click()
     },
     selectPhase: async (p) => {
         await p.goto('/competition/list');
+        state.selectedPhase = null;
+        state.selectedType = null;
         const phases = ['Jelentkezés', 'Beadás', 'Szavazás', 'Befejezett'];
         const phase = phases[Math.floor(Math.random() * phases.length)];
         state.selectedPhase = phase;
@@ -64,6 +68,8 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
     },
     selectType: async (p) => {
         await p.goto('/competition/list');
+        state.selectedPhase = null;
+        state.selectedType = null;
         const types = ['Film', 'Zene', 'Történet'];
         const type = types[Math.floor(Math.random() * types.length)];
         state.selectedType = type;
@@ -72,6 +78,8 @@ export const actions: Record<string, (p: Page) => Promise<void>> = {
     },
     paginateList: async (p) => {
         await p.goto('/competition/list');
+        state.selectedPhase = null;
+        state.selectedType = null;
         while (await p.getByRole('button', { name: 'Go to next page' }).isVisible() &&await p.getByRole('button', { name: 'Go to next page' }).isEnabled()) {
             await p.getByRole('button', { name: 'Go to next page' }).click();
         }

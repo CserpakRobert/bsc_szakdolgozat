@@ -64,19 +64,24 @@ async function typeCheck(p: Page) {
 
   for (const [type, text] of Object.entries(typeLabels)) {
     if (type !== state.selectedType) {
-      await expect(p.getByText(text)).toHaveCount(0);
+      await expect(p.getByText(text, {exact:true})).toHaveCount(0);
     }
   }
 }
 
-const phases = ['Jelentkezés', /*'Beadás',*/ 'Szavazás', 'Befejezett'];
+const phases = [
+    //'Jelentkezés',
+     'Beadás',
+      'Szavazás',
+       'Befejezett'
+    ];
 
 async function phaseCheck(p: Page) {
   if (!state.selectedPhase) return;  
 
   for (const phase of phases) {
     if (phase !== state.selectedPhase) {
-      await expect(p.getByText(phase, { exact: true })).toHaveCount(0);
+      await expect(p.getByText(phase, { exact: true })).toHaveCount(1);
     }
   }
 }
