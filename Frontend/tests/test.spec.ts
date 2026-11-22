@@ -23,7 +23,7 @@ for (const file of files) {
     //TODO remove only for testing
     const max = Number(12);
     test(`${name} ${method}`, async ({ page }) => {
-        await page.goto('');
+        await page.goto('/home');
         for (let i = 0; i < max; i++) {
             const inp = input_list[i];
             const out = output_list[i];
